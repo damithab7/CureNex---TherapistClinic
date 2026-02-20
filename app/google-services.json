@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "75753260351",
+    "project_id": "curenex-63f5a",
+    "storage_bucket": "curenex-63f5a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:75753260351:android:ae9924ebcfa326fd58ff8a",
+        "android_client_info": {
+          "package_name": "lk.damithab.curenex"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeIaOB6D-TGO2yXPDB7K7Y4g7lwBrLxSc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

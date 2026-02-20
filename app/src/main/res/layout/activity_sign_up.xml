@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.SignUpActivity">
+
+    <View
+        android:id="@+id/bottomBackgroundCard"
+        android:layout_width="408dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_login_card"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/sign_up_back_btn" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/sign_up_back_btn"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/default_margin_horizontal"
+        android:layout_marginBottom="@dimen/small_margin_bottom"
+        android:fontFamily="@font/poppins"
+        android:paddingTop="10dp"
+        android:text="@string/sign_in_back"
+        android:textAllCaps="false"
+        android:textSize="@dimen/link_click_text_size"
+        app:icon="@drawable/smallarrowleft"
+        app:layout_constraintBottom_toTopOf="@+id/SignUpText"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/SignUpText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/default_margin_horizontal"
+        android:layout_marginTop="160dp"
+        android:fontFamily="@font/poppins"
+        android:text="@string/sign_up_txt"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.135"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/default_margin_horizontal"
+        android:layout_marginVertical="@dimen/layout_margin"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SignUpText">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/signInFirstNameLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/signup_margin_top"
+            android:hint="@string/firstname_placeholder_hint">
+
+            <EditText
+                android:id="@+id/firstNameSignUpInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:drawableStart="@drawable/usericon"
+                android:drawablePadding="@dimen/edit_text_icon_padding"
+                android:fontFamily="@font/poppins"
+
+                android:inputType="text"
+                android:padding="@dimen/edit_text_padding"
+                android:textSize="@dimen/edit_text_size" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/signInLastNameLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/signup_margin_top"
+            android:hint="@string/lastname_placeholder_hint">
+
+            <EditText
+                android:id="@+id/lastNameSignUpInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginTop="@dimen/default_margin_top"
+                android:drawableStart="@drawable/usericon"
+                android:drawablePadding="@dimen/edit_text_icon_padding"
+                android:fontFamily="@font/poppins"
+
+                android:inputType="text"
+                android:padding="@dimen/edit_text_padding"
+                android:textSize="@dimen/edit_text_size" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/signInEmailLayout"
+            android:layout_marginTop="@dimen/signup_margin_top"
+            android:hint="@string/email_placeholder_hint">
+            <EditText
+                android:id="@+id/emailSignUpInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/default_margin_top"
+                android:drawableLeft="@drawable/emailicon"
+                android:drawablePadding="@dimen/edit_text_icon_padding"
+                android:fontFamily="@font/poppins"
+                android:inputType="textEmailAddress"
+                android:padding="@dimen/edit_text_padding"
+                android:textSize="@dimen/edit_text_size"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="65dp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:id="@+id/signInPasswordLayout"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/signup_margin_top"
+            android:hint="@string/password_placeholder_hint">
+
+            <EditText
+                android:id="@+id/passwordSignUpInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/default_margin_top"
+                android:drawableStart="@drawable/passwordicon"
+                android:drawablePadding="@dimen/edit_text_icon_padding"
+                android:fontFamily="@font/poppins"
+                android:inputType="textPassword"
+                android:padding="@dimen/edit_text_padding"
+                android:textSize="@dimen/edit_text_size"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="65dp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/signInRetypePasswordLayout"
+            android:layout_marginTop="@dimen/signup_margin_top"
+            android:hint="@string/retype_password_placeholder_hint">
+
+            <EditText
+                android:id="@+id/retype_passwordSignUpInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/passwordicon"
+                android:drawablePadding="@dimen/edit_text_icon_padding"
+                android:fontFamily="@font/poppins"
+                android:inputType="textPassword"
+                android:padding="@dimen/edit_text_padding"
+                android:textSize="@dimen/edit_text_size"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="65dp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/signUpContinueBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_margin_top"
+            android:fontFamily="@font/poppins"
+            android:text="@string/continue_btn_txt"
+            android:textSize="@dimen/button_text_size" />
+
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

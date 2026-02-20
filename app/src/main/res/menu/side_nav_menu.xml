@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:id="@+id/side_nav_group_main">
+        <item
+            android:id="@+id/side_nav_shop"
+            android:checkable="true"
+            android:icon="@drawable/shopicon"
+            android:title="@string/side_nav_shop_title"
+            android:visible="true" />
+
+        <item
+            android:id="@+id/side_nav_notifications"
+            android:checkable="true"
+            android:icon="@drawable/notificationicon"
+            android:title="@string/side_nav_notification_title"
+            android:visible="false" />
+
+        <item
+            android:id="@+id/side_nav_bookings"
+            android:checkable="true"
+            android:icon="@drawable/bookingicon"
+            android:title="@string/side_nav_booking_title"
+            android:visible="false" />
+        <item
+            android:id="@+id/side_nav_support"
+            android:checkable="true"
+            android:icon="@drawable/supporticon"
+            android:title="@string/side_nav_support_title"
+            android:visible="true" />
+    </group>
+
+
+    <group android:id="@+id/side_nav_group_auth">
+        <item
+            android:id="@+id/side_nav_login"
+            android:icon="@drawable/signinicon"
+            android:title="@string/side_nav_login_title"
+            android:visible="true" />
+
+        <item
+            android:id="@+id/side_nav_logout"
+            android:icon="@drawable/signouticon"
+            android:title="@string/side_nav_logout_title"
+            android:visible="false" />
+    </group>
+</menu>

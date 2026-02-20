@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_marginHorizontal="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/timeChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="09.00" />
+
+        <TextView
+            android:id="@+id/availableSlotsText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3 slots left"
+            android:textColor="#E67E22"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+</FrameLayout>
+
