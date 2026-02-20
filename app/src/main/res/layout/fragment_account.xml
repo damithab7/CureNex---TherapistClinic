@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.AccountFragment">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/accountProfileLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/margin_25"
+            android:layout_marginHorizontal="@dimen/margin_25"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/curenexlogo" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:includeFontPadding="false"
+                    android:paddingLeft="@dimen/edit_text_padding"
+                    android:text="Damitha Sulochana"
+                    android:textSize="@dimen/logo_font_size"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.button.MaterialButton
+                    style="@style/Widget.Material3.Button"
+                    android:id="@+id/button"
+                    android:includeFontPadding="false"
+                    android:padding="0dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/small_margin_vertical"
+                    android:fontFamily="@font/poppins"
+                    android:text="Edit Profile"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/small_font_size" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!--        <View-->
+        <!--            android:id="@+id/divider"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="4dp"-->
+        <!--            android:layout_marginTop="8dp"-->
+        <!--            android:background="@color/input_icon_color"-->
+        <!--            app:layout_constraintBottom_toTopOf="@+id/accountText"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/accountProfileLayout" />-->
+
+        <TextView
+            android:id="@+id/accountText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_25"
+            android:layout_marginTop="@dimen/default_margin_vertical"
+            android:fontFamily="@font/poppins"
+            android:text="Account"
+            android:textSize="@dimen/medium_font_size"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/accountProfileLayout" />
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            app:layout_constraintTop_toBottomOf="@+id/accountText"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/accountAddressBtn"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minHeight="0dp"
+                    android:textColor="?attr/textColorCustom"
+                    android:paddingVertical="@dimen/medium_padding"
+                    android:paddingStart="20dp"
+                    android:drawableLeft="@drawable/ic_location_rounded"
+                    android:drawableRight="@drawable/rightsmallarrow"
+                    android:fontFamily="@font/poppins"
+                    android:text="Addresses"
+                    android:textAlignment="viewStart"
+                    android:textAllCaps="false"
+                    app:cornerRadius="0dp"
+                    app:iconPadding="@dimen/icon_padding" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/accountOrdersBtn"
+                    app:cornerRadius="0dp"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingStart="20dp"
+                    android:textColor="?attr/textColorCustom"
+                    android:minHeight="0dp"
+                    android:paddingVertical="@dimen/medium_padding"
+                    android:drawableLeft="@drawable/ic_orders_rounded"
+                    android:drawableRight="@drawable/rightsmallarrow"
+                    android:fontFamily="@font/poppins"
+                    android:text="Orders"
+                    android:textAlignment="viewStart"
+                    app:iconPadding="@dimen/icon_padding" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/accountPasswordBtn"
+                    app:cornerRadius="0dp"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingStart="20dp"
+                    android:textColor="?attr/textColorCustom"
+                    android:minHeight="0dp"
+                    android:paddingVertical="@dimen/medium_padding"
+                    android:drawableLeft="@drawable/ic_password_rounded"
+                    android:drawableRight="@drawable/rightsmallarrow"
+                    android:fontFamily="@font/poppins"
+                    android:text="Change password"
+                    android:textAlignment="viewStart"
+                    app:iconPadding="@dimen/icon_padding" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/accountSettingsBtn"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:paddingStart="20dp"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_settings_rounded"
+                    android:drawableRight="@drawable/rightsmallarrow"
+                    android:fontFamily="@font/poppins"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minHeight="0dp"
+                    android:paddingVertical="@dimen/medium_padding"
+                    android:text="Settings"
+                    android:textAlignment="viewStart"
+                    android:textColor="?attr/textColorCustom"
+                    app:cornerRadius="0dp"
+                    app:iconPadding="@dimen/icon_padding" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button2"
+                    style="@style/Widget.Material3.Button.TextButton.Dialog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/layout_margin"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/poppins"
+                    android:includeFontPadding="false"
+                    android:text="Sign Out"
+                    android:textColor="@color/red"
+                    android:layout_gravity="center_horizontal"
+                    android:textSize="@dimen/small_font_size"
+                    android:textStyle="bold"
+                    app:icon="@drawable/signouticon"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/red" />
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

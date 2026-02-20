@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.BookingHistoryActivity">
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/booking_toolbar"
+        app:title="My Bookings"
+        app:titleCentered="true"
+        app:titleTextAppearance="@style/logoFont"
+        android:layout_width="match_parent"
+        app:navigationIcon="@drawable/backicon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/navContainerView"
+        android:layout_height="wrap_content">
+
+    </com.google.android.material.appbar.MaterialToolbar>
+
+
+    <com.google.android.material.tabs.TabLayout
+        android:layout_marginHorizontal="@dimen/layout_margin"
+        android:id="@+id/booking_tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/tab_layout_bg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tabBackground="@android:color/transparent"
+        app:tabIndicator="@drawable/tab_indicator"
+        app:tabIndicatorColor="?attr/tab_indicator_bg"
+        app:tabTextColor="?attr/textColorCustom"
+        app:tabSelectedTextColor="?attr/textColorCustom"
+        app:tabIndicatorGravity="stretch"
+        app:tabRippleColor="@android:color/transparent"
+        app:tabMode="fixed"
+        app:tabIndicatorAnimationDuration="300"
+        app:tabIndicatorAnimationMode="linear"
+        app:tabIndicatorFullWidth="true"
+        >
+
+    </com.google.android.material.tabs.TabLayout>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:layout_marginHorizontal="@dimen/layout_margin"
+        android:id="@+id/booking_viewpager2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tabLayout"
+        app:layout_constraintVertical_bias="0.0" />
+</LinearLayout>

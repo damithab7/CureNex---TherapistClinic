@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingVertical="10dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="6"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/order_item_title"
+            android:includeFontPadding="false"
+            android:fontFamily="@font/poppins"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="I Ordered a supplli"/>
+        <TextView
+            android:id="@+id/order_item_date"
+            android:textColor="@color/material_on_background_disabled"
+            android:includeFontPadding="false"
+            android:fontFamily="@font/poppins"
+            android:textSize="13sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Order date 2023/10/01"/>
+        <TextView
+            android:id="@+id/order_item_id"
+            android:textColor="@color/material_on_background_disabled"
+            android:includeFontPadding="false"
+            android:fontFamily="@font/poppins"
+            android:textSize="13sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="order id: 123123"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/order_item_price"
+            android:layout_gravity="end"
+            android:includeFontPadding="false"
+            android:fontFamily="@font/poppins"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rs.1200"/>
+        <com.google.android.material.chip.Chip
+            android:id="@+id/order_item_status_chip"
+            app:chipMinTouchTargetSize="0dp"
+            android:minHeight="20dp"
+            app:chipMinHeight="0dp"
+            app:chipStartPadding="4dp"
+            app:chipEndPadding="4dp"
+            app:chipSpacing="0dp"
+            app:textStartPadding="0dp"
+            app:textEndPadding="0dp"
+
+            android:textSize="12sp"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="Delivery"/>
+        <TextView
+            android:id="@+id/order_item_qty"
+            android:layout_gravity="end"
+            android:fontFamily="@font/poppins"
+            android:textSize="13sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Qty :10"/>
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        tools:srcCompat="@tools:sample/avatars"/>
+
+</LinearLayout>

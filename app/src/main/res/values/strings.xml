@@ -1,0 +1,60 @@
+<resources>
+    <string name="app_name">CureNex</string>
+    <string name="app_version">v1.0.0</string>
+    <string name="app_copy">"@dsb.inc"</string>
+
+    <!--    WelcomeDialog -->
+    <string name="welcome_screen_brief">Welcome to CureNex. We’re dedicated to bringing you expert therapeutic care and the quality health products you need to feel your best. From managing your appointments with our specialists to finding the right clinical supports, we’ve made the process simple and straightforward. Whenever you’re ready, just hit continue and let’s get into it.</string>
+    <string name="welcome_screen_title">Welcome to CureNex</string>
+    <string name="welcome_btn_text">Continue</string>
+
+    <!--    SignInActivity Text-->
+    <string name="sign_in_txt">Sign In</string>
+    <string name="email_placeholder_hint">Email Address</string>
+    <string name="password_placeholder_hint">Password</string>
+    <string name="retype_password_placeholder_hint">Retype-Password</string>
+    <string name="continue_btn_txt">Continue</string>
+    <string name="sign_up_link_text">Don’t have an account ?</string>
+    <string name="sign_up_link">Create one</string>
+    <string name="sign_in_back">Back to login</string>
+    <string name="forgot_password_link_text">Forgot Password ?</string>
+    <string name="forgot_password_link">Reset</string>
+    <string name="hello">Hello!</string>
+    <string name="sign_in_welcome">Welcome to CureNex</string>
+
+    <!--    SignUpActivity Text-->
+    <string name="sign_up_txt">Sign Up</string>
+    <string name="firstname_placeholder_hint">Firstname</string>
+    <string name="lastname_placeholder_hint">Lastname</string>
+    <string name="logo_name">CureNex</string>
+
+    <!--    HomeActivityText-->
+    <string name="home_search_hint">Search</string>
+    <string name="subtotal">Subtotal</string>
+    <string name="shipping">Shipping</string>
+    <string name="total">Total</string>
+    <string name="checkout">Proceed to Checkout</string>
+    <string name="cart">Cart</string>
+    <string name="mycart">MyCart</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="bottom_nav_home_txt">Home</string>
+    <string name="bottom_nav_service_txt">Service</string>
+    <string name="bottom_nav_shop_txt">shop</string>
+    <string name="bottom_nav_account_txt">Account</string>
+    <string name="bottom_nav_cart_txt">Cart</string>
+    <string name="see_all">See All</string>
+    <string name="new_arrivals">New Arrivals</string>
+    <string name="view_all">View All</string>
+
+    <string name="side_nav_notification_title">Notifications</string>
+    <string name="side_nav_logout_title">Logout</string>
+
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+    <string name="side_nav_booking_title">My Bookings</string>
+    <string name="side_nav_support_title">Support</string>
+    <string name="side_nav_shop_title">Shop</string>
+    <string name="side_nav_login_title">Login</string>
+    <string name="drawer_emergency_txt">Emergency Call</string>
+</resources>

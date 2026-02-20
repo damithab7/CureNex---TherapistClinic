@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="BottomNavText">
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="logoFont">
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+
+    <style name="sideNavFont">
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+</resources>
