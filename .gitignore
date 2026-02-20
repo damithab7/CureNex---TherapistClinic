@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+# Android / IntelliJ
 *.iml
 .gradle
 /local.properties
@@ -8,50 +8,26 @@
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
-local.properties
-=======
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-.kotlin
-
-### IntelliJ IDEA ###
-.idea/modules.xml
 .idea/jarRepositories.xml
 .idea/compiler.xml
-.idea/libraries/
-*.iws
-*.iml
-*.ipr
+.DS_Store
 
-### Eclipse ###
+# Secrets & Local Config
+app/google-services.json
+local.properties
+.kotlin
+
+# Build folders
+/build
+/captures
+target/
+.externalNativeBuild
+.cxx
+
+# System/IDE Files
+.vscode/
 .apt_generated
 .classpath
 .factorypath
 .project
 .settings
-.springBeans
-.sts4-cache
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
-.vscode/
-
-### Mac OS ###
-.DS_Store
->>>>>>> 9d86298a9e408c159b20d43c5ed1341baedd5da1
