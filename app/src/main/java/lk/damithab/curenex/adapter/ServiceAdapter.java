@@ -21,14 +21,14 @@ import lk.damithab.curenex.R;
 import lk.damithab.curenex.dto.ServiceDTO;
 import lk.damithab.curenex.model.Service;
 
-public class HomeServiceAdapter extends RecyclerView.Adapter<HomeServiceAdapter.ViewHolder> {
+public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHolder> {
     private List<Service> serviceList;
 
     private Context context;
 
     private OnServiceItemClickListener listener;
 
-    public HomeServiceAdapter(List<Service> serviceList, OnServiceItemClickListener listener) {
+    public ServiceAdapter(List<Service> serviceList, OnServiceItemClickListener listener) {
         this.serviceList = serviceList;
         this.listener = listener;
     }
@@ -37,7 +37,7 @@ public class HomeServiceAdapter extends RecyclerView.Adapter<HomeServiceAdapter.
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_home_service, parent, false);
+                .inflate(R.layout.item_service, parent, false);
         context = parent.getContext();
         return new ViewHolder(view);
     }
@@ -72,8 +72,8 @@ public class HomeServiceAdapter extends RecyclerView.Adapter<HomeServiceAdapter.
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.serviceImage = itemView.findViewById(R.id.home_c_image);
-            this.serviceName = itemView.findViewById(R.id.home_c_text);
+            this.serviceImage = itemView.findViewById(R.id.item_service_image);
+            this.serviceName = itemView.findViewById(R.id.item_service_text);
         }
 
     }

@@ -3,6 +3,8 @@ package lk.damithab.curenex.fragment;
 import static lk.damithab.curenex.util.RegexUtil.isPasswordValid;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +48,22 @@ public class SignInPasswordFragment extends Fragment {
 
         this.continueToHome = binding.passwordContinueBtn;
 
+        passwordInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable editable) {
 
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                binding.signInPasswordLayout.setErrorEnabled(false);
+            }
+        });
         continueToHome.setOnClickListener(v -> {
             Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.button_click);
             v.startAnimation(anim);
@@ -61,12 +78,12 @@ public class SignInPasswordFragment extends Fragment {
 
     private void validatePassword(String password) {
         if (password.isEmpty()) {
-            passwordInput.setError("Password is required.");
-        } else if (password.length() < 8) {
-            passwordInput.setError("Password must be at least 8 characters long.");
-        } else if (!isPasswordValid(password)) {
-            passwordInput.setError("Password must include at least one uppercase letter, one number, and one special character.");
-        }else{
+            binding.signInPasswordLayout.setErrorEnabled(true);
+            binding.signInPasswordLayout.setError("Password is required.");
+        } else if (password.length() < 6) {
+            binding.signInPasswordLayout.setErrorEnabled(true);
+            binding.signInPasswordLayout.setError("Password must be at least 6 characters long.");
+        } else{
             SignInViewModel viewModel = new ViewModelProvider(requireActivity()).get(SignInViewModel.class);
             String email = viewModel.getEmail();
             ((SignInActivity) getActivity()).login(email, password);

@@ -4,44 +4,43 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="wrap_content"
-    android:layout_width="110dp"
+    android:layout_width="match_parent"
     android:padding="@dimen/small_padding"
     android:layout_margin="@dimen/small_margin_all">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/home_c_card"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="200dp"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/item_service_card"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        app:cardCornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/home_c_image"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:scaleType="centerCrop"
+            android:id="@+id/item_service_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/welcomeimage" />
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
     <TextView
         android:textAlignment="center"
         android:fontFamily="@font/poppins"
-        android:id="@+id/home_c_text"
+        android:id="@+id/item_service_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/small_margin_top"
-        android:textSize="@dimen/small_font_size"
+        android:textSize="@dimen/medium_font_size"
         android:text="Women Shoes"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/home_c_card" />
+        app:layout_constraintTop_toBottomOf="@id/item_service_card" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

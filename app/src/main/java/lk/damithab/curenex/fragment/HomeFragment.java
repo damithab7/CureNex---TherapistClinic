@@ -2,65 +2,103 @@ package lk.damithab.curenex.fragment;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import lk.damithab.curenex.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link HomeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.List;
+
+import lk.damithab.curenex.R;
+import lk.damithab.curenex.adapter.HomeServiceAdapter;
+import lk.damithab.curenex.databinding.FragmentHomeBinding;
+import lk.damithab.curenex.model.Service;
+
 public class HomeFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private FragmentHomeBinding binding;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private HomeServiceAdapter homeServiceAdapter;
 
-    public HomeFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static HomeFragment newInstance(String param1, String param2) {
-        HomeFragment fragment = new HomeFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private RecyclerView serviceRecyclerView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        serviceRecyclerView = binding.homeServicesRecycle;
+        serviceRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+//        Service s1 =new Service("ser1", "Physiotherapy", "https://loremflickr.com/400/400/physiotherapy?lock=15");
+//        Service s2 =new Service("ser2", "Psychotherapy", "https://loremflickr.com/400/400/psychotherapy?lock=1");
+//        Service s3 =new Service("ser3", "Ergonomics", "https://loremflickr.com/400/400/office,posture?lock=23");
+//        Service s4 =new Service("ser4", "Nutrition", "https://loremflickr.com/400/400/healthy,food?lock=4");
+//        Service s5 =new Service("ser5", "Psychodynamic", "https://loremflickr.com/400/400/psychology?lock=21");
+//        Service s6 =new Service("ser6", "Interpersonal", "https://loremflickr.com/400/400/nurse?lock=17");
+//
+//        List<Service> serv =List.of(s1, s2, s3 , s4, s5, s6);
+//
+//        WriteBatch batch =db.batch();
+//
+//        for(Service service: serv){
+//            DocumentReference ref = db.collection("services").document();
+//            batch.set(ref, service);
+//        }
+//
+//        batch.commit();
+
+        db.collection("services").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        QuerySnapshot result = task.getResult();
+                        //List<Category> categories = result.toObjects(Category.class);
+
+                        List<Service> services = task.getResult().toObjects(Service.class);
+                        homeServiceAdapter = new HomeServiceAdapter(services, service -> {
+
+                            Bundle bundle = new Bundle();
+                            bundle.putString("serviceId", service.getServiceId());
+
+                            TherapistFragment fragment = new TherapistFragment();
+                            fragment.setArguments(bundle);
+
+                            getParentFragmentManager().beginTransaction()
+                                    .replace(R.id.fragment_container, fragment)
+                                    .addToBackStack(null)
+                                    .commit();
+
+                        });
+
+                        serviceRecyclerView.setAdapter(homeServiceAdapter);
+
+                    }
+                });
     }
 }
