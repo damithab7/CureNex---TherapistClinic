@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -45,6 +46,9 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivitySignUpBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseFirestore = FirebaseFirestore.getInstance();
 
         this.sign_up_back = binding.signUpBackBtn;
         sign_up_back.setOnClickListener(v -> {
@@ -216,6 +220,7 @@ public class SignUpActivity extends AppCompatActivity {
                  return;
              }
 
+
             firebaseAuth.createUserWithEmailAndPassword(email, password).
                     addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
@@ -225,15 +230,17 @@ public class SignUpActivity extends AppCompatActivity {
                                 User user = User.builder().uid(uid).firstName(firstName)
                                         .lastName(lastName)
                                         .profileUrl("https://ui-avatars.com/api/"+firstName+"+"+lastName)
-                                        .email(email).build();
+                                        .email(email)
+                                        .userStatus(true).build();
 
                                 firebaseFirestore.collection("users").document(uid)
                                         .set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void unused) {
-                                                Toast.makeText(SignUpActivity.this, "SignUp success!", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(SignUpActivity.this, "Sign-Up success!", Toast.LENGTH_SHORT).show();
                                                 Intent intent = new Intent(SignUpActivity.this, SignInActivity.class);
                                                 startActivity(intent);
+                                                finish();
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
                                             @Override
@@ -241,6 +248,8 @@ public class SignUpActivity extends AppCompatActivity {
 
                                             }
                                         });
+                            }else{
+                                Log.w("SignUp", "Sign up failed");
                             }
                         }
                     });

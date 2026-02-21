@@ -34,7 +34,7 @@
 
         <LinearLayout
             android:layout_marginVertical="@dimen/small_margin_vertical"
-            android:id="@+id/categoriesLayoutHome"
+            android:id="@+id/servicesLayoutHome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
@@ -78,18 +78,18 @@
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/home_categories_recycle"
-            android:layout_marginVertical="@dimen/small_margin_vertical"
+            android:id="@+id/home_services_recycle"
             android:layout_width="0dp"
-            android:nestedScrollingEnabled="false"
             android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/small_margin_vertical"
+            android:nestedScrollingEnabled="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/categoriesLayoutHome" />
+            app:layout_constraintTop_toBottomOf="@+id/servicesLayoutHome" />
 
         <LinearLayout
-            android:id="@+id/newArrivalsLayout"
+            android:id="@+id/bestTherapistLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/small_margin_vertical"
@@ -97,7 +97,7 @@
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/home_categories_recycle">
+            app:layout_constraintTop_toBottomOf="@+id/home_services_recycle">
 
             <TextView
                 android:includeFontPadding="false"
@@ -133,13 +133,13 @@
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/new_arrivals_home_recycle"
+            android:id="@+id/best_therapist_home_recycle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
+            android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/newArrivalsLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/bestTherapistLayout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

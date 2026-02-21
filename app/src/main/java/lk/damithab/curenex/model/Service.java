@@ -9,11 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
-    private String uid;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String profileUrl;
-    private boolean userStatus;
+public class Service {
+    private String serviceId;
+    private String name;
+    private String imageUrl;
 }

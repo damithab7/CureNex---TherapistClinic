@@ -4,6 +4,8 @@ import static lk.damithab.curenex.util.RegexUtil.isEmailValid;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +53,23 @@ public class SignInEmailFragment extends Fragment {
             startActivity(intent);
         });
 
+        emailInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                binding.signInEmailLayout.setErrorEnabled(false);
+            }
+        });
+
         continueToPassword.setOnClickListener(v -> {
             Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.button_click);
             v.startAnimation(anim);
@@ -64,9 +83,11 @@ public class SignInEmailFragment extends Fragment {
     }
     private void validateEmail(String email) {
         if (email.isEmpty()) {
-            emailInput.setError("Email address is required.");
+            binding.signInEmailLayout.setErrorEnabled(true);
+            binding.signInEmailLayout.setError("Email address is required.");
         } else if (!isEmailValid(email)) {
-            emailInput.setError("Invalid email format. Please use the format: name@example.com.");
+            binding.signInEmailLayout.setErrorEnabled(true);
+            binding.signInEmailLayout.setError("Invalid email format. Please use the format: name@example.com.");
         } else {
             SignInViewModel viewModel = new ViewModelProvider(requireActivity()).get(SignInViewModel.class);
             viewModel.setEmail(email);

@@ -12,12 +12,12 @@
         android:layout_height="wrap_content"
         android:hint="@string/email_placeholder_hint"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:id="@+id/signInEmailLayout"
         >
         <EditText
             android:id="@+id/emailSignInInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/text_input_bg"
             android:inputType="textEmailAddress"
             android:fontFamily="@font/poppins"
             android:textSize="@dimen/edit_text_size"
