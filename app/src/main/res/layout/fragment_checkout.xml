@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".fragment.CheckoutFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/address_bottom_layout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.card.MaterialCardView
+                app:strokeWidth="0dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:fontFamily="@font/poppins"
+                        android:text="Address"
+                        android:textSize="@dimen/medium_font_size"
+                        android:textStyle="bold" />
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="30dp"
+                        android:orientation="vertical"
+                        >
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_weight="1"
+                                android:fontFamily="@font/poppins"
+                                android:textSize="15sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/material_dynamic_neutral30"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Select Address"/>
+
+                            <ImageView
+                                android:id="@+id/select_address_btn"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/edit_square_24px"
+                                android:layout_alignParentEnd="true"
+                                android:rotation="180"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/checkout_address_layout"
+                            android:visibility="gone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/checkout_address_name"
+                                android:fontFamily="@font/poppins"
+                                android:textSize="@dimen/default_font_size"
+                                android:textColor="@color/material_dynamic_neutral50"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Name"/>
+                            <TextView
+                                android:id="@+id/checkout_address_address1"
+                                android:fontFamily="@font/poppins"
+                                android:textSize="@dimen/default_font_size"
+                                android:textColor="@color/material_dynamic_neutral50"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Address"/>
+                            <TextView
+                                android:id="@+id/checkout_address_city"
+                                android:fontFamily="@font/poppins"
+                                android:textSize="@dimen/default_font_size"
+                                android:textColor="@color/material_dynamic_neutral50"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="City"/>
+                            <TextView
+                                android:id="@+id/checkout_address_postcode"
+                                android:fontFamily="@font/poppins"
+                                android:textSize="@dimen/default_font_size"
+                                android:textColor="@color/material_dynamic_neutral50"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="PostCode"/>
+                            <TextView
+                                android:id="@+id/checkout_address_mobile"
+                                android:fontFamily="@font/poppins"
+                                android:textSize="@dimen/default_font_size"
+                                android:textColor="@color/material_dynamic_neutral50"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Mobile"/>
+                        </LinearLayout>
+                        <CheckBox
+                            android:id="@+id/shipping_details_check_billing"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+
+                            android:checked="true"
+                            android:text="Billing address same as shipping" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/billing_layout"
+                android:visibility="gone"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:fontFamily="@font/poppins"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="Billing Address"
+                        android:textSize="@dimen/medium_font_size"
+                        android:textStyle="bold" />
+
+
+                    <ImageView
+                        android:id="@+id/billing_layout_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/arrow_down_24"
+                        android:layout_alignParentEnd="true"
+                        android:rotation="180"/>
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/billing_layout_body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/billing_details_name_layout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:hint="Full Name"
+                        app:placeholderText="Full Name"
+                        app:placeholderTextAppearance="@style/placeholderFont">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/billing_details_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins"
+                            android:inputType="text"
+                            android:padding="@dimen/edit_text_padding"
+                            android:textSize="@dimen/edit_text_size" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginTop="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/email_placeholder_hint"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:id="@+id/billing_details_email_layout"
+                        app:placeholderText="example@email.com"
+                        app:placeholderTextAppearance="@style/placeholderFont"
+                        >
+                        <EditText
+                            android:id="@+id/billing_details_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textEmailAddress"
+                            android:fontFamily="@font/poppins"
+                            android:textSize="@dimen/edit_text_size"
+
+                            android:padding="@dimen/edit_text_padding" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/billing_details_contact_layout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:hint="Contact Number"
+                        app:placeholderText="Contact Number"
+                        app:placeholderTextAppearance="@style/placeholderFont">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/billing_details_contact"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins"
+                            android:inputType="phone"
+                            android:padding="@dimen/edit_text_padding"
+                            android:textSize="@dimen/edit_text_size" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/billing_details_address1_layout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:hint="Address"
+                        app:placeholderText="Address"
+                        app:placeholderTextAppearance="@style/placeholderFont">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/billing_details_address1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins"
+                            android:inputType="text"
+                            android:padding="@dimen/edit_text_padding"
+                            android:textSize="@dimen/edit_text_size" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/billing_details_address2_layout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:hint="Address 2"
+                        app:placeholderText="Address 2"
+                        app:placeholderTextAppearance="@style/placeholderFont">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/billing_details_address2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins"
+                            android:inputType="text"
+                            android:padding="@dimen/edit_text_padding"
+                            android:textSize="@dimen/edit_text_size" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/billing_details_city_layout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:hint="City"
+                        app:placeholderText="City"
+                        app:placeholderTextAppearance="@style/placeholderFont">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/billing_details_city"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins"
+                            android:inputType="text"
+                            android:padding="@dimen/edit_text_padding"
+                            android:textSize="@dimen/edit_text_size" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/billing_details_postcode_layout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:hint="Postal Code"
+                        app:placeholderText="Postal Code"
+                        app:placeholderTextAppearance="@style/placeholderFont">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/billing_details_postcode"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins"
+                            android:inputType="text"
+                            android:padding="@dimen/edit_text_padding"
+                            android:textSize="@dimen/edit_text_size" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:strokeWidth="0dp"
+                android:layout_marginTop="20dp">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:layout_marginTop="5dp"
+                        android:id="@+id/product_checkout_items_recycler"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                app:strokeWidth="0dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="20dp"
+                app:cardBackgroundColor="@color/md_theme_surface">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:fontFamily="@font/poppins"
+                        android:text="Order Summary"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="10dp"
+                        android:background="?android:attr/listDivider" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Subtotal" />
+
+                        <TextView
+                            android:id="@+id/checkout_subtotal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins"
+                            android:text="LKR 3800.00"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins"
+                            android:text="Shipping" />
+
+                        <TextView
+                            android:id="@+id/checkout_shipping"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins"
+                            android:text="LKR 500.00"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="10dp"
+                        android:background="?android:attr/listDivider" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins"
+                            android:text="Total"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/checkout_total"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins"
+                            android:text="LKR 4300.00"
+                            android:textSize="17sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/address_bottom_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/checkout_btn_proceed"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/poppins"
+            android:text="Payment"
+            android:textSize="@dimen/default_font_size" />
+    </LinearLayout>
+
+</RelativeLayout>

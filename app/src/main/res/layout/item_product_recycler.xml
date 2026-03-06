@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="160dp"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:strokeWidth="0dp"
+    android:layout_marginEnd="5dp">
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+            android:layout_marginHorizontal="@dimen/item_card_margin_horizontal"
+            android:layout_marginBottom="5dp"
+            app:strokeWidth="@dimen/item_card_stroke_width"
+            app:cardElevation="@dimen/item_card_elevation"
+            app:cardCornerRadius="@dimen/item_card_corner_radius">
+        <ImageView
+            android:id="@+id/item_product_r_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
+            />
+        </com.google.android.material.card.MaterialCardView>
+        <TextView
+            android:fontFamily="@font/poppins"
+            android:id="@+id/item_product_r_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/item_card_margin_horizontal"
+            android:text="Product Name"
+            android:textSize="14sp"
+            android:maxLines="1"/>
+
+        <TextView
+            android:fontFamily="@font/poppins"
+            android:id="@+id/item_product_r_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="LKR 0.00"
+            android:layout_marginHorizontal="@dimen/item_card_margin_horizontal"
+            android:textStyle="bold"
+            android:textSize="16sp"/>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

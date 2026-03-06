@@ -23,39 +23,9 @@
     </com.google.android.material.appbar.MaterialToolbar>
 
 
-    <com.google.android.material.tabs.TabLayout
-        android:layout_marginHorizontal="@dimen/layout_margin"
-        android:id="@+id/order_tab_layout"
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@drawable/tab_layout_bg"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tabBackground="@android:color/transparent"
-        app:tabIndicator="@drawable/tab_indicator"
-        app:tabIndicatorColor="?attr/tab_indicator_bg"
-        app:tabTextColor="?attr/textColorCustom"
-        app:tabSelectedTextColor="?attr/textColorCustom"
-        app:tabIndicatorGravity="stretch"
-        app:tabRippleColor="@android:color/transparent"
-        app:tabMode="fixed"
-        app:tabIndicatorAnimationDuration="300"
-        app:tabIndicatorAnimationMode="linear"
-        app:tabIndicatorFullWidth="true"
-        >
-
-    </com.google.android.material.tabs.TabLayout>
-
-    <androidx.viewpager2.widget.ViewPager2
-        android:layout_marginHorizontal="@dimen/layout_margin"
-        android:id="@+id/order_viewpager2"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tabLayout"
-        app:layout_constraintVertical_bias="0.0" />
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:id="@+id/orders_history_recycler"/>
 </LinearLayout>

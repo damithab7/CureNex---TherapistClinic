@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -25,6 +27,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import lk.damithab.curenex.R;
@@ -56,6 +59,7 @@ public class SignUpActivity extends AppCompatActivity {
         });
 
         binding.signUpContinueBtn.setOnClickListener(view -> {
+
             String firstName = binding.firstNameSignUpInput.getText().toString().trim();
             String lastName = binding.lastNameSignUpInput.getText().toString().trim();
             String email = binding.emailSignUpInput.getText().toString().trim();
@@ -95,7 +99,8 @@ public class SignUpActivity extends AppCompatActivity {
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                     binding.signInLastNameLayout.setErrorEnabled(false);
                 }
-            }); binding.emailSignUpInput.addTextChangedListener(new TextWatcher() {
+            });
+            binding.emailSignUpInput.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void afterTextChanged(Editable editable) {
 
@@ -110,7 +115,8 @@ public class SignUpActivity extends AppCompatActivity {
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                     binding.signInEmailLayout.setErrorEnabled(false);
                 }
-            }); binding.passwordSignUpInput.addTextChangedListener(new TextWatcher() {
+            });
+            binding.passwordSignUpInput.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void afterTextChanged(Editable editable) {
 
@@ -125,7 +131,8 @@ public class SignUpActivity extends AppCompatActivity {
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                     binding.signInPasswordLayout.setErrorEnabled(false);
                 }
-            }); binding.retypePasswordSignUpInput.addTextChangedListener(new TextWatcher() {
+            });
+            binding.retypePasswordSignUpInput.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void afterTextChanged(Editable editable) {
 
@@ -142,7 +149,7 @@ public class SignUpActivity extends AppCompatActivity {
                 }
             });
 
-            if(firstName.isEmpty() && lastName.isEmpty() && email.isEmpty() && password.isEmpty() && retypePassword.isEmpty()){
+            if (firstName.isEmpty() && lastName.isEmpty() && email.isEmpty() && password.isEmpty() && retypePassword.isEmpty()) {
                 binding.signInFirstNameLayout.setErrorEnabled(true);
                 binding.signInFirstNameLayout.setError("Firstname is required!");
 
@@ -164,7 +171,7 @@ public class SignUpActivity extends AppCompatActivity {
 
             if (firstName.isEmpty()) {
                 binding.signInFirstNameLayout.setErrorEnabled(true);
-                binding.signInFirstNameLayout.setError("Firstname iss required!");
+                binding.signInFirstNameLayout.setError("Firstname is required!");
                 binding.firstNameSignUpInput.requestFocus();
                 return;
             }
@@ -206,30 +213,39 @@ public class SignUpActivity extends AppCompatActivity {
                 return;
             }
 
-             if (!isPasswordValid(password)) {
-                 binding.signInPasswordLayout.setErrorEnabled(true);
+            if (!isPasswordValid(password)) {
+                binding.signInPasswordLayout.setErrorEnabled(true);
                 binding.signInPasswordLayout.setError("Password must include at least one uppercase letter, one number, one special character & at least 6 characters long.");
                 binding.passwordSignUpInput.requestFocus();
                 return;
             }
 
-             if(!password.equals(retypePassword)){
-                 binding.signInRetypePasswordLayout.setErrorEnabled(true);
-                 binding.signInRetypePasswordLayout.setError("Passwords do not match. Please re-enter.");
-                 binding.retypePasswordSignUpInput.requestFocus();
-                 return;
-             }
+            if (!password.equals(retypePassword)) {
+                binding.signInRetypePasswordLayout.setErrorEnabled(true);
+                binding.signInRetypePasswordLayout.setError("Passwords do not match. Please re-enter.");
+                binding.retypePasswordSignUpInput.requestFocus();
+                return;
+            }
 
+            binding.signUpProgress.setVisibility(View.VISIBLE);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
-            firebaseAuth.createUserWithEmailAndPassword(email, password).
-                    addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            binding.firstNameSignUpInput.clearFocus();
+            binding.lastNameSignUpInput.clearFocus();
+            binding.emailSignUpInput.clearFocus();
+            binding.passwordSignUpInput.clearFocus();
+            binding.retypePasswordSignUpInput.clearFocus();
+
+            firebaseAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 String uid = task.getResult().getUser().getUid();
                                 User user = User.builder().uid(uid).firstName(firstName)
                                         .lastName(lastName)
-                                        .profileUrl("https://ui-avatars.com/api/"+firstName+"+"+lastName)
+                                        .profileUrl("https://ui-avatars.com/api/" + firstName + "+" + lastName)
                                         .email(email)
                                         .userStatus(true).build();
 
@@ -237,8 +253,10 @@ public class SignUpActivity extends AppCompatActivity {
                                         .set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void unused) {
-                                                Toast.makeText(SignUpActivity.this, "Sign-Up success!", Toast.LENGTH_SHORT).show();
-                                                Intent intent = new Intent(SignUpActivity.this, SignInActivity.class);
+                                                binding.signUpProgress.setVisibility(View.INVISIBLE);
+                                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+//                                                Toast.makeText(SignUpActivity.this, "Sign-Up success!", Toast.LENGTH_SHORT).show();
+                                                Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
                                                 startActivity(intent);
                                                 finish();
                                             }
@@ -248,8 +266,17 @@ public class SignUpActivity extends AppCompatActivity {
 
                                             }
                                         });
-                            }else{
-                                Log.w("SignUp", "Sign up failed");
+                            } else {
+                                binding.signUpProgress.setVisibility(View.INVISIBLE);
+                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                if (task.getException() instanceof FirebaseAuthUserCollisionException) {
+                                    binding.signInEmailLayout.setErrorEnabled(true);
+                                    binding.signInEmailLayout.setError("This email is already registered. Please login.");
+                                } else {
+                                    Log.e("SignUp", "Error: " + task.getException().getMessage());
+                                    Toast.makeText(SignUpActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                                }
+
                             }
                         }
                     });

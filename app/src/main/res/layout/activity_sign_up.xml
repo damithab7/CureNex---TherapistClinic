@@ -64,6 +64,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/signup_margin_top"
+            app:placeholderText="Firstname"
+            app:placeholderTextAppearance="@style/placeholderFont"
             android:hint="@string/firstname_placeholder_hint">
 
             <EditText
@@ -85,6 +87,8 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:placeholderText="Lastname"
+            app:placeholderTextAppearance="@style/placeholderFont"
             android:layout_marginTop="@dimen/signup_margin_top"
             android:hint="@string/lastname_placeholder_hint">
 
@@ -108,6 +112,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/signInEmailLayout"
+            app:placeholderText="example@email.com"
+            app:placeholderTextAppearance="@style/placeholderFont"
             android:layout_marginTop="@dimen/signup_margin_top"
             android:hint="@string/email_placeholder_hint">
             <EditText
@@ -130,6 +136,8 @@
             android:layout_width="match_parent"
             android:id="@+id/signInPasswordLayout"
             android:layout_height="wrap_content"
+            app:placeholderText="Password@123"
+            app:placeholderTextAppearance="@style/placeholderFont"
             android:layout_marginTop="@dimen/signup_margin_top"
             android:hint="@string/password_placeholder_hint">
 
@@ -153,6 +161,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/signInRetypePasswordLayout"
+            app:placeholderText="Password@123"
+            app:placeholderTextAppearance="@style/placeholderFont"
             android:layout_marginTop="@dimen/signup_margin_top"
             android:hint="@string/retype_password_placeholder_hint">
 
@@ -179,6 +189,19 @@
             android:text="@string/continue_btn_txt"
             android:textSize="@dimen/button_text_size" />
 
+        <ProgressBar
+            android:indeterminateOnly="true"
+            android:padding="15dp"
+            android:id="@+id/signUpProgress"
+            style="?android:attr/progressBarStyle"
+            android:layout_centerInParent="true"
+            android:background="@drawable/edit_text_background"
+            android:layout_width="wrap_content"
+            android:visibility="invisible"
+            android:layout_gravity="center"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="30dp"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

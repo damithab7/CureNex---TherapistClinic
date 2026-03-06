@@ -7,27 +7,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal">
     <ImageView
-        android:layout_width="0dp"
+        android:id="@+id/item_booking_therapist_img"
+        android:layout_width="80dp"
         android:layout_height="match_parent"
-        android:layout_weight="2"
         android:layout_gravity="top"
         tools:srcCompat="@tools:sample/avatars"/>
 
     <LinearLayout
+        android:layout_marginStart="5dp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="5"
+        android:layout_weight="1"
         android:orientation="vertical">
         <TextView
-            android:id="@+id/order_item_title"
+            android:id="@+id/item_booking_id"
             android:includeFontPadding="false"
             android:fontFamily="@font/poppins"
-            android:textSize="18sp"
+            android:textSize="@dimen/default_font_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="I Ordered a supplli"/>
         <TextView
-            android:id="@+id/order_item_date"
+            android:id="@+id/item_booking_therapist_name"
+            android:includeFontPadding="false"
+            android:fontFamily="@font/poppins"
+            android:textSize="@dimen/default_font_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="I Ordered a supplli"/>
+        <TextView
+            android:id="@+id/item_booking_date"
             android:textColor="@color/material_on_background_disabled"
             android:includeFontPadding="false"
             android:fontFamily="@font/poppins"
@@ -36,7 +45,7 @@
             android:layout_height="wrap_content"
             android:text="Order date 2023/10/01"/>
         <TextView
-            android:id="@+id/order_item_id"
+            android:id="@+id/item_booking_time_slot"
             android:textColor="@color/material_on_background_disabled"
             android:includeFontPadding="false"
             android:fontFamily="@font/poppins"
@@ -48,25 +57,49 @@
 
     </LinearLayout>
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="3"
         android:orientation="vertical">
         <TextView
-            android:id="@+id/order_item_price"
+            android:id="@+id/item_booking_total"
             android:layout_gravity="end"
             android:includeFontPadding="false"
             android:fontFamily="@font/poppins"
-            android:textSize="16sp"
+            android:textSize="@dimen/medium_font_size"
+            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Rs.1200"/>
-        <com.google.android.material.button.MaterialButton
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/item_booking_status_card"
+            android:layout_gravity="end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/md_theme_secondaryContainer"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
+            <TextView
+                android:layout_marginHorizontal="@dimen/item_card_margin_horizontal"
+                android:textAlignment="center"
+                android:fontFamily="@font/poppins"
+                android:id="@+id/item_booking_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:textColor="@color/stock_color"
+                android:textSize="@dimen/small_font_size"
+                android:text="In Stock" />
+
+        </androidx.cardview.widget.CardView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/item_booking_cancel_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
             android:text="Cancel"
-            android:layout_weight="1"
-            android:layout_gravity="end"
+            android:layout_gravity="bottom|end"
             android:fontFamily="@font/poppins"
             style="@style/Widget.Material3.Button.TonalButton"
             android:textAlignment="textEnd"/>

@@ -3,13 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginHorizontal="@dimen/layout_margin"
     tools:context=".fragment.ServiceFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview_service"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/md_theme_primaryContainer"
-        android:padding="8dp"/>
+       />
 
 </FrameLayout>

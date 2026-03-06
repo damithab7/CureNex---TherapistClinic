@@ -28,26 +28,24 @@
                 android:layout_height="match_parent"
                 tools:context=".activity.HomeActivity">
 
-                <TextView
-                    android:id="@+id/h_logo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins"
-                    android:text="@string/mycart"
-                    android:textSize="@dimen/logo_font_size"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+<!--                <TextView-->
+<!--                    android:id="@+id/h_logo"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:fontFamily="@font/poppins"-->
+<!--                    android:text="@string/mycart"-->
+<!--                    android:textSize="@dimen/logo_font_size"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent" />-->
 
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView"
+                    android:id="@+id/cart_cart_items"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/default_margin_vertical"
-                    app:layout_constraintBottom_toTopOf="@+id/cart_subtotal_layout"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/h_logo"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.0" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -90,7 +88,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="@font/poppins"
-                    android:text="Rs. 2000.00"
+                    android:text="Rs. 0.00"
                     android:textAlignment="viewEnd"
                     android:textSize="@dimen/small_font_size"
                     android:textStyle="bold" />
@@ -116,7 +114,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="@font/poppins"
-                    android:text="Rs. 500.00"
+                    android:text="Rs. 0.00"
                     android:textAlignment="viewEnd"
                     android:textSize="@dimen/small_font_size"
                     android:textStyle="bold" />
@@ -136,19 +134,19 @@
                     android:textSize="@dimen/small_font_size" />
 
                 <TextView
-                    android:id="@+id/cart_total_price"
+                    android:id="@+id/cart_items_total"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="@font/poppins"
-                    android:text="Rs. 2500.00"
+                    android:text="Rs. 0.00"
                     android:textAlignment="viewEnd"
                     android:textSize="@dimen/medium_font_size"
                     android:textStyle="bold" />
             </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/cartCheckoutBtn"
+                android:id="@+id/cart_process_btn"
                 style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

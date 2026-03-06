@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="tab_indicator_dark">#323232</color>
+    <color name="stock_color">#74C69D</color>
 
     <color name="md_theme_primary">#81D3DF</color>
     <color name="md_theme_onPrimary">#00363C</color>
