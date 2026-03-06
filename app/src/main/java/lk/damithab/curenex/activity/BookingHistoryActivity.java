@@ -15,6 +15,9 @@ import com.google.android.material.tabs.TabLayout;
 
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.adapter.ViewBookingsViewPagerAdapter;
+import lk.damithab.curenex.databinding.ActivityBookingHistoryBinding;
+import lk.damithab.curenex.databinding.FragmentUpcomingBookingsBinding;
+
 import com.google.android.material.appbar.MaterialToolbar;
 
 public class BookingHistoryActivity extends AppCompatActivity {
@@ -22,18 +25,21 @@ public class BookingHistoryActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
     private ViewBookingsViewPagerAdapter adapter;
+    private ActivityBookingHistoryBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_booking_history);
+        binding = ActivityBookingHistoryBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        tabLayout = findViewById(R.id.booking_tab_layout);
-        viewPager2 = findViewById(R.id.booking_viewpager2);
+        tabLayout = binding.bookingTabLayout;
+        viewPager2 = binding.bookingViewpager2;
 
         tabLayout.addTab(tabLayout.newTab().setText("Upcoming"));
         tabLayout.addTab(tabLayout.newTab().setText("Past"));
 
-        MaterialToolbar toolbar = findViewById(R.id.booking_toolbar);
+        MaterialToolbar toolbar = binding.bookingToolbar;
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

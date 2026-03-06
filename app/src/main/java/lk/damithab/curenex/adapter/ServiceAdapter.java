@@ -14,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.List;
 
@@ -28,9 +30,12 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHold
 
     private OnServiceItemClickListener listener;
 
+    private FirebaseStorage storage;
+
     public ServiceAdapter(List<Service> serviceList, OnServiceItemClickListener listener) {
         this.serviceList = serviceList;
         this.listener = listener;
+        storage = FirebaseStorage.getInstance();
     }
 
     @NonNull
@@ -47,10 +52,14 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHold
         Service service = serviceList.get(position);
         holder.serviceName.setText(service.getName());
 
-        Glide.with(holder.itemView.getContext())
-                .load(service.getImageUrl())
-                .centerCrop()
-                .into(holder.serviceImage);
+        storage.getReference(service.getImageUrl())
+                .getDownloadUrl()
+                .addOnSuccessListener(uri -> {
+                    Glide.with(holder.itemView.getContext())
+                            .load(uri)
+                            .centerCrop()
+                            .into(holder.serviceImage);
+                });
 
         holder.itemView.setOnClickListener(v -> {
             Animation animation = AnimationUtils.loadAnimation(v.getContext(), R.anim.button_click);

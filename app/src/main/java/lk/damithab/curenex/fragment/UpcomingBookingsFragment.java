@@ -2,65 +2,90 @@ package lk.damithab.curenex.fragment;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 
 import lk.damithab.curenex.R;
+import lk.damithab.curenex.adapter.UpcomingBookingsAdapter;
+import lk.damithab.curenex.databinding.FragmentUpcomingBookingsBinding;
+import lk.damithab.curenex.dialog.SpinnerDialog;
+import lk.damithab.curenex.model.Booking;
+import lk.damithab.curenex.model.CartItem;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link UpcomingBookingsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class UpcomingBookingsFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private FragmentUpcomingBookingsBinding binding;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private FirebaseFirestore db;
 
-    public UpcomingBookingsFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment UpcomingBookingsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static UpcomingBookingsFragment newInstance(String param1, String param2) {
-        UpcomingBookingsFragment fragment = new UpcomingBookingsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private FirebaseAuth auth;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_upcoming_bookings, container, false);
+        binding = FragmentUpcomingBookingsBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        Calendar calendar = Calendar.getInstance(); ///Today date
+        SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()); //
+        String todayDate = dbFormat.format(calendar.getTime());
+
+        SpinnerDialog spinner = SpinnerDialog.show(getParentFragmentManager());
+
+        db.collection("bookings")
+                .whereEqualTo("uid", auth.getUid())
+                .whereGreaterThanOrEqualTo("bookingDate", todayDate)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot qds) {
+                        if(!qds.isEmpty()){
+                            List<Booking> bookingList = qds.toObjects(Booking.class);
+
+                            UpcomingBookingsAdapter adapter = new UpcomingBookingsAdapter(bookingList, booking->{
+                                db.collection("bookings").document(booking.getDocId())
+                                        .update("status", "Cancelled")
+                                        .addOnSuccessListener( aVoid->{
+                                            Toast.makeText(getContext(), "booking canceled!", Toast.LENGTH_SHORT).show();
+                                        });
+                            });
+
+                            binding.upcomingBookingsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+                            binding.upcomingBookingsRecyclerView.setAdapter(adapter);
+                        }
+                        spinner.dismiss();
+                    }
+                });
+
     }
 }

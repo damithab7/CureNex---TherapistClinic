@@ -44,11 +44,6 @@ public class SplashScreen extends AppCompatActivity {
         setContentView(R.layout.activity_splash_screen);
 
         ImageView logoView = findViewById(R.id.splashLogo);
-//        Picasso.get()
-//                .load(R.drawable.ic_launcher_foreground)
-//                .resize(300, 300)
-//                .centerCrop()
-//                .into(logoView);
 
         Glide.with(this)
                 .asBitmap()
@@ -73,6 +68,6 @@ public class SplashScreen extends AppCompatActivity {
                         startActivity(intent);
                         finish();
                     }
-                }, 5000);
+                }, 2000);
     }
 }

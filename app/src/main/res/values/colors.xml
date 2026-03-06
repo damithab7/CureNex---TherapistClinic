@@ -43,6 +43,7 @@
     <color name="stroke_color_dark">#363636</color>
 
     <color name="light_white">#F4F3F3</color>
+    <color name="stock_color">#2D6A4F</color>
 
     <color name="md_theme_primary">#006973</color>
     <color name="md_theme_onPrimary">#FFFFFF</color>

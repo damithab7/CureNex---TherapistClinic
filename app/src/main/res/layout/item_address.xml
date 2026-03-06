@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.Material3.CardView.Outlined"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    app:cardBackgroundColor="@color/md_theme_surfaceContainer"
+    app:cardCornerRadius="15dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/item_address_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                android:text="Name"
+                android:layout_weight="1"
+                android:textColor="@color/material_dynamic_neutral50"
+                android:textSize="@dimen/default_font_size" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/item_address_remove"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_gravity="end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:padding="2dp"
+                app:cornerRadius="50dp"
+                app:icon="@drawable/closeicon"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconSize="24dp"
+                />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/item_address_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins"
+            android:text="Address"
+            android:textColor="@color/material_dynamic_neutral50"
+            android:textSize="@dimen/default_font_size" />
+
+        <TextView
+            android:id="@+id/item_address_city"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins"
+            android:text="City"
+            android:textColor="@color/material_dynamic_neutral50"
+            android:textSize="@dimen/default_font_size" />
+
+        <TextView
+            android:id="@+id/item_address_postcode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins"
+            android:text="PostCode"
+            android:textColor="@color/material_dynamic_neutral50"
+            android:textSize="@dimen/default_font_size" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/item_address_mobile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins"
+            android:text="Mobile"
+            android:layout_weight="1"
+            android:textColor="@color/material_dynamic_neutral50"
+            android:textSize="@dimen/default_font_size" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/item_address_edit"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_gravity="end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:insetLeft="0dp"
+            android:insetTop="0dp"
+            android:insetRight="0dp"
+            android:insetBottom="0dp"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:padding="2dp"
+            android:text="Edit"
+            app:cornerRadius="50dp"
+            app:icon="@drawable/editicon"
+            app:iconGravity="textStart"
+            app:iconPadding="5dp"
+            app:iconSize="16dp"
+            />
+    </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

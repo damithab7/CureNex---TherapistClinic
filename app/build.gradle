@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     id 'com.google.gms.google-services'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 }
 
 android {
@@ -30,6 +31,7 @@ android {
         targetCompatibility JavaVersion.VERSION_11
     }
     buildFeatures{
+        buildConfig true
         viewBinding true
     }
 }
@@ -41,6 +43,9 @@ dependencies {
     implementation libs.constraintlayout
     implementation libs.navigation.fragment
     implementation libs.navigation.ui
+    implementation libs.legacy.support.v4
+    implementation libs.recyclerview
+    implementation libs.play.services.maps
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
@@ -55,4 +60,14 @@ dependencies {
     implementation(libs.converter.gson)
     implementation (libs.logging.interceptor)
     implementation libs.glide
+    implementation(libs.dotsindicator)
+    implementation libs.payhere.android.sdk
+    implementation libs.gson
+    implementation(libs.firebase.storage)
+
+    implementation libs.google.maps.services
+    implementation libs.slf4j.simple
+    implementation libs.play.services.maps
+    implementation libs.play.services.location
+    implementation(libs.android.maps.utils)
 }

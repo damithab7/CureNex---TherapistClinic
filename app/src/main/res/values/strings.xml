@@ -55,6 +55,9 @@
     <string name="side_nav_booking_title">My Bookings</string>
     <string name="side_nav_support_title">Support</string>
     <string name="side_nav_shop_title">Shop</string>
+    <string name="side_nav_cart_title">Cart</string>
+    <string name="side_nav_home_title">Home</string>
     <string name="side_nav_login_title">Login</string>
     <string name="drawer_emergency_txt">Emergency Call</string>
+    <string name="title_activity_clinic_location">ClinicLocation</string>
 </resources>

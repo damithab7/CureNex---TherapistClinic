@@ -4,10 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_drawerlayout"
     android:layout_width="match_parent"
+    android:animateLayoutChanges="true"
     android:layout_height="match_parent"
     tools:context=".activity.MainActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -21,6 +23,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/menuicon"
+            app:menu="@menu/toolbar_menu"
             app:title="@string/logo_name"
             app:titleCentered="true"
             app:titleTextAppearance="@style/logoFont">
@@ -30,13 +33,22 @@
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/navContainerView"
             android:name="androidx.navigation.fragment.NavHostFragment"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_weight="1"
             app:defaultNavHost="true"
             app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/main_toolbar" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_weight="1"
+            android:id="@+id/searchResultsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="?attr/android:colorBackground" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigationView"
@@ -51,7 +63,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:menu="@menu/bottom_nav_menu" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"

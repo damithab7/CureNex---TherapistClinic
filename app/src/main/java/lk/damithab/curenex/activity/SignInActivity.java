@@ -1,8 +1,12 @@
 package lk.damithab.curenex.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -61,14 +65,23 @@ public class SignInActivity extends AppCompatActivity {
 
     public void login(String email, String password) {
 
+        findViewById(R.id.signInProgress).setVisibility(View.VISIBLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
+
+                findViewById(R.id.signInProgress).setVisibility(View.INVISIBLE);
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
                 if(task.isSuccessful()){
                     FirebaseUser user = firebaseAuth.getCurrentUser();
                     updateUI(user);
                 }else{
-                    Toast.makeText(SignInActivity.this, "Authentication failed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignInActivity.this, "Invalid Credentials!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
