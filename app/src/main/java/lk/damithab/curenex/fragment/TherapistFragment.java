@@ -106,6 +106,7 @@ public class TherapistFragment extends Fragment {
                 .addOnSuccessListener(ds->{
                     /// need to find a way to get User details and Service details. UPDATE -> I put workEmail & workMobileNo in therapist document
                     /// I added name in Therapist class so I don't need to get user details.
+                    checkAllTasksFinished();
                     if (!ds.isEmpty()){
                         List<Therapist> therapists = ds.toObjects(Therapist.class);
 
@@ -123,7 +124,6 @@ public class TherapistFragment extends Fragment {
                         });
 
                         binding.recyclerviewTherapist.setAdapter(adapter);
-                        checkAllTasksFinished();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override

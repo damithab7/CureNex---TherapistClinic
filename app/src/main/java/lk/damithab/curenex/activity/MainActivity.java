@@ -16,6 +16,8 @@ import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -73,6 +75,7 @@ import java.util.List;
 import java.util.Objects;
 
 import lk.damithab.curenex.R;
+import lk.damithab.curenex.adapter.AdvancedSearchAdapter;
 import lk.damithab.curenex.adapter.BasicSearchAdapter;
 import lk.damithab.curenex.databinding.ActivityMainBinding;
 import lk.damithab.curenex.databinding.SideNavHeaderBinding;
@@ -84,8 +87,10 @@ import lk.damithab.curenex.fragment.CartFragment;
 import lk.damithab.curenex.fragment.EmptyCartFragment;
 import lk.damithab.curenex.fragment.HomeFragment;
 import lk.damithab.curenex.fragment.ListingFragment;
+import lk.damithab.curenex.fragment.ProductDetailsFragment;
 import lk.damithab.curenex.fragment.ServiceFragment;
 import lk.damithab.curenex.fragment.ShopFragment;
+import lk.damithab.curenex.fragment.SingleTherapistFragment;
 import lk.damithab.curenex.fragment.TherapistFragment;
 import lk.damithab.curenex.helper.SQLiteHelper;
 import lk.damithab.curenex.listener.FirestoreCallback;
@@ -93,6 +98,7 @@ import lk.damithab.curenex.model.Category;
 import lk.damithab.curenex.model.Clinic;
 import lk.damithab.curenex.model.Product;
 import lk.damithab.curenex.model.Service;
+import lk.damithab.curenex.model.Therapist;
 import lk.damithab.curenex.model.User;
 import lk.damithab.curenex.util.AnimationUtil;
 
@@ -138,6 +144,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String clinicNo;
 
     private SpinnerDialog spinner;
+
+    private int completedSearchTasks = 0;
+    private final int TOTAL_SEARCH_TASKS = 1;
+    private int completedAdvancedSearchTasks = 0;
+    private final int TOTAL_ADVANCED_SEARCH_TASKS = 2;
 
     private final ActivityResultLauncher<String> callPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -365,6 +376,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
+
+        getSupportFragmentManager().registerFragmentLifecycleCallbacks(new FragmentManager.FragmentLifecycleCallbacks() {
+            @Override
+            public void onFragmentResumed(@NonNull FragmentManager fm, @NonNull Fragment f) {
+                super.onFragmentResumed(fm, f);
+
+                int menuId = getMenuIdForFragment(f);
+
+                if (menuId != -1) {
+                    bottomNavigationView.getMenu().findItem(menuId).setChecked(true);
+
+                    MenuItem drawerItem = navigationView.getMenu().findItem(menuId);
+                    if (drawerItem != null) drawerItem.setChecked(true);
+                }
+            }
+        }, false);
+
     }
 
     public void loadFragment(Fragment fragment) {
@@ -433,14 +461,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String s) {
+
                 if (s.isEmpty()) {
                     binding.searchResultsRecyclerView.setAdapter(null);
                     return false;
                 }
-                if(s.length() < 4){
-                    performBasicSearch(s);
+
+                startDataLoading(true);
+
+                if(s.length() < 3){
+                    performBasicSearch(s.toLowerCase().trim());
                 }else{
-//                    performAdvancedSearch(s.toLowerCase());
+                    performAdvanceSearch(s);
                 }
                 return false;
             }
@@ -454,6 +486,42 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         return true;
+    }
+
+    private void checkBasicSearchFinished() {
+        completedSearchTasks++;
+        Log.d("MainActivity", "checkAllTasksFinished: "+completedSearchTasks);
+        if (completedSearchTasks >= TOTAL_SEARCH_TASKS) {
+            onDataLoad(false);
+            completedSearchTasks = 0; // Reset for swipe-to-refresh
+        }
+    }
+
+    private void checkAdvancedSearchFinished() {
+        completedAdvancedSearchTasks++;
+        Log.d("MainActivity", "checkAllTasksFinished: "+completedAdvancedSearchTasks);
+        if (completedAdvancedSearchTasks >= TOTAL_ADVANCED_SEARCH_TASKS) {
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                onDataLoad(false);
+            }, 200);
+            completedAdvancedSearchTasks = 0;
+        }
+    }
+
+    private void startDataLoading(boolean isShimmer) {
+        onDataLoad(isShimmer);
+    }
+
+    private synchronized void onDataLoad(boolean isShimmer){
+        if(isShimmer){
+            binding.shimmerViewContainerMain.startShimmer();
+            binding.shimmerViewContainerMain.setVisibility(View.VISIBLE);
+            binding.searchResultsRecyclerView.setVisibility(View.GONE);
+        }else{
+            binding.shimmerViewContainerMain.stopShimmer();
+            binding.shimmerViewContainerMain.setVisibility(View.GONE);
+            binding.searchResultsRecyclerView.setVisibility(View.VISIBLE);
+        }
     }
 
     private void performBasicSearch(String query) {
@@ -474,17 +542,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     private void setBasicSearchAdapter(List<Object> combinedList){
         binding.searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        checkBasicSearchFinished();
         if(!combinedList.isEmpty()){
             BasicSearchAdapter adapter = new BasicSearchAdapter(combinedList, object->{
-                if (searchItem != null) {
-                    searchItem.collapseActionView();
-                }
-
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                View view = this.getCurrentFocus();
-                if (view != null) {
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
 
                 Fragment selectedFragment;
                 Bundle bundle = new Bundle();
@@ -504,6 +564,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         .replace(R.id.navContainerView, selectedFragment)
                         .addToBackStack(null)
                         .commit();
+                getSupportFragmentManager().executePendingTransactions();
+
+                if (searchItem != null) {
+                    searchItem.collapseActionView();
+                }
+
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                View view = this.getCurrentFocus();
+                if (view != null) {
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+
+
             });
             binding.searchResultsRecyclerView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
@@ -514,27 +587,74 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void performAdvanceSearch(String query){
         List<Object> combinedList = new ArrayList<>();
 
-        firebaseFirestore.collection("services")
-                .orderBy("name")
+        Log.d("MainActivity", "performAdvanceSearch: Testt");
+
+        firebaseFirestore.collection("products")
+                .orderBy("title")
                 .startAt(query)
                 .endAt(query + "\uf8ff")
                 .get()
-                .addOnSuccessListener(serviceSnapshots -> {
-                    combinedList.addAll(serviceSnapshots.toObjects(Service.class));
+                .addOnSuccessListener(qs -> {
+                    checkAdvancedSearchFinished();
+                    combinedList.addAll(qs.toObjects(Product.class));
 
                     // Second Query: Categories
-                    firebaseFirestore.collection("categories")
-                            .orderBy("categoryName")
+                    firebaseFirestore.collection("therapist")
+                            .orderBy("name")
                             .startAt(query)
                             .endAt(query + "\uf8ff")
                             .get()
-                            .addOnSuccessListener(categorySnapshots -> {
-                                combinedList.addAll(categorySnapshots.toObjects(Category.class));
-                                setBasicSearchAdapter(combinedList);
+                            .addOnSuccessListener(qsnap -> {
+                                checkAdvancedSearchFinished();
+                                combinedList.addAll(qsnap.toObjects(Therapist.class));
+                                setAdvanceSearchAdapter(combinedList);
+                            }).addOnFailureListener(aVoid->{
+                                checkAdvancedSearchFinished();
                             });
 
+                }).addOnFailureListener(aVoid->{
+                    checkAdvancedSearchFinished();
+                    Log.d("MainActivity", "performAdvanceSearch: "+aVoid.getMessage());
                 });
 
+    }
+
+    private void setAdvanceSearchAdapter(List<Object> combinedList){
+        binding.searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        if(!combinedList.isEmpty()){
+            AdvancedSearchAdapter adapter = new AdvancedSearchAdapter(combinedList, object->{
+
+                Fragment selectedFragment;
+                Bundle bundle = new Bundle();
+
+                if (object instanceof Product) {
+                    Product product = (Product) object;
+                    selectedFragment = new ProductDetailsFragment();
+                    bundle.putString("productId", product.getProductId());
+                } else {
+                    Therapist therapist = (Therapist) object;
+                    selectedFragment = new SingleTherapistFragment();
+                    bundle.putString("therapistId", therapist.getTherapistId());
+                }
+
+                selectedFragment.setArguments(bundle);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.navContainerView, selectedFragment)
+                        .addToBackStack(null)
+                        .commit();
+                getSupportFragmentManager().executePendingTransactions();
+
+                if (searchItem != null) {
+                    searchItem.collapseActionView();
+                }
+
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(binding.getRoot().getWindowToken(), 0);
+
+            });
+            binding.searchResultsRecyclerView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }
     }
 
 
@@ -640,6 +760,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         return false;
     }
+
+    private int getMenuIdForFragment(Fragment fragment) {
+        if (fragment instanceof HomeFragment) return R.id.nav_home;
+        if (fragment instanceof ServiceFragment || fragment instanceof TherapistFragment) return R.id.nav_service;
+        if (fragment instanceof ShopFragment || fragment instanceof ListingFragment) return R.id.nav_shop;
+        if (fragment instanceof CartFragment || fragment instanceof EmptyCartFragment) return R.id.nav_cart;
+        if (fragment instanceof AccountFragment) return R.id.nav_account;
+        return -1;
+    }
+
 
     @Override
     protected void onStart() {
@@ -759,4 +889,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
     }
+
 }
