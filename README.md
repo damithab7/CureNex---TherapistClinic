@@ -5,7 +5,13 @@
 
 > This is a healthcare management system I built using Java and Firebase connects users, therapists, and admins through three Android apps.This handle live appointment booking and schedule management,The system uses Firestore for realtime data syncing. This also use Google Maps SDK, Firebase Admin SDK with custom claims.
 
-## Author
+## Key Features
+
+* Uses Firebase Firestore to  when a user books a slot, it updates instantly on the therapist's and admin's apps.
+* Payment Integration - Uses the PayHere SDK to process secure local payments for sessions and products.
+* Performance Optimization - Implemented Glide for image loading and caching of firebase storage images.
+* External Services - Integrated the Zen API to handle [quotes] for users.
+* Managed via Firebase Auth and the Admin SDK to strict role-based permissions between the three apps.
 
 ## Tech Stack
 <ul>
@@ -22,6 +28,7 @@
     APIs & SDKs: PayHere, Zen API, Glide
   </li>
 </ul>
+
 ## Author
 
 👤 **damitha.sb**
