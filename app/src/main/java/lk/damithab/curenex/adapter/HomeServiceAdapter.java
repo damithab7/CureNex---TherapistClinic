@@ -15,12 +15,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.dto.ServiceDTO;
 import lk.damithab.curenex.model.Service;
+import lk.damithab.curenex.module.GlideApp;
 
 public class HomeServiceAdapter extends RecyclerView.Adapter<HomeServiceAdapter.ViewHolder> {
     private List<Service> serviceList;
@@ -51,14 +53,13 @@ public class HomeServiceAdapter extends RecyclerView.Adapter<HomeServiceAdapter.
         Service service = serviceList.get(position);
         holder.serviceName.setText(service.getName());
 
-        storage.getReference(service.getImageUrl())
-                .getDownloadUrl()
-                .addOnSuccessListener(uri -> {
-                    Glide.with(holder.itemView.getContext())
-                            .load(uri)
-                            .centerCrop()
-                            .into(holder.serviceImage);
-                });
+        StorageReference ref = storage.getReference(service.getImageUrl());
+
+        GlideApp.with(holder.itemView.getContext())
+                .load(ref)
+                .centerCrop()
+                .placeholder(R.drawable.imageplaceholder2)
+                .into(holder.serviceImage);
 
         holder.itemView.setOnClickListener(v -> {
             Animation animation = AnimationUtils.loadAnimation(v.getContext(), R.anim.button_click);

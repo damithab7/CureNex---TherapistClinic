@@ -17,6 +17,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 import java.util.Locale;
@@ -24,6 +25,7 @@ import java.util.Locale;
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.model.Booking;
 import lk.damithab.curenex.model.Therapist;
+import lk.damithab.curenex.module.GlideApp;
 
 public class PastBookingsAdapter extends RecyclerView.Adapter<PastBookingsAdapter.ViewHolder> {
 
@@ -59,14 +61,13 @@ public class PastBookingsAdapter extends RecyclerView.Adapter<PastBookingsAdapte
                         if(!qds.isEmpty()){
                             Therapist therapist = qds.toObjects(Therapist.class).get(0);
                             holder.bookingTherapistName.setText(therapist.getTitle()+" "+therapist.getName());
-                            storage.getReference(therapist.getTherapistImage())
-                                    .getDownloadUrl()
-                                    .addOnSuccessListener(uri -> {
-                                        Glide.with(holder.itemView.getContext())
-                                                .load(uri)
-                                                .centerCrop()
-                                                .into(holder.therapistImage);
-                                    });
+                            StorageReference ref = storage.getReference(therapist.getTherapistImage());
+
+                            GlideApp.with(holder.itemView.getContext())
+                                    .load(ref)
+                                    .centerCrop()
+                                    .placeholder(R.drawable.imageplaceholder2)
+                                    .into(holder.therapistImage);
                         }
                     }
                 });

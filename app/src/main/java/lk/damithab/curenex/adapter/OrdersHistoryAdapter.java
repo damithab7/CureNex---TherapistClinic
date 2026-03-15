@@ -58,12 +58,12 @@ public class OrdersHistoryAdapter extends RecyclerView.Adapter<OrdersHistoryAdap
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Order order = ordersList.get(position);
-        holder.orderId.setText(order.getOrderId());
-        holder.orderDate.setText(order.getOrderDate().toString());
+        holder.orderId.setText("#"+order.getOrderId());
+        holder.orderDate.setText(order.getOrderDate().toDate().toString());
         holder.orderStatus.setText(order.getStatus());
         holder.orderTotal.setText(String.format(Locale.US, "LKR %,.2f",order.getTotalAmount()));
 
-        holder.itemView.setOnClickListener(v -> {
+        holder.viewMore.setOnClickListener(v -> {
             Animation animation = AnimationUtils.loadAnimation(v.getContext(), R.anim.button_click);
             v.startAnimation(animation);
             if (listener != null) {

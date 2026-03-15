@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,19 +21,19 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 
 import lk.damithab.curenex.R;
+import lk.damithab.curenex.activity.AddressActivity;
 import lk.damithab.curenex.activity.MainActivity;
 import lk.damithab.curenex.activity.OrderHistoryActivity;
 import lk.damithab.curenex.activity.SettingsActivity;
 import lk.damithab.curenex.activity.SignInActivity;
 import lk.damithab.curenex.databinding.FragmentAccountBinding;
-import lk.damithab.curenex.dialog.PasswordChangeDialog;
+import lk.damithab.curenex.dialog.ProfileDialog;
 import lk.damithab.curenex.dialog.SpinnerDialog;
 import lk.damithab.curenex.model.User;
 
 public class AccountFragment extends Fragment {
 
     private FragmentAccountBinding binding;
-    Button addressBtn, ordersBtn, changePasswordBtn, settingsBtn;
 
     FirebaseAuth auth;
 
@@ -42,9 +43,9 @@ public class AccountFragment extends Fragment {
 
     private FirebaseAuth firebaseAuth;
 
-    public AccountFragment() {
-        // Required empty public constructor
-    }
+    private int completedTasks = 0;
+    private final int TOTAL_TASKS = 1;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +60,7 @@ public class AccountFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentAccountBinding.inflate(inflater, container, false);
         return binding.getRoot();
+
     }
 
     @Override
@@ -67,7 +69,26 @@ public class AccountFragment extends Fragment {
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        SpinnerDialog spinner = SpinnerDialog.show(getParentFragmentManager());
+        startDataLoading(true);
+
+//        binding.accountEditProfileBtn.bringToFront();
+        binding.accountEditProfileBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i("FragmentAccount", "onViewCreated: Edit Button");
+                ProfileDialog dialog = new ProfileDialog();
+                dialog.setOnProfileUpdateListener((newImageUri, firstName, lastName) -> {
+                    binding.accountUserName.setText(firstName + " " + lastName);
+                    if (newImageUri != null) {
+                        Glide.with(binding.getRoot())
+                                .load(newImageUri)
+                                .circleCrop()
+                                .into(binding.accountUserImage);
+                    }
+                });
+                dialog.show(getParentFragmentManager(), "ProfileDialog");
+            }
+        });
 
         if (firebaseAuth.getCurrentUser() != null) {
             binding.accountBtnSignOut.setOnClickListener(v -> {
@@ -81,10 +102,67 @@ public class AccountFragment extends Fragment {
             });
         }
 
+        binding.accountAddressBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), AddressActivity.class);
+                startActivity(intent);
+//                getParentFragmentManager().beginTransaction()
+//                        .replace(R.id.navContainerView, new AddressFragment())
+//                        .addToBackStack(null)
+//                        .commit();
+            }
+        });
+        view.findViewById(R.id.accountOrdersBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), OrderHistoryActivity.class);
+                startActivity(intent);
+            }
+        });
+        view.findViewById(R.id.accountSettingsBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), SettingsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+    }
+
+    private void checkAllTasksFinished() {
+        completedTasks++;
+        Log.d("HomeFragment", "checkAllTasksFinished: " + completedTasks);
+        if (completedTasks >= TOTAL_TASKS) {
+            onDataLoad(false);
+            completedTasks = 0; // Reset for swipe-to-refresh
+        }
+    }
+
+    private void startDataLoading(boolean isShimmer) {
+        onDataLoad(isShimmer);
+        loadData();
+    }
+
+    private synchronized void onDataLoad(boolean isShimmer) {
+        if (isShimmer) {
+            binding.shimmerListingViewContainer.startShimmer();
+            binding.shimmerListingViewContainer.setVisibility(View.VISIBLE);
+            binding.accountMain.setVisibility(View.GONE);
+        } else {
+            binding.shimmerListingViewContainer.stopShimmer();
+            binding.shimmerListingViewContainer.setVisibility(View.GONE);
+            binding.accountMain.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void loadData(){
         db.collection("users").whereEqualTo("uid", auth.getUid()).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot qds) {
+                        checkAllTasksFinished();
+                        if (!isAdded()) return;
                         if (!qds.isEmpty()) {
                             User user = qds.toObjects(User.class).get(0);
                             binding.accountUserName.setText(user.getFirstName() + " " + user.getLastName());
@@ -105,38 +183,16 @@ public class AccountFragment extends Fragment {
                                         });
                             }
 
-                            binding.accountEditProfileBtn.setOnClickListener(v -> {
-
-                            });
                         }
-                        spinner.dismiss();
+
+
                     }
 
+                }).addOnFailureListener(aVoid->{
+                    checkAllTasksFinished();
                 });
-        view.findViewById(R.id.accountAddressBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getParentFragmentManager().beginTransaction()
-                        .replace(R.id.navContainerView, new AddressFragment())
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
-        view.findViewById(R.id.accountOrdersBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), OrderHistoryActivity.class);
-                startActivity(intent);
-            }
-        });
-        view.findViewById(R.id.accountSettingsBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), SettingsActivity.class);
-                startActivity(intent);
-            }
-        });
     }
+
 
     @Override
     public void onResume() {

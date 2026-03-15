@@ -28,10 +28,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.databinding.ActivitySignUpBinding;
+import lk.damithab.curenex.dialog.ToastDialog;
 import lk.damithab.curenex.model.User;
 import lk.damithab.curenex.util.RegexUtil;
 
@@ -256,7 +258,7 @@ public class SignUpActivity extends AppCompatActivity {
                                                 binding.signUpProgress.setVisibility(View.INVISIBLE);
                                                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 //                                                Toast.makeText(SignUpActivity.this, "Sign-Up success!", Toast.LENGTH_SHORT).show();
-                                                Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+                                                Intent intent = new Intent(SignUpActivity.this, VerificationActivity.class);
                                                 startActivity(intent);
                                                 finish();
                                             }
@@ -278,6 +280,11 @@ public class SignUpActivity extends AppCompatActivity {
                                 }
 
                             }
+                        }
+                    })
+                    .addOnFailureListener(e->{
+                        if (e instanceof FirebaseAuthUserCollisionException) {
+                            new ToastDialog(getSupportFragmentManager(), "This email is already registered.");
                         }
                     });
 

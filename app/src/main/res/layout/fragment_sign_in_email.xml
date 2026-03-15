@@ -60,6 +60,7 @@
             android:minHeight="0dp"
             android:insetTop="0dp"
             android:insetBottom="0dp"
+            android:layout_marginStart="5dp"
             android:fontFamily="@font/poppins"
             android:padding="0dp"
             android:text="@string/sign_up_link"
@@ -68,6 +69,27 @@
             android:textStyle="bold" />
     </LinearLayout>
 
+    <TextView
+        android:layout_marginVertical="10dp"
+        android:layout_gravity="center"
+        android:fontFamily="@font/poppins"
+        android:textSize="@dimen/link_click_text_size"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OR" />
 
+    <com.google.android.material.button.MaterialButton
+        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+        android:id="@+id/googleContinueBtn"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:fontFamily="@font/poppins"
+        app:icon="@drawable/googleicon"
+        app:iconTint="@null"
+        app:iconTintMode="@null"
+        app:iconSize="26dp"
+        android:text="Continue with Google"
+        android:textSize="@dimen/button_text_size" />
 
 </LinearLayout>

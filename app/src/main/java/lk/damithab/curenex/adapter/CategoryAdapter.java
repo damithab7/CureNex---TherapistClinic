@@ -13,11 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.model.Category;
+import lk.damithab.curenex.module.GlideApp;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
     private List<Category> categories;
@@ -43,14 +45,15 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Category category = categories.get(position);
         holder.categoryName.setText(category.getCategoryName());
-        storage.getReference(category.getImageUrl())
-                .getDownloadUrl()
-                .addOnSuccessListener(uri -> {
-                    Glide.with(holder.itemView.getContext())
-                            .load(uri)
-                            .centerCrop()
-                            .into(holder.categoryImage);
-                });
+
+
+        StorageReference ref = storage.getReference(category.getImageUrl());
+
+        GlideApp.with(holder.itemView.getContext())
+                .load(ref)
+                .centerCrop()
+                .placeholder(R.drawable.imageplaceholder2)
+                .into(holder.categoryImage);
 
         holder.itemView.setOnClickListener(v -> {
 

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 import java.util.Locale;
@@ -21,6 +22,7 @@ import java.util.Locale;
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.model.Product;
 import lk.damithab.curenex.model.Therapist;
+import lk.damithab.curenex.module.GlideApp;
 
 public class TherapistAdapter extends RecyclerView.Adapter<TherapistAdapter.ViewHolder> {
     private List<Therapist> therapistList;
@@ -57,14 +59,13 @@ public class TherapistAdapter extends RecyclerView.Adapter<TherapistAdapter.View
                 .append(")");
         holder.therapistStarRateText.setText(starRateText);
 
-        storage.getReference(therapist.getTherapistImage())
-                .getDownloadUrl()
-                .addOnSuccessListener(uri -> {
-                    Glide.with(holder.itemView.getContext())
-                            .load(uri)
-                            .centerCrop()
-                            .into(holder.therapistImage);
-                });
+        StorageReference ref = storage.getReference(therapist.getTherapistImage());
+
+        GlideApp.with(holder.itemView.getContext())
+                .load(ref)
+                .centerCrop()
+                .placeholder(R.drawable.imageplaceholder2)
+                .into(holder.therapistImage);
 
         holder.itemView.setOnClickListener(v -> {
 

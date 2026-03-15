@@ -61,6 +61,11 @@ public class ProductDetailsFragment extends Fragment {
     private boolean isAttribute = true;
     private int attrActualSize = 0;
 
+    private FirebaseFirestore db;
+
+    private int completedTasks = 0;
+    private final int TOTAL_TASKS = 2;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,8 +87,6 @@ public class ProductDetailsFragment extends Fragment {
 
         AnimationUtil.bottomSlideDown(getActivity().findViewById(R.id.bottomNavigationView));
 
-        SpinnerDialog dialog = SpinnerDialog.show(getParentFragmentManager());
-
         getActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -93,44 +96,9 @@ public class ProductDetailsFragment extends Fragment {
 
         // Load Product Details
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
 
-        Log.d("TEssst", "onViewCreated: Testttttt");
-
-        db.collection("products")
-                .whereEqualTo("productId", productId)
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot qds) {
-                        if (!qds.isEmpty()) {
-                            Product product = qds.getDocuments().get(0).toObject(Product.class);
-
-                            ProductSliderAdapter adapter = new ProductSliderAdapter(product.getImages());
-                            binding.productImageSlider.setAdapter(adapter);
-
-                            binding.dotsIndicator.attachTo(binding.productImageSlider);
-
-                            binding.productDetailsRating.setTag(product.getRating());
-
-                            binding.productDetailsTitle.setText(product.getTitle());
-                            binding.productDetailsPrice.setText(String.format(Locale.US, "LKR %,.2f", product.getPrice()));
-                            binding.productDetailsAvbQty.setText(String.valueOf(product.getStockCount()));
-
-                            avbQuantity = product.getStockCount();
-
-                            if (product.getAttribute() != null) {
-                                isAttribute = false;
-                                attrActualSize = product.getAttribute().size();
-                                product.getAttribute().forEach(attribute -> {
-                                    renderAttribute(attribute, binding.productDetailsAttributeContainer);
-                                });
-                            }
-
-                            dialog.dismiss();
-                        }
-                    }
-                });
+        startDataLoading(true);
 
         binding.productDetailsBtnMinus.setOnClickListener(v -> {
             if (quantity > 1) {
@@ -147,6 +115,25 @@ public class ProductDetailsFragment extends Fragment {
 
         loadTopSellProduct();
 
+        /// Buy now
+        binding.productDetailsBtnBuyNow.setOnClickListener(v->{
+            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+            if (firebaseAuth.getCurrentUser() == null) {
+                Intent intent = new Intent(getActivity(), SignInActivity.class);
+                startActivity(intent);
+            } else {
+                CheckoutFragment checkoutFragment = new CheckoutFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("productId", productId);
+                bundle.putInt("qty", quantity);
+                checkoutFragment.setArguments(bundle);
+                getParentFragmentManager().beginTransaction().replace(R.id.navContainerView, checkoutFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+
+        /// Add to cart
         binding.productDetailsBtnAddCart.setOnClickListener(v -> {
             FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
             if (firebaseAuth.getCurrentUser() == null) {
@@ -181,12 +168,81 @@ public class ProductDetailsFragment extends Fragment {
                                                 navigationView.removeBadge(R.id.nav_cart);
                                             }
                                         });
-                                new ToastDialog(getActivity().getSupportFragmentManager(), "Added to cart successfully!");
+                                new ToastDialog(getActivity().getSupportFragmentManager(), "Product added to cart!");
 //                                Snackbar.make(view, "Item added to cart", Snackbar.LENGTH_SHORT).show();
                             }
                         });
             }
         });
+    }
+
+    private void checkAllTasksFinished() {
+        completedTasks++;
+        Log.d("HomeFragment", "checkAllTasksFinished: " + completedTasks);
+        if (completedTasks >= TOTAL_TASKS) {
+            onDataLoad(false);
+            completedTasks = 0; // Reset for swipe-to-refresh
+        }
+    }
+
+    private void startDataLoading(boolean isShimmer) {
+        onDataLoad(isShimmer);
+        loadData();
+    }
+
+    private synchronized void onDataLoad(boolean isShimmer) {
+        if (isShimmer) {
+            binding.shimmerSingleTherapistViewContainer.startShimmer();
+            binding.shimmerSingleTherapistViewContainer.setVisibility(View.VISIBLE);
+            binding.productDetailsBottomBar.setVisibility(View.GONE);
+            binding.productDetailsMain.setVisibility(View.GONE);
+        } else {
+            binding.shimmerSingleTherapistViewContainer.stopShimmer();
+            binding.shimmerSingleTherapistViewContainer.setVisibility(View.GONE);
+            binding.productDetailsBottomBar.setVisibility(View.VISIBLE);
+            binding.productDetailsMain.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void loadData(){
+        db.collection("products")
+                .whereEqualTo("productId", productId)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot qds) {
+                        if (!qds.isEmpty()) {
+                            Product product = qds.getDocuments().get(0).toObject(Product.class);
+
+                            ProductSliderAdapter adapter = new ProductSliderAdapter(product.getImages());
+                            binding.productImageSlider.setAdapter(adapter);
+
+                            binding.dotsIndicator.attachTo(binding.productImageSlider);
+
+                            binding.productDetailsRating.setTag(product.getRating());
+
+                            binding.productDetailsTitle.setText(product.getTitle());
+                            binding.productDetailsDescription.setText(product.getDescription());
+                            binding.productDetailsPrice.setText(String.format(Locale.US, "LKR %,.2f", product.getPrice()));
+                            binding.productDetailsAvbQty.setText(String.valueOf(product.getStockCount()));
+
+                            avbQuantity = product.getStockCount();
+
+                            if (product.getAttribute() != null) {
+                                isAttribute = false;
+                                attrActualSize = product.getAttribute().size();
+                                product.getAttribute().forEach(attribute -> {
+                                    renderAttribute(attribute, binding.productDetailsAttributeContainer);
+                                });
+                            }
+
+                        }
+                        checkAllTasksFinished();
+                    }
+                }).addOnFailureListener(aVoid->{
+                    checkAllTasksFinished();
+                });
+
     }
 
     private void loadTopSellProduct() {
@@ -218,7 +274,10 @@ public class ProductDetailsFragment extends Fragment {
                             binding.productDetailsTopSellSection.itemSectionTitle.setText("Top Selling Products");
                             binding.productDetailsTopSellSection.itemSectionContainer.setAdapter(adapter);
                         }
+                        checkAllTasksFinished();
                     }
+                }).addOnFailureListener(aVoid->{
+                    checkAllTasksFinished();
                 });
     }
 

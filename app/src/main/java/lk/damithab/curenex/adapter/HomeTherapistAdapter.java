@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 import java.util.Locale;
@@ -25,6 +26,7 @@ import java.util.Locale;
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.model.Service;
 import lk.damithab.curenex.model.Therapist;
+import lk.damithab.curenex.module.GlideApp;
 
 public class HomeTherapistAdapter extends RecyclerView.Adapter<HomeTherapistAdapter.ViewHolder> {
     private List<Therapist> therapistList;
@@ -83,14 +85,13 @@ public class HomeTherapistAdapter extends RecyclerView.Adapter<HomeTherapistAdap
                 .append(")");
         holder.therapistRateText.setText(starRateText);
 
-        storage.getReference(therapist.getTherapistImage())
-                .getDownloadUrl()
-                .addOnSuccessListener(uri -> {
-                    Glide.with(holder.itemView.getContext())
-                            .load(uri)
-                            .centerCrop()
-                            .into(holder.therapistImage);
-                });
+        StorageReference ref = storage.getReference(therapist.getTherapistImage());
+
+        GlideApp.with(holder.itemView.getContext())
+                .load(ref)
+                .centerCrop()
+                .placeholder(R.drawable.imageplaceholder2)
+                .into(holder.therapistImage);
 
         holder.itemView.setOnClickListener(v -> {
             Animation animation = AnimationUtils.loadAnimation(v.getContext(), R.anim.button_click);

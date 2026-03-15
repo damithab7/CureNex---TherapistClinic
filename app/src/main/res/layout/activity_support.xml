@@ -17,7 +17,7 @@
             android:orientation="vertical">
 
             <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/booking_toolbar"
+                android:id="@+id/support_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toTopOf="@id/navContainerView"
@@ -27,8 +27,7 @@
                 app:navigationIcon="@drawable/backicon"
                 app:title="Support"
                 app:titleCentered="true"
-                app:titleTextAppearance="@style/logoFont"></com.google.android.material.appbar.MaterialToolbar>
-
+                app:titleTextAppearance="@style/logoFont"/>
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/drawer_header_image"
                 android:layout_width="match_parent"

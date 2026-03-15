@@ -28,6 +28,7 @@ import lk.damithab.curenex.R;
 import lk.damithab.curenex.api.AuthAPI;
 import lk.damithab.curenex.client.RetrofitClient;
 import lk.damithab.curenex.databinding.ActivitySignInBinding;
+import lk.damithab.curenex.dialog.ToastDialog;
 import lk.damithab.curenex.dialog.WelcomeDialog;
 import lk.damithab.curenex.dto.LoginRequestDTO;
 import lk.damithab.curenex.dto.TokenDTO;
@@ -52,11 +53,11 @@ public class SignInActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
 
         String accessToken = TokenManager.retrieveAccessToken(this);
-        if(accessToken != null && !accessToken.isEmpty()){
+        if (accessToken != null && !accessToken.isEmpty()) {
             Intent intent = new Intent(SignInActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
-        }else{
+        } else {
             /// Load fragments by fragment transactions
             loadFragments(new SignInEmailFragment(), false);
         }
@@ -70,24 +71,35 @@ public class SignInActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
 
-        firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
+        firebaseAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
 
-                findViewById(R.id.signInProgress).setVisibility(View.INVISIBLE);
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        findViewById(R.id.signInProgress).setVisibility(View.INVISIBLE);
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
-                if(task.isSuccessful()){
-                    FirebaseUser user = firebaseAuth.getCurrentUser();
-                    updateUI(user);
-                }else{
-                    Toast.makeText(SignInActivity.this, "Invalid Credentials!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = firebaseAuth.getCurrentUser();
+                            if (user != null) {
+                                user.reload().addOnCompleteListener(reloadTask -> {
+                                    if (user.isEmailVerified()) {
+                                        updateUI(user);
+                                    } else {
+                                        Intent intent = new Intent(SignInActivity.this, VerificationActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                });
+                            }
+                        } else {
+                            Toast.makeText(SignInActivity.this, "Invalid Credentials!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
-    private void updateUI(FirebaseUser user){
+    private void updateUI(FirebaseUser user) {
         Intent intent = new Intent(SignInActivity.this, MainActivity.class);
         startActivity(intent);
         finish();

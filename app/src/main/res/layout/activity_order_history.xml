@@ -14,18 +14,13 @@
         app:titleTextAppearance="@style/logoFont"
         android:layout_width="match_parent"
         app:navigationIcon="@drawable/backicon"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/navContainerView"
         android:layout_height="wrap_content">
 
     </com.google.android.material.appbar.MaterialToolbar>
 
-
-    <androidx.recyclerview.widget.RecyclerView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:id="@+id/orders_history_recycler"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/orders_container"/>
 </LinearLayout>

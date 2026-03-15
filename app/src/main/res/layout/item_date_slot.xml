@@ -8,21 +8,24 @@
     app:cardBackgroundColor="@color/md_theme_surfaceContainer"
     app:cardCornerRadius="20dp">
     <LinearLayout
-        android:layout_marginHorizontal="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:padding="8dp">
+        android:orientation="vertical"
+        android:paddingVertical="10dp"
+        android:paddingHorizontal="20dp">
 
     <TextView
+        android:fontFamily="@font/poppins"
         android:id="@+id/item_dateslot_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:chipStrokeWidth="0dp"
-        android:text="Fri,"
+        android:text="Fri"
         />
 
     <TextView
+        android:fontFamily="@font/poppins"
+        android:textStyle="bold"
         android:id="@+id/item_dateslot_day"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

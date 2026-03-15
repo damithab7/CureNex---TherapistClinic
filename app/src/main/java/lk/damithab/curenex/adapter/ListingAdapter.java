@@ -14,11 +14,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.model.Product;
+import lk.damithab.curenex.module.GlideApp;
 
 
 public class ListingAdapter extends RecyclerView.Adapter<ListingAdapter.ViewHolder> {
@@ -53,14 +55,13 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingAdapter.ViewHold
             holder.productStock.setText("Out of Stock");
             holder.productStock.setTextColor(Color.RED);
         }
-        storage.getReference(product.getImages().get(0))
-                .getDownloadUrl()
-                .addOnSuccessListener(uri -> {
-                    Glide.with(holder.itemView.getContext())
-                            .load(uri)
-                            .centerCrop()
-                            .into(holder.productImage);
-                });
+        StorageReference ref = storage.getReference(product.getImages().get(0));
+
+        GlideApp.with(holder.itemView.getContext())
+                .load(ref)
+                .centerCrop()
+                .placeholder(R.drawable.imageplaceholder2)
+                .into(holder.productImage);
 
         holder.itemView.setOnClickListener(v -> {
 

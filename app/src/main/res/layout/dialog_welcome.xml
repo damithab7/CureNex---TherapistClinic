@@ -29,7 +29,7 @@
         android:layout_gravity="start"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="5dp"
-        android:fontFamily="@font/poppins_thin"
+        android:fontFamily="@font/poppins"
         android:text="@string/welcome_screen_title"
         android:textSize="18sp"
         android:textStyle="bold" />

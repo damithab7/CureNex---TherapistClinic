@@ -1,5 +1,7 @@
 package lk.damithab.curenex.fragment;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -12,6 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -37,13 +41,17 @@ import java.util.Map;
 import java.util.Set;
 
 import lk.damithab.curenex.R;
+import lk.damithab.curenex.activity.MainActivity;
 import lk.damithab.curenex.adapter.DateAdapter;
 import lk.damithab.curenex.adapter.TimeSlotAdapter;
 import lk.damithab.curenex.databinding.FragmentSingleTherapistBinding;
+import lk.damithab.curenex.dialog.MessageDialog;
+import lk.damithab.curenex.dialog.ToastDialog;
 import lk.damithab.curenex.model.Booking;
 import lk.damithab.curenex.model.DateModel;
 import lk.damithab.curenex.model.Therapist;
 import lk.damithab.curenex.model.TherapistSchedule;
+import lk.damithab.curenex.util.AnimationUtil;
 
 public class SingleTherapistFragment extends Fragment {
 
@@ -66,6 +74,9 @@ public class SingleTherapistFragment extends Fragment {
     private String docId;
 
     private FirebaseStorage storage;
+
+    private int completedTasks = 0;
+    private final int TOTAL_TASKS = 2;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -123,7 +134,7 @@ public class SingleTherapistFragment extends Fragment {
 //
 //        batch.commit();
 
-        getActivity().findViewById(R.id.bottomNavigationView).setVisibility(View.GONE);
+        AnimationUtil.bottomSlideDown(getActivity().findViewById(R.id.bottomNavigationView));
 
         getActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
@@ -132,6 +143,71 @@ public class SingleTherapistFragment extends Fragment {
             }
         });
 
+        startDataLoading(true);
+
+        binding.singleTBooknowbtn.setOnClickListener(v -> {
+            if (selectedDate == null) {
+                Toast.makeText(getContext(), "Please select a date", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (selectedSlot == null) {
+                Toast.makeText(getContext(), "Please select a time slot", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // --- SUCCESS: You have everything you need ---
+            String scheduleId = selectedSlot.getScheduleId(); // The specific ID from Firestore
+            String bookingDate = selectedDate.getFullDate(); // e.g., "2026-02-27"
+            String therapistDocId = docId; // The therapist's auto-ID (HMkbq...)
+
+            Log.d("SingleTherapist", scheduleId + bookingDate + therapistDocId);
+
+            BookingOrderFragment bookingOrderFragment = new BookingOrderFragment();
+
+            Bundle args = new Bundle();
+            args.putString("schedule_id", scheduleId);
+            args.putString("booking_date", bookingDate);
+            args.putString("booking_time", selectedTime);
+            args.putString("therapist_id", therapistDocId);
+
+            bookingOrderFragment.setArguments(args);
+
+            getParentFragmentManager().beginTransaction().replace(R.id.navContainerView, bookingOrderFragment)
+                    .addToBackStack(null)
+                    .commit();
+
+//            proceedToConfirmation(therapistDocId, scheduleId, bookingDate);
+        });
+    }
+
+    private void checkAllTasksFinished() {
+        completedTasks++;
+        Log.d("HomeFragment", "checkAllTasksFinished: " + completedTasks);
+        if (completedTasks >= TOTAL_TASKS) {
+            onDataLoad(false);
+            completedTasks = 0; // Reset for swipe-to-refresh
+        }
+    }
+
+    private void startDataLoading(boolean isShimmer) {
+        onDataLoad(isShimmer);
+        loadData();
+    }
+
+    private synchronized void onDataLoad(boolean isShimmer) {
+        if (isShimmer) {
+            binding.shimmerSingleTherapistViewContainer.startShimmer();
+            binding.shimmerSingleTherapistViewContainer.setVisibility(View.VISIBLE);
+            binding.singleTMain.setVisibility(View.GONE);
+        } else {
+            binding.shimmerSingleTherapistViewContainer.stopShimmer();
+            binding.shimmerSingleTherapistViewContainer.setVisibility(View.GONE);
+            binding.singleTMain.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void loadData() {
         db.collection("therapist")
                 .whereEqualTo("therapistId", therapistId)
                 .get()
@@ -145,9 +221,58 @@ public class SingleTherapistFragment extends Fragment {
 
                             Therapist therapist = qds.getDocuments().get(0).toObject(Therapist.class);
 
-                            binding.sTName.setText(therapist.getTitle() + " " + therapist.getName());
+                            String therapistName = therapist.getTitle() + " " + therapist.getName();
+
+                            binding.sTName.setText(therapistName);
+                            binding.singleTWorkemail.setOnClickListener(v -> {
+
+                                Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.click_anim);
+                                anim.setAnimationListener(new Animation.AnimationListener() {
+                                    @Override
+                                    public void onAnimationStart(Animation animation) {
+                                    }
+
+                                    @Override
+                                    public void onAnimationEnd(Animation animation) {
+                                        Intent intent = new Intent(Intent.ACTION_SENDTO);
+                                        intent.setData(Uri.parse("mailto:" + therapist.getWorkEmail()));
+                                        intent.putExtra(Intent.EXTRA_SUBJECT, "Inquiry from Therapist " + therapistName);
+
+                                        startActivity(Intent.createChooser(intent, "Send Email"));
+
+                                    }
+
+                                    @Override
+                                    public void onAnimationRepeat(Animation animation) {
+                                    }
+                                });
+                                v.startAnimation(anim);
+
+                            });
+
+                            binding.singleTWorkmobile.setOnClickListener(v -> {
+                                Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.click_anim);
+                                anim.setAnimationListener(new Animation.AnimationListener() {
+                                    @Override
+                                    public void onAnimationStart(Animation animation) {
+                                    }
+
+                                    @Override
+                                    public void onAnimationEnd(Animation animation) {
+                                        Intent intent = new Intent(Intent.ACTION_DIAL);
+                                        intent.setData(Uri.parse("tel:" + therapist.getWorkMobileNo()));
+                                        startActivity(intent);
+                                    }
+
+                                    @Override
+                                    public void onAnimationRepeat(Animation animation) {
+                                    }
+                                });
+                                v.startAnimation(anim);
+
+                            });
                             binding.sTAbout.setText(therapist.getBio());
-                            binding.sTRate.setText(String.format(Locale.US, "LKR %,.2f",therapist.getRate()) +"/h");
+                            binding.sTRate.setText(String.format(Locale.US, "LKR %,.2f", therapist.getRate()) + "/h");
                             storage.getReference(therapist.getTherapistImage())
                                     .getDownloadUrl()
                                     .addOnSuccessListener(uri -> {
@@ -155,6 +280,7 @@ public class SingleTherapistFragment extends Fragment {
                                                 .load(uri)
                                                 .centerCrop()
                                                 .into(binding.singleTImageView);
+                                        checkAllTasksFinished();
                                     });
 
                             db.collection("therapist").document(docId).collection("schedule")
@@ -197,13 +323,14 @@ public class SingleTherapistFragment extends Fragment {
                                                     }
                                                 }
 
-                                                Log.d("bookigns", "Date is selected"+"therapistId "+docId+" | bookingDate "+ selectedDate.getFullDate());
+                                                Log.d("bookigns", "Date is selected" + "therapistId " + docId + " | bookingDate " + selectedDate.getFullDate());
 
                                                 db.collection("bookings")
                                                         .whereEqualTo("therapistId", docId)
                                                         .whereEqualTo("bookingDate", selectedDate.getFullDate())
                                                         .get()
                                                         .addOnSuccessListener(bookingDocs -> {
+
 
                                                             Map<String, Integer> bookingCounts = new HashMap<>();
                                                             for (DocumentSnapshot bookingDoc : bookingDocs) {
@@ -227,47 +354,15 @@ public class SingleTherapistFragment extends Fragment {
                                             }
                                         }
 
+                                        checkAllTasksFinished();
+
                                     });
 
                         }
                     }
+                }).addOnFailureListener(aVoid -> {
+                    checkAllTasksFinished();
                 });
-
-
-        binding.singleTBooknowbtn.setOnClickListener(v->{
-            if (selectedDate == null) {
-                Toast.makeText(getContext(), "Please select a date", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (selectedSlot == null) {
-                Toast.makeText(getContext(), "Please select a time slot", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // --- SUCCESS: You have everything you need ---
-            String scheduleId = selectedSlot.getScheduleId(); // The specific ID from Firestore
-            String bookingDate = selectedDate.getFullDate(); // e.g., "2026-02-27"
-            String therapistDocId = docId; // The therapist's auto-ID (HMkbq...)
-
-            Log.d("SingleTherapist", scheduleId + bookingDate + therapistDocId);
-
-            BookingOrderFragment bookingOrderFragment = new BookingOrderFragment();
-
-            Bundle args = new Bundle();
-            args.putString("schedule_id", scheduleId);
-            args.putString("booking_date", bookingDate);
-            args.putString("booking_time", selectedTime);
-            args.putString("therapist_id", therapistDocId);
-
-            bookingOrderFragment.setArguments(args);
-
-            getParentFragmentManager().beginTransaction().replace(R.id.navContainerView, bookingOrderFragment)
-                    .addToBackStack(null)
-                    .commit();
-
-//            proceedToConfirmation(therapistDocId, scheduleId, bookingDate);
-        });
     }
 
 
@@ -303,12 +398,12 @@ public class SingleTherapistFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().findViewById(R.id.bottomNavigationView).setVisibility(View.GONE);
+        AnimationUtil.bottomSlideDown(getActivity().findViewById(R.id.bottomNavigationView));
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        getActivity().findViewById(R.id.bottomNavigationView).setVisibility(View.VISIBLE);
+        AnimationUtil.bottomSlideUp(getActivity().findViewById(R.id.bottomNavigationView));
     }
 }

@@ -10,10 +10,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
 import lk.damithab.curenex.R;
+import lk.damithab.curenex.module.GlideApp;
 
 public class ProductSliderAdapter extends RecyclerView.Adapter<ProductSliderAdapter.ProductSliderViewHolder> {
 
@@ -26,6 +28,7 @@ public class ProductSliderAdapter extends RecyclerView.Adapter<ProductSliderAdap
         storage = FirebaseStorage.getInstance();
     }
 
+
     @NonNull
     @Override
     public ProductSliderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -35,14 +38,13 @@ public class ProductSliderAdapter extends RecyclerView.Adapter<ProductSliderAdap
 
     @Override
     public void onBindViewHolder(@NonNull ProductSliderViewHolder holder, int position) {
-        storage.getReference(images.get(position))
-                .getDownloadUrl()
-                .addOnSuccessListener(uri -> {
-                    Glide.with(holder.itemView.getContext())
-                            .load(uri)
-                            .centerCrop()
-                            .into(holder.imageView);
-                });
+        StorageReference ref = storage.getReference(images.get(position));
+
+        GlideApp.with(holder.itemView.getContext())
+                .load(ref)
+                .centerCrop()
+                .placeholder(R.drawable.imageplaceholder2)
+                .into(holder.imageView);
     }
 
     @Override

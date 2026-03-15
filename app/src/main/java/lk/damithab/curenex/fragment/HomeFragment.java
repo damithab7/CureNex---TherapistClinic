@@ -2,11 +2,13 @@ package lk.damithab.curenex.fragment;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +22,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.adapter.HomeServiceAdapter;
@@ -36,6 +40,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HomeFragment extends Fragment {
 
@@ -46,6 +51,12 @@ public class HomeFragment extends Fragment {
 
     private RecyclerView serviceRecyclerView, homeTherapistRecycler;
 
+    private FirebaseFirestore db;
+
+    private int completedTasks = 0;
+    private final int TOTAL_TASKS = 4;
+
+    private boolean setLoading = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,113 +80,86 @@ public class HomeFragment extends Fragment {
         homeTherapistRecycler = binding.bestTherapistHomeRecycle;
         homeTherapistRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
 
-        /// Zen API Calling
-        Retrofit instance = RetrofitClient.getInstance(getContext());
-        ZenAPI zenAPI = instance.create(ZenAPI.class);
-
-        Call<List<QuoteDTO>> quoteDTOCall = zenAPI.getQuote();
-        quoteDTOCall.enqueue(new Callback<List<QuoteDTO>>() {
+        binding.homeSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onResponse(Call<List<QuoteDTO>> call, Response<List<QuoteDTO>> response) {
-                if (response.isSuccessful()) {
-                    QuoteDTO quoteDTO = response.body().get(0);
-                    Log.i("HomeFra", quoteDTO.getQ());
-                    if (quoteDTO != null) {
-                        binding.homeQuoteTxt.setText(quoteDTO.getQ());
-                        binding.homeQuoteAuthor.setText(quoteDTO.getA());
-                    }
-                } else {
-                    Log.i("ZenAPIError", response.message());
-                }
+            public void onRefresh() {
+                startDataLoading(true);
             }
-
-            @Override
-            public void onFailure(Call<List<QuoteDTO>> call, Throwable t) {
-                t.printStackTrace();
-            }
-
         });
 
-        /// Load Promotional Images
-        db.collection("promotions")
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot qds) {
-
-                        if (!qds.isEmpty()) {
-                            List<Promotion> promotions = qds.toObjects(Promotion.class);
-
-                            PromotionSliderAdapter adapter = new PromotionSliderAdapter(promotions);
-                            binding.homePromotionSlider.setAdapter(adapter);
-
-                            binding.homeDotsIndicator.attachTo(binding.homePromotionSlider);
-                        }
-                    }
-                });
-
-
-//        Service s1 =new Service("ser1", "Physiotherapy", "https://loremflickr.com/400/400/physiotherapy?lock=15");
-//        Service s2 =new Service("ser2", "Psychotherapy", "https://loremflickr.com/400/400/psychotherapy?lock=1");
-//        Service s3 =new Service("ser3", "Ergonomics", "https://loremflickr.com/400/400/office,posture?lock=23");
-//        Service s4 =new Service("ser4", "Nutrition", "https://loremflickr.com/400/400/healthy,food?lock=4");
-//        Service s5 =new Service("ser5", "Psychodynamic", "https://loremflickr.com/400/400/psychology?lock=21");
-//        Service s6 =new Service("ser6", "Interpersonal", "https://loremflickr.com/400/400/nurse?lock=17");
-//
-//        List<Service> serv =List.of(s1, s2, s3 , s4, s5, s6);
-//
-//        WriteBatch batch =db.batch();
-//
-//        for(Service service: serv){
-//            DocumentReference ref = db.collection("services").document();
-//            batch.set(ref, service);
-//        }
-//
-//        batch.commit();
+        if(setLoading){
+            startDataLoading(true);
+            setLoading = false;
+        }else{
+            startDataLoading(false);
+        }
 
         binding.homeServicesSeeAll.setOnClickListener(v -> {
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.navContainerView, new ServiceFragment())
                     .commit();
+            if (getActivity() != null) {
+                com.google.android.material.bottomnavigation.BottomNavigationView navBar =
+                        getActivity().findViewById(R.id.bottomNavigationView);
+
+                if (navBar != null) {
+                    navBar.getMenu().findItem(R.id.nav_service).setChecked(true);
+                }
+            }
         });
         binding.homeTherapistsSeeAll.setOnClickListener(v -> {
             getParentFragmentManager().beginTransaction()
-                    .replace(R.id.navContainerView, new TherapistFragment())
+                    .replace(R.id.navContainerView, new ServiceFragment())
                     .commit();
         });
 
-        db.collection("services").get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        QuerySnapshot result = task.getResult();
-                        //List<Category> categories = result.toObjects(Category.class);
 
-                        List<Service> services = task.getResult().toObjects(Service.class);
-                        homeServiceAdapter = new HomeServiceAdapter(services, service -> {
+    }
 
-                            Bundle bundle = new Bundle();
-                            bundle.putString("serviceId", service.getServiceId());
 
-                            TherapistFragment fragment = new TherapistFragment();
-                            fragment.setArguments(bundle);
+    private void checkAllTasksFinished() {
+        completedTasks++;
+        Log.d("HomeFragment", "checkAllTasksFinished: "+completedTasks);
+        if (completedTasks >= TOTAL_TASKS) {
+            onDataLoad(false);
+            completedTasks = 0; // Reset for swipe-to-refresh
+        }
+    }
 
-                            getParentFragmentManager().beginTransaction()
-                                    .replace(R.id.navContainerView, fragment)
-                                    .addToBackStack(null)
-                                    .commit();
+    private void startDataLoading(boolean isShimmer) {
+        binding.homeSwipeRefreshLayout.setRefreshing(false);
+        onDataLoad(isShimmer);
 
-                        });
+        zenApiCalling();
+        loadPromotionalImages();
+        loadServices();
+        loadTherapists();
+    }
 
-                        serviceRecyclerView.setAdapter(homeServiceAdapter);
+    private synchronized void onDataLoad(boolean isShimmer){
+        if(isShimmer){
+            binding.shimmerViewContainer.startShimmer();
+            binding.shimmerViewContainer.setVisibility(View.VISIBLE);
+            binding.homeMain.setVisibility(View.GONE);
+        }else{
+            binding.shimmerViewContainer.stopShimmer();
+            binding.shimmerViewContainer.setVisibility(View.GONE);
+            binding.homeMain.setVisibility(View.VISIBLE);
+        }
+    }
 
-                    }
-                });
 
+    private void loadTherapists(){
         db.collection("therapist").whereGreaterThan("rating", 4).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                        checkAllTasksFinished();
+
+                        binding.homeSwipeRefreshLayout.setRefreshing(false);
+
                         QuerySnapshot result = task.getResult();
                         //List<Category> categories = result.toObjects(Category.class);
 
@@ -200,6 +184,96 @@ public class HomeFragment extends Fragment {
                         }
 
                     }
+                }).addOnFailureListener(aVoid->{
+                    checkAllTasksFinished();
                 });
+    }
+
+    private void loadPromotionalImages(){
+        db.collection("promotions")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot qds) {
+
+                        checkAllTasksFinished();
+                        if (!qds.isEmpty()) {
+                            List<Promotion> promotions = qds.toObjects(Promotion.class);
+
+                            PromotionSliderAdapter adapter = new PromotionSliderAdapter(promotions);
+                            binding.homePromotionSlider.setAdapter(adapter);
+
+                            binding.homeDotsIndicator.attachTo(binding.homePromotionSlider);
+                        }
+                    }
+                }).addOnFailureListener(aVoid->{
+                    checkAllTasksFinished();
+                });
+
+    }
+    private void zenApiCalling(){
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://zenquotes.io/api/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        ZenAPI zenAPI = retrofit.create(ZenAPI.class);
+
+        Call<List<QuoteDTO>> quoteDTOCall = zenAPI.getQuote();
+        quoteDTOCall.enqueue(new Callback<List<QuoteDTO>>() {
+            @Override
+            public void onResponse(Call<List<QuoteDTO>> call, Response<List<QuoteDTO>> response) {
+                checkAllTasksFinished();
+                if (response.isSuccessful()) {
+                    QuoteDTO quoteDTO = response.body().get(0);
+                    Log.i("HomeFra", quoteDTO.getQ());
+                    if (quoteDTO != null) {
+                        binding.homeQuoteTxt.setText(quoteDTO.getQ());
+                        binding.homeQuoteAuthor.setText(quoteDTO.getA());
+                    }
+                } else {
+                    Log.i("ZenAPIError", response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<QuoteDTO>> call, Throwable t) {
+                checkAllTasksFinished();
+                t.printStackTrace();
+            }
+
+        });
+    }
+
+    private void loadServices(){
+        db.collection("services").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        checkAllTasksFinished();
+                        QuerySnapshot result = task.getResult();
+                        //List<Category> categories = result.toObjects(Category.class);
+
+                        List<Service> services = task.getResult().toObjects(Service.class);
+                        homeServiceAdapter = new HomeServiceAdapter(services, service -> {
+
+                            Bundle bundle = new Bundle();
+                            bundle.putString("serviceId", service.getServiceId());
+
+                            TherapistFragment fragment = new TherapistFragment();
+                            fragment.setArguments(bundle);
+
+                            getParentFragmentManager().beginTransaction()
+                                    .replace(R.id.navContainerView, fragment)
+                                    .addToBackStack(null)
+                                    .commit();
+
+                        });
+
+                        serviceRecyclerView.setAdapter(homeServiceAdapter);
+
+                    }
+                }).addOnFailureListener(aVoid->{
+                    checkAllTasksFinished();
+                });
+
     }
 }

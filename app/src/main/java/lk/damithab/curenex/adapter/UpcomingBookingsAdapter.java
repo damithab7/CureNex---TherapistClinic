@@ -1,5 +1,6 @@
 package lk.damithab.curenex.adapter;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -15,13 +17,16 @@ import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.model.Booking;
 import lk.damithab.curenex.model.Therapist;
+import lk.damithab.curenex.module.GlideApp;
 
 public class UpcomingBookingsAdapter extends RecyclerView.Adapter<UpcomingBookingsAdapter.ViewHolder> {
 
@@ -59,14 +64,13 @@ public class UpcomingBookingsAdapter extends RecyclerView.Adapter<UpcomingBookin
                         if(!qds.isEmpty()){
                             Therapist therapist = qds.toObjects(Therapist.class).get(0);
                             holder.bookingTherapistName.setText(therapist.getTitle()+" "+therapist.getName());
-                            storage.getReference(therapist.getTherapistImage())
-                                    .getDownloadUrl()
-                                    .addOnSuccessListener(uri -> {
-                                        Glide.with(holder.itemView.getContext())
-                                                .load(uri)
-                                                .centerCrop()
-                                                .into(holder.therapistImage);
-                                    });
+                            StorageReference ref = storage.getReference(therapist.getTherapistImage());
+
+                            GlideApp.with(holder.itemView.getContext())
+                                    .load(ref)
+                                    .centerCrop()
+                                    .placeholder(R.drawable.imageplaceholder2)
+                                    .into(holder.therapistImage);
                         }
                     }
                 });
@@ -74,6 +78,13 @@ public class UpcomingBookingsAdapter extends RecyclerView.Adapter<UpcomingBookin
         holder.bookingDate.setText(booking.getBookingDate());
         holder.bookingTimeSlot.setText(booking.getBookingTime());
         holder.bookingStatus.setText(booking.getStatus());
+
+        if(Objects.equals(booking.getStatus(), "Cancelled")){
+            holder.statusCard.setCardBackgroundColor(Color.RED);
+            holder.bookingStatus.setTextColor(Color.WHITE);
+            holder.cancelButton.setEnabled(false);
+        }
+
         holder.bookingTotal.setText(String.format(Locale.US, "LKR %,.2f",booking.getTotal()));
 
         holder.cancelButton.setOnClickListener(v->{
@@ -96,6 +107,8 @@ public class UpcomingBookingsAdapter extends RecyclerView.Adapter<UpcomingBookin
 
         MaterialButton cancelButton;
 
+        CardView statusCard;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             this.bookingId = itemView.findViewById(R.id.item_booking_id);
@@ -107,6 +120,7 @@ public class UpcomingBookingsAdapter extends RecyclerView.Adapter<UpcomingBookin
             this.bookingStatus = itemView.findViewById(R.id.item_booking_status);
             this.bookingTotal = itemView.findViewById(R.id.item_booking_total);
             this.cancelButton = itemView.findViewById(R.id.item_booking_cancel_btn);
+            this.statusCard = itemView.findViewById(R.id.item_booking_status_card);
         }
     }
 

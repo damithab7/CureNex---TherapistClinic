@@ -11,6 +11,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -67,6 +69,8 @@ public class ClinicLocation extends FragmentActivity implements OnMapReadyCallba
 
     private Polyline polyline;
 
+    private LatLng clinic;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +90,9 @@ public class ClinicLocation extends FragmentActivity implements OnMapReadyCallba
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
 
     }
 
@@ -104,30 +110,47 @@ public class ClinicLocation extends FragmentActivity implements OnMapReadyCallba
         enableMyLocation();
 
 
-        LatLng home = new LatLng(6.9090792, 79.9408215);
-
+        clinic = new LatLng(6.987873556699518,  81.05838263529499);
 
         // mMap.addMarker(new MarkerOptions().position(home).title("Marker in Home"));
 
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(home, 15f)); // 2-5 Country, 10 - 15 City, 18 -20 Building
-
-
-        mMap.setOnMapLongClickListener(latLng -> {
-            if (markerPin == null) {
-                MarkerOptions markerOptions = new MarkerOptions();
-                markerOptions.position(latLng);
-                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.manicon));
-                markerPin = mMap.addMarker(markerOptions);
-            } else {
-                markerPin.setPosition(latLng);
-            }
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(clinic, 15f)); // 2-5 Country, 10 - 15 City, 18 -20 Building
 
 
-            //getDirection(currentLocation, latLng);
-            getDirectionWithApi(currentLocation, latLng);
+//        mMap.setOnMapLongClickListener(latLng -> {
+//            if (markerPin == null) {
+//                MarkerOptions markerOptions = new MarkerOptions();
+//                markerOptions.position(latLng);
+//                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.manicon));
+//                markerPin = mMap.addMarker(markerOptions);
+//            } else {
+//                markerPin.setPosition(latLng);
+//            }
+//
+//
+//            getDirection(currentLocation, latLng);
+//
+//        });
 
-        });
+        if (markerPin == null) {
+            markerPin = mMap.addMarker(new MarkerOptions()
+                    .position(clinic)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.clinicicon)));
+        } else {
+            markerPin.setPosition(clinic);
+        }
+
+
+//        if (markerPin == null) {
+//            MarkerOptions markerOptions = new MarkerOptions();
+//            markerOptions.position(clinic);
+//            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.manicon));
+//            markerPin = mMap.addMarker(markerOptions);
+//        } else {
+//            markerPin.setPosition(clinic);
+//        }
+//
+//        getDirectionWithApi(currentLocation, clinic);
 
 
     }
@@ -145,7 +168,6 @@ public class ClinicLocation extends FragmentActivity implements OnMapReadyCallba
         }
     }
 
-
     @RequiresPermission(allOf = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
     private void startLocationUpdate() {
         locationCallback = new LocationCallback() {
@@ -154,6 +176,12 @@ public class ClinicLocation extends FragmentActivity implements OnMapReadyCallba
                 for (Location location : locationResult.getLocations()) {
 
                     currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        if (currentLocation != null && clinic != null) {
+                            getDirectionWithApi(currentLocation, clinic);
+                        }
+                    }, 5000);
 
                     //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f));
                 }

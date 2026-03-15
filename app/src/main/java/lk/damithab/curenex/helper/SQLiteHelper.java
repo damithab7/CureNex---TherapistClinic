@@ -27,11 +27,11 @@ import androidx.annotation.Nullable;
         @Override
         public void onCreate(SQLiteDatabase sqLiteDatabase) {
             String tableQuery = "CREATE TABLE IF NOT EXISTS `clinic` (id INTEGER PRIMARY KEY AUTOINCREMENT, name " +
-                    "VARCHAR(150), address VARCHAR(100), emergency VARCHAR(15), email VARCHAR(100), phone VARCHAR(15))"; //use AUTOINCREMENT instead of mysql AUTO_INCREMENT
+                "VARCHAR(150), address VARCHAR(100), emergency VARCHAR(15), email VARCHAR(100), phone VARCHAR(15))"; //use AUTOINCREMENT instead of mysql AUTO_INCREMENT
             sqLiteDatabase.execSQL(tableQuery);
-        }
+    }
 
-        @Override
+    @Override
         public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
             String dropTable = "DROP TABLE IF EXISTS `clinic`";
             sqLiteDatabase.execSQL(dropTable);

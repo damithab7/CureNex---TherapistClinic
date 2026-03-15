@@ -1,196 +1,228 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/homeSwipeRefreshLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true">
-    <LinearLayout
-        android:id="@+id/main"
-        android:orientation="vertical"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/layout_margin"
-        android:layout_marginHorizontal="@dimen/layout_margin"
-        tools:context=".activity.HomeActivity">
+        android:fillViewport="true">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="@dimen/layout_margin"
+            android:layout_marginBottom="@dimen/layout_margin"
+            android:orientation="vertical"
+            tools:context=".activity.HomeActivity">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/home_promotion_card"
-                style="@style/Widget.Material3.CardView.Outlined"
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shimmer_view_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/md_theme_background"
-                app:cardCornerRadius="15dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:shimmer_auto_start="true">
 
-                <androidx.viewpager2.widget.ViewPager2
-                    android:id="@+id/home_promotion_slider"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="280dp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/doctorimageexample2"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <include layout="@layout/item_home_skeleton" />
+
+                </LinearLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
+            <LinearLayout
+                android:id="@+id/home_main"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/home_promotion_card"
+                        style="@style/Widget.Material3.CardView.Outlined"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/md_theme_background"
+                        app:cardCornerRadius="15dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.viewpager2.widget.ViewPager2
+                            android:id="@+id/home_promotion_slider"
+                            android:layout_width="match_parent"
+                            android:layout_height="280dp"
+                            android:adjustViewBounds="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/doctorimageexample2"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.cardview.widget.CardView>
+
+                    <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+                        android:id="@+id/home_dotsIndicator"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="5dp"
+                        app:dotsColor="@color/md_theme_secondary"
+                        app:dotsSize="6dp"
+                        app:dotsSpacing="4dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/home_promotion_card"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:selectedDotColor="@color/md_theme_primary" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.cardview.widget.CardView
+                    style="@style/Widget.Material3.CardView.Outlined"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="10dp"
+                    app:cardBackgroundColor="@color/md_theme_surfaceContainer"
+                    app:cardCornerRadius="15dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+
+                        <TextView
+                            android:id="@+id/home_quote_txt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins"
+                            android:text="The pain of parting is nothing to the joy of meeting again."
+                            android:textSize="@dimen/medium_font_size" />
+
+                        <TextView
+                            android:id="@+id/home_quote_author"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins"
+                            android:text="-Charles Dickens"
+                            android:textAlignment="textEnd"
+                            android:textSize="@dimen/small_font_size" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <LinearLayout
+                    android:id="@+id/servicesLayoutHome"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="5dp"
+                    android:layout_marginTop="1dp"
+                    android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@+id/h_search_edittext">
 
-            </androidx.cardview.widget.CardView>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins"
+                        android:gravity="center_vertical"
+                        android:includeFontPadding="false"
+                        android:text="Services"
+                        android:textSize="@dimen/sub_heading_size"
+                        android:textStyle="bold" />
 
-            <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
-                android:id="@+id/home_dotsIndicator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                app:dotsColor="@color/md_theme_secondary"
-                app:dotsSize="6dp"
-                app:dotsSpacing="4dp"
-                android:layout_marginBottom="5dp"
-                app:layout_constraintBottom_toBottomOf="@+id/home_promotion_card"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:selectedDotColor="@color/md_theme_primary" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="10dp"
-            style="@style/Widget.Material3.CardView.Outlined"
-           app:cardBackgroundColor="@color/md_theme_surfaceContainer"
-            app:cardCornerRadius="15dp">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:orientation="vertical">
-                <TextView
-                    android:id="@+id/home_quote_txt"
-                    android:fontFamily="@font/poppins"
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/home_services_see_all"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins"
+                        android:gravity="center_vertical"
+                        android:includeFontPadding="false"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:paddingVertical="0dp"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="0dp"
+                        android:text="@string/see_all"
+                        android:textAllCaps="false"
+                        android:textSize="@dimen/small_font_size"
+                        android:textStyle="bold"
+                        app:icon="@drawable/rightsmallarrow"
+                        app:iconGravity="textEnd"
+                        app:iconPadding="4dp"
+                        app:iconTint="?attr/textColorCustom" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/home_services_recycle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/medium_font_size"
-                    android:text="The pain of parting is nothing to the joy of meeting again."/>
+                    android:nestedScrollingEnabled="false"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/servicesLayoutHome" />
 
-                <TextView
-                    android:id="@+id/home_quote_author"
-                    android:fontFamily="@font/poppins"
+                <LinearLayout
+                    android:id="@+id/bestTherapistLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/small_font_size"
-                    android:text="-Charles Dickens"
-                    android:textAlignment="textEnd"/>
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/home_services_recycle">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins"
+                        android:gravity="center_vertical"
+                        android:includeFontPadding="false"
+                        android:text="Best Therapists"
+                        android:textSize="@dimen/sub_heading_size"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/home_therapists_see_all"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:paddingVertical="0dp"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="0dp"
+                        android:text="@string/view_all"
+                        android:textSize="@dimen/small_font_size"
+                        android:textStyle="bold"
+                        app:icon="@drawable/rightsmallarrow"
+                        app:iconGravity="textEnd"
+                        app:iconPadding="4dp" />
+
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/best_therapist_home_recycle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/bestTherapistLayout" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <LinearLayout
-            android:layout_marginVertical="5dp"
-            android:id="@+id/servicesLayoutHome"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/h_search_edittext">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:textStyle="bold"
-                android:includeFontPadding="false"
-                android:gravity="center_vertical"
-                android:layout_height="match_parent"
-                android:fontFamily="@font/poppins"
-                android:textSize="@dimen/sub_heading_size"
-                android:text="Services" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/home_services_see_all"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:icon="@drawable/rightsmallarrow"
-                app:iconGravity="textEnd"
-                app:iconPadding="4dp"
-                android:fontFamily="@font/poppins"
-                app:iconTint="?attr/textColorCustom"
-                android:includeFontPadding="false"
-                android:gravity="center_vertical"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:paddingVertical="0dp"
-                android:paddingStart="5dp"
-                android:paddingEnd="0dp"
-                android:text="@string/see_all"
-                android:textAllCaps="false"
-                android:textSize="@dimen/small_font_size"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/home_services_recycle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/servicesLayoutHome" />
-
-        <LinearLayout
-            android:id="@+id/bestTherapistLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/home_services_recycle">
-
-            <TextView
-                android:includeFontPadding="false"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:textStyle="bold"
-                android:fontFamily="@font/poppins"
-                android:gravity="center_vertical"
-                android:text="Best Therapists"
-                android:textSize="@dimen/sub_heading_size" />
-
-            <com.google.android.material.button.MaterialButton
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:text="@string/view_all"
-                android:textStyle="bold"
-                android:paddingVertical="0dp"
-                android:paddingStart="5dp"
-                android:paddingEnd="0dp"
-                android:textSize="@dimen/small_font_size"
-                android:id="@+id/home_therapists_see_all"
-                app:icon="@drawable/rightsmallarrow"
-                app:iconGravity="textEnd"
-                app:iconPadding="4dp"
-                />
 
         </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/best_therapist_home_recycle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/bestTherapistLayout" />
-
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

@@ -41,7 +41,6 @@ public class CartFragment extends Fragment {
 
     private List<CartItem> cartItems;
 
-    private SpinnerDialog spinner;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,7 +56,7 @@ public class CartFragment extends Fragment {
 
         BottomNavigationView navigationView = getActivity().findViewById(R.id.bottomNavigationView);
 
-        spinner = SpinnerDialog.show(getParentFragmentManager());
+        SpinnerDialog spinner = SpinnerDialog.show(getParentFragmentManager());
 
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -69,6 +68,7 @@ public class CartFragment extends Fragment {
                     .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot qds) {
+                            spinner.dismiss();
                             if (!qds.isEmpty()) {
                                 binding.cartProcessBtn.setEnabled(true);
 
@@ -117,7 +117,13 @@ public class CartFragment extends Fragment {
                                                 if(!cartItems.isEmpty()) {
                                                     navigationView.getOrCreateBadge(R.id.nav_cart)
                                                             .setNumber(cartItems.size());
+                                                    getParentFragmentManager().beginTransaction().replace(R.id.navContainerView, new CartFragment())
+                                                            .addToBackStack(null)
+                                                            .commit();
                                                 }else{
+                                                    getParentFragmentManager().beginTransaction().replace(R.id.navContainerView, new EmptyCartFragment())
+                                                            .addToBackStack(null)
+                                                            .commit();
                                                     navigationView.removeBadge(R.id.nav_cart);
                                                 }
                                                 updateTotal();
@@ -127,12 +133,18 @@ public class CartFragment extends Fragment {
                                 });
                                 binding.cartCartItems.setAdapter(adapter);
                                 updateTotal();
+
                             } else {
+                                getParentFragmentManager().beginTransaction().replace(R.id.navContainerView, new EmptyCartFragment())
+                                        .addToBackStack(null)
+                                        .commit();
                                 navigationView.removeBadge(R.id.nav_cart);
                             }
 
                             spinner.dismiss();
                         }
+                    }).addOnFailureListener(aVoid->{
+                        spinner.dismiss();
                     });
         }
 

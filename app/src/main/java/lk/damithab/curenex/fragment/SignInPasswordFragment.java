@@ -29,6 +29,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.activity.SignInActivity;
 import lk.damithab.curenex.databinding.FragmentSignInPasswordBinding;
+import lk.damithab.curenex.dialog.ToastDialog;
 import lk.damithab.curenex.model.SignInViewModel;
 import lk.damithab.curenex.model.User;
 import lk.damithab.curenex.util.RegexUtil;
@@ -103,7 +104,7 @@ public class SignInPasswordFragment extends Fragment {
                                     auth.sendPasswordResetEmail(email)
                                             .addOnCompleteListener(task -> {
                                                 if (task.isSuccessful()) {
-
+                                                    new ToastDialog(getParentFragmentManager(), "Rest password link has send to your email. Please check your inbox or spam folders");
                                                 } else {
                                                     // Handle error (e.g., user not found)
                                                     Log.e("AuthError", task.getException().getMessage());
