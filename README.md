@@ -14,7 +14,6 @@
 * Managed via Firebase Auth and the Admin SDK to strict role-based permissions between the three apps.
 * Integrated Firebase Cloud Messaging (FCM) to send push notifications to users and therapists immediately after an appointment is booked or a product order is placed.
 * Implemented Facebook Shimmer and Skeleton Loading screens to provide a better UX feel while data is fetching
-* 
 
 ## Tech Stack
 <ul>
