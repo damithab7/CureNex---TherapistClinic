@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:gravity="center"
     android:layout_gravity="center"
@@ -11,25 +12,28 @@
 
     <ImageView
         android:id="@+id/dialog_icon"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:src="@drawable/check_circle_24px"
+        android:layout_width="190dp"
+        android:layout_height="190dp"
+        android:src="@drawable/orderconfirm"
         android:contentDescription="Success Icon"
         android:layout_marginBottom="10dp"/>
     <TextView
+        android:layout_marginVertical="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
         android:fontFamily="@font/poppins"
-        android:textSize="18sp"
+        android:textSize="17sp"
         android:textAlignment="center"
         android:text="We are please to inform you that your appointment has been confirmed "/>
 
     <com.google.android.material.button.MaterialButton
+        style="@style/Widget.Material3.Button.TonalButton"
         android:id="@+id/booking_confirm_backtohomebtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Back to Home"
+        app:icon="@drawable/rightarrow"
+        app:iconGravity="textEnd"
         android:fontFamily="@font/poppins"/>
 
 </LinearLayout>

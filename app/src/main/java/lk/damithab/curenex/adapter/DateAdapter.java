@@ -54,7 +54,7 @@ public class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         DateModel date = dateList.get(position);
 
-        holder.dateSlotName.setText(date.getDayName() +", ");
+        holder.dateSlotName.setText(date.getDayName());
         holder.dateSlotDay.setText(date.getDateNum());
 
         Context context = holder.itemView.getContext();

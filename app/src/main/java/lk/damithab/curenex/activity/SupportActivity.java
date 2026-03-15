@@ -5,12 +5,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.google.android.material.appbar.MaterialToolbar;
 
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.databinding.ActivitySupportBinding;
@@ -26,6 +29,16 @@ public class SupportActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivitySupportBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        MaterialToolbar toolbar = binding.supportToolbar;
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getOnBackPressedDispatcher().onBackPressed();
+            }
+        });
+
 
         Clinic clinic = getLocalClinicInfo();
         binding.supportPhoneNo.setText(clinic.getPhone());

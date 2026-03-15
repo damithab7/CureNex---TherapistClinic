@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -91,6 +93,12 @@ public class AddAddressFragment extends Fragment {
 
         loadListeners();
 
+        AutoCompleteTextView shippingCities = binding.shippingDetailsCity;
+        String[] cities = {"Ampara","Anuradhapura", "Badulla","Colombo","Gampaha","Galle","Kurunegala","Kegalla","Bandarawela","Bandaragama"
+                ,"Haputhale","Horana","Mathale","Hambanthota"};
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_dropdown_item_1line, cities);
+        shippingCities.setAdapter(arrayAdapter);
+
         if(addressId != null){
             binding.saveAddressBtn.setText("Update");
             db.collection("address").document(addressId)
@@ -100,6 +108,7 @@ public class AddAddressFragment extends Fragment {
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             if (documentSnapshot.exists()) {
                                 Address address = documentSnapshot.toObject(Address.class);
+                                assert address != null;
                                 String[] name = address.getName().split(" ");
                                 binding.shippingDetailsName.setText(name[0]);
                                 binding.shippingDetailsLastname.setText(name[1]);
@@ -377,14 +386,14 @@ public class AddAddressFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().findViewById(R.id.bottomNavigationView).setVisibility(View.GONE);
-        getActivity().findViewById(R.id.main_toolbar).setVisibility(View.GONE);
+//        getActivity().findViewById(R.id.bottomNavigationView).setVisibility(View.GONE);
+//        getActivity().findViewById(R.id.main_toolbar).setVisibility(View.GONE);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        getActivity().findViewById(R.id.bottomNavigationView).setVisibility(View.VISIBLE);
-        getActivity().findViewById(R.id.main_toolbar).setVisibility(View.VISIBLE);
+//        getActivity().findViewById(R.id.bottomNavigationView).setVisibility(View.VISIBLE);
+//        getActivity().findViewById(R.id.main_toolbar).setVisibility(View.VISIBLE);
     }
 }

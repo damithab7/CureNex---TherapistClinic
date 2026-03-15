@@ -15,12 +15,14 @@
         android:padding="8dp">
 
         <TextView
+            android:fontFamily="@font/poppins"
             android:id="@+id/item_time_slot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="09.00" />
 
         <TextView
+            android:fontFamily="@font/poppins"
             android:id="@+id/availableSlotsText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

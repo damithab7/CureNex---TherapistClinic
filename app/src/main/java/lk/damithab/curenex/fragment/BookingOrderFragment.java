@@ -1,16 +1,27 @@
 package lk.damithab.curenex.fragment;
 
+import static androidx.core.content.ContextCompat.getSystemService;
 import static lk.damithab.curenex.util.RegexUtil.isCharacterValid;
 import static lk.damithab.curenex.util.RegexUtil.isEmailValid;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.RemoteInput;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
@@ -20,6 +31,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -35,14 +47,18 @@ import com.google.firebase.storage.FirebaseStorage;
 import org.w3c.dom.Document;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import lk.damithab.curenex.R;
+import lk.damithab.curenex.activity.BookingHistoryActivity;
+import lk.damithab.curenex.activity.MainActivity;
 import lk.damithab.curenex.databinding.FragmentBookingOrderBinding;
 import lk.damithab.curenex.listener.FirestoreCallback;
 import lk.damithab.curenex.model.Booking;
+import lk.damithab.curenex.model.Notification;
 import lk.damithab.curenex.model.Therapist;
 import lk.damithab.curenex.util.RegexUtil;
 import lk.payhere.androidsdk.PHConstants;
@@ -67,6 +83,8 @@ public class BookingOrderFragment extends Fragment {
     private boolean paymentActive = false;
 
     private FirebaseStorage storage;
+
+    private static final String CHANNEL_ID = "bookings_channel";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -96,6 +114,8 @@ public class BookingOrderFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         getActivity().findViewById(R.id.bottomNavigationView).setVisibility(View.GONE);
         getActivity().findViewById(R.id.main_toolbar).setVisibility(View.GONE);
+
+        createNotificationChannel();
 
         // DOB date picker
         MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
@@ -469,6 +489,7 @@ public class BookingOrderFragment extends Fragment {
         newBookingRef.set(booking).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
+                sendNotification(booking.getBookingId());
                 getParentFragmentManager().beginTransaction()
                         .replace(R.id.navContainerView, new BookingConfirmedFragment())
                         .addToBackStack(null)
@@ -476,6 +497,84 @@ public class BookingOrderFragment extends Fragment {
             }
         });
     }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Appointment Notifications";
+            String description = "Channel for general appointments";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager = getSystemService(getContext(), NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    private void sendNotification(String bookingId) {
+        Intent intent = new Intent(getActivity(), BookingHistoryActivity.class);
+        int requestCode = 0;
+
+        String title = "Booking Confirmed!";
+        String message = "Booking Confirmed: #" + bookingId;
+        PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(),
+                requestCode,
+                intent,
+                PendingIntent.FLAG_MUTABLE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), CHANNEL_ID)
+                .setSmallIcon(R.drawable.notification_icon)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(requireContext());
+
+        /// Save notification to db
+        Notification notification = new Notification();
+
+        Calendar calendar = Calendar.getInstance(); ///Today date
+        SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()); /// to Store bookings date
+
+        notification.setDate(dbFormat.format(calendar.getTime()));
+        notification.setTitle(title);
+        notification.setMessage(message);
+        notification.setUid(firebaseAuth.getUid());
+
+        DocumentReference notifiRef = db.collection("notifications").document();
+        String generatedId = notifiRef.getId();
+        notification.setNotificationId(generatedId);
+        notifiRef.set(notification).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+
+            }
+        });
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            notificationManager.notify(1, builder.build());
+        }else{
+            checkAndRequestPermission();
+        }
+    }
+
+    private void checkAndRequestPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { /// Out android version => android version 13
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            }
+        }
+    }
+
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+
+                } else {
+
+                }
+            });
+
 
     @Override
     public void onResume() {

@@ -23,5 +23,4 @@ public class Therapist {
     private String workEmail;
     private String workMobileNo;
 
-
 }

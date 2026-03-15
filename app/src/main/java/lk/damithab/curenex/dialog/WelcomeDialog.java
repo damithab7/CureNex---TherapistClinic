@@ -13,24 +13,35 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.google.android.material.button.MaterialButton;
+
 import lk.damithab.curenex.R;
+import lk.damithab.curenex.databinding.DialogWelcomeBinding;
+import lombok.Setter;
 
 public class WelcomeDialog extends DialogFragment {
-    public Button continueBtn;
 
-    public WelcomeDialog() {
+    private DialogWelcomeBinding binding;
 
-    }
+    @Setter
+    private View.OnClickListener onContinueClickListener;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.dialog_welcome, container, false);
+        binding = DialogWelcomeBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
 
-        Button continueBtn = v.findViewById(R.id.WelcomeScreenContinueBtn);
-        continueBtn.setOnClickListener(view -> dismiss());
-
-        return v;
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (onContinueClickListener != null) {
+            binding.WelcomeScreenContinueBtn.setOnClickListener(v -> {
+                onContinueClickListener.onClick(v);
+                dismiss();
+            });
+        }
     }
 
     @Override

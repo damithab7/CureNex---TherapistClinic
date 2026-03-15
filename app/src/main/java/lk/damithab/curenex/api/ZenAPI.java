@@ -8,6 +8,9 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 
 public interface ZenAPI {
-    @GET("https://zenquotes.io/api/today")
+    @GET("today")
     Call<List<QuoteDTO>> getQuote();
+
+    @GET("random")
+    Call<List<QuoteDTO>> getRandomQuote();
 }

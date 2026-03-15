@@ -334,6 +334,122 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
+                    <LinearLayout
+                        android:visibility="gone"
+                        android:id="@+id/single_product_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="5dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="10dp"
+                            app:cardCornerRadius="10dp">
+
+                            <ImageView
+                                android:id="@+id/single_product_image"
+                                android:layout_width="85dp"
+                                android:layout_height="85dp"
+                                android:scaleType="centerCrop"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:srcCompat="@drawable/doctorimageexample2" />
+
+                        </androidx.cardview.widget.CardView>
+
+                        <LinearLayout
+                            android:layout_gravity="center"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/single_product_title"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:ellipsize="end"
+                                        android:fontFamily="@font/poppins"
+                                        android:lines="1"
+                                        android:text="Hasarangi Perera"
+                                        android:textSize="@dimen/medium_font_size"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:id="@+id/single_product_attributes"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0dp"
+                                        android:layout_weight="1"
+                                        android:fontFamily="@font/poppins"
+                                        android:text="therapist@gmail.com"
+                                        android:textColor="@color/material_dynamic_neutral60" />
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="5dp"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <LinearLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="bottom"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            android:id="@+id/single_product_qty"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="0dp"
+                                            android:layout_weight="1"
+                                            android:fontFamily="@font/poppins"
+                                            android:text="Time 17:00"
+                                            android:textColor="@color/material_dynamic_neutral40" />
+
+                                    </LinearLayout>
+
+                                </LinearLayout>
+
+                                <TextView
+                                    android:id="@+id/single_product_price"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="bottom"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginEnd="5dp"
+                                    android:fontFamily="@font/poppins"
+                                    android:text="LKR 3800/ h"
+                                    android:textSize="14dp" />
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:layout_marginTop="5dp"

@@ -33,6 +33,13 @@ public class ListingFragment extends Fragment {
 
     private String categoryId;
 
+    private FirebaseFirestore db;
+
+    private int completedTasks = 0;
+    private final int TOTAL_TASKS = 1;
+
+    private boolean setLoading = true;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,14 +60,52 @@ public class ListingFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding.recyclerviewListing.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
 
+        startDataLoading(true);
+
+        getActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                requireActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
+    }
+
+    private void checkAllTasksFinished() {
+        completedTasks++;
+        Log.d("HomeFragment", "checkAllTasksFinished: " + completedTasks);
+        if (completedTasks >= TOTAL_TASKS) {
+            onDataLoad(false);
+            completedTasks = 0; // Reset for swipe-to-refresh
+        }
+    }
+
+    private void startDataLoading(boolean isShimmer) {
+        onDataLoad(isShimmer);
+        loadData();
+    }
+
+    private synchronized void onDataLoad(boolean isShimmer) {
+        if (isShimmer) {
+            binding.shimmerListingViewContainer.startShimmer();
+            binding.shimmerListingViewContainer.setVisibility(View.VISIBLE);
+            binding.recyclerviewListing.setVisibility(View.GONE);
+        } else {
+            binding.shimmerListingViewContainer.stopShimmer();
+            binding.shimmerListingViewContainer.setVisibility(View.GONE);
+            binding.recyclerviewListing.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void loadData() {
         db.collection("products")
                 .whereEqualTo("categoryId", categoryId)
                 .orderBy("title", Query.Direction.ASCENDING)
                 .get()
-                .addOnSuccessListener(ds->{
-                    if (!ds.isEmpty()){
+                .addOnSuccessListener(ds -> {
+                    checkAllTasksFinished();
+                    if (!ds.isEmpty()) {
                         List<Product> products = ds.toObjects(Product.class);
 
                         adapter = new ListingAdapter(products, product -> {
@@ -81,15 +126,12 @@ public class ListingFragment extends Fragment {
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.e("Firestore", "Error: "+e.getMessage());
+                        checkAllTasksFinished();
+                        Log.e("Firestore", "Error: " + e.getMessage());
                     }
                 });
 
-        getActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                requireActivity().getSupportFragmentManager().popBackStack();
-            }
-        });
     }
+
+
 }

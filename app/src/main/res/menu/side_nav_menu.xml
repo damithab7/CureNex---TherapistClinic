@@ -23,13 +23,14 @@
             android:title="@string/side_nav_cart_title"
             android:visible="false" />
 
+    </group>
+    <group android:id="@+id/side_nav_group_secondary">
         <item
             android:id="@+id/side_nav_notifications"
             android:checkable="true"
             android:icon="@drawable/notificationicon"
             android:title="@string/side_nav_notification_title"
             android:visible="false" />
-
         <item
             android:id="@+id/side_nav_bookings"
             android:checkable="true"
@@ -43,7 +44,6 @@
             android:title="@string/side_nav_support_title"
             android:visible="true" />
     </group>
-
 
     <group android:id="@+id/side_nav_group_auth">
         <item

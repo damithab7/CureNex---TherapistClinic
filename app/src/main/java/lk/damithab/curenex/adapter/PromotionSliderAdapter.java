@@ -10,11 +10,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.model.Promotion;
+import lk.damithab.curenex.module.GlideApp;
 
 public class PromotionSliderAdapter extends RecyclerView.Adapter<PromotionSliderAdapter.ProductSliderViewHolder> {
 
@@ -38,14 +40,13 @@ public class PromotionSliderAdapter extends RecyclerView.Adapter<PromotionSlider
     public void onBindViewHolder(@NonNull ProductSliderViewHolder holder, int position) {
         Promotion promotion = promotions.get(position);
 
-        storage.getReference(promotion.getImageUrl())
-                .getDownloadUrl()
-                .addOnSuccessListener(uri -> {
-                    Glide.with(holder.itemView.getContext())
-                            .load(uri)
-                            .centerCrop()
-                            .into(holder.imageView);
-                });
+        StorageReference ref = storage.getReference(promotion.getImageUrl());
+
+        GlideApp.with(holder.itemView.getContext())
+                .load(ref)
+                .centerCrop()
+                .placeholder(R.drawable.imageplaceholder2)
+                .into(holder.imageView);
     }
 
     @Override

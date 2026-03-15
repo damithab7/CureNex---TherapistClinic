@@ -40,6 +40,8 @@
             android:id="@+id/list_item_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="3"
             android:layout_marginTop="@dimen/small_margin_top"
             android:textSize="@dimen/default_font_size"
             android:textStyle="bold"
@@ -57,7 +59,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/md_theme_onSurface"
-                android:textSize="@dimen/small_font_size"
+                android:textSize="16dp"
                 android:text="Women Shoes" />
             <androidx.cardview.widget.CardView
                 android:layout_marginHorizontal="@dimen/item_card_margin_horizontal"

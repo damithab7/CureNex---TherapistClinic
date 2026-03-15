@@ -3,9 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/md_theme_background"
     android:layout_height="wrap_content">
     <LinearLayout
+        android:background="@drawable/side_nav_header_bg"
+        android:layout_margin="20dp"
         android:id="@+id/link_to_about"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,7 +18,10 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_gravity="bottom"
-            android:layout_margin="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginEnd="10dp"
             android:src="@drawable/userplacholder" />
         <LinearLayout
             android:layout_marginVertical="20dp"
@@ -29,7 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:textSize="21sp"
+                android:textSize="@dimen/medium_font_size"
                 android:fontFamily="@font/poppins"
                 android:text="Log in to continue" />
 
@@ -37,7 +41,7 @@
             <TextView
                 android:id="@+id/drawer_header_email"
                 android:fontFamily="@font/poppins"
-                android:textSize="14sp"
+                android:textSize="@dimen/small_font_size"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"

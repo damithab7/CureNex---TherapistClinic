@@ -6,6 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.SettingsActivity">
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/settings_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:navigationIcon="@drawable/backicon"
+        app:title="Settings"
+        app:titleCentered="true"
+        app:titleTextAppearance="@style/logoFont">
+
+    </com.google.android.material.appbar.MaterialToolbar>
+
     <TextView
         android:paddingStart="20dp"
         android:textAllCaps="true"
@@ -25,11 +36,42 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/accountAddressBtn"
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_location_rounded"
+            android:drawableLeft="@drawable/settingsicon"
+            android:fontFamily="@font/poppins"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:minHeight="0dp"
+            android:paddingVertical="@dimen/medium_padding"
+            android:paddingStart="20dp"
+            android:text="OS settings"
+            android:textAlignment="viewStart"
+            android:textAllCaps="false"
+            android:textColor="?attr/textColorCustom"
+            app:cornerRadius="0dp"
+            android:layout_weight="4"
+            app:iconPadding="@dimen/icon_padding" />
+
+        <Switch
+            android:layout_gravity="center"
+            android:checked="true"
+            android:id="@+id/settings_default_os_theme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+    </LinearLayout><LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <com.google.android.material.button.MaterialButton
+            android:enabled="false"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/dark_mode_24px"
             android:fontFamily="@font/poppins"
             android:insetTop="0dp"
             android:insetBottom="0dp"
@@ -45,7 +87,9 @@
             app:iconPadding="@dimen/icon_padding" />
 
         <Switch
-            android:id="@+id/switch1"
+            android:layout_gravity="center"
+            android:enabled="false"
+            android:id="@+id/settings_switch_theme"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1" />

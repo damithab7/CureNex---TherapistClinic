@@ -17,6 +17,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 import java.util.Locale;
@@ -24,6 +25,7 @@ import java.util.Locale;
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.model.CartItem;
 import lk.damithab.curenex.model.Product;
+import lk.damithab.curenex.module.GlideApp;
 
 public class CheckoutItemsAdapter extends RecyclerView.Adapter<CheckoutItemsAdapter.ViewHolder> {
 
@@ -63,14 +65,14 @@ public class CheckoutItemsAdapter extends RecyclerView.Adapter<CheckoutItemsAdap
                     StringBuilder attrBuilder = getStringBuilder();
                     holder.productAttr.setText(attrBuilder.toString());
                     holder.productQuantity.setText("Quantity: "+String.valueOf(cartItem.getQuantity()));
-                    storage.getReference(product.getImages().get(0))
-                            .getDownloadUrl()
-                            .addOnSuccessListener(uri -> {
-                                Glide.with(holder.itemView.getContext())
-                                        .load(uri)
-                                        .centerCrop()
-                                        .into(holder.productImage);
-                            });
+
+                    StorageReference ref = storage.getReference(product.getImages().get(0));
+
+                    GlideApp.with(holder.itemView.getContext())
+                            .load(ref)
+                            .centerCrop()
+                            .placeholder(R.drawable.imageplaceholder2)
+                            .into(holder.productImage);
 
 //                holder.itemView.setOnClickListener(v -> {
 //

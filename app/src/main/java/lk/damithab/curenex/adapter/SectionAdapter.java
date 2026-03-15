@@ -13,11 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.model.Product;
+import lk.damithab.curenex.module.GlideApp;
 
 public class SectionAdapter extends RecyclerView.Adapter<SectionAdapter.ViewHolder> {
     private List<Product> products;
@@ -44,14 +46,14 @@ public class SectionAdapter extends RecyclerView.Adapter<SectionAdapter.ViewHold
         Product product = products.get(position);
         holder.productTitle.setText(product.getTitle());
         holder.productPrice.setText("LKR "+product.getPrice());
-        storage.getReference(product.getImages().get(0))
-                .getDownloadUrl()
-                .addOnSuccessListener(uri -> {
-                    Glide.with(holder.itemView.getContext())
-                            .load(uri)
-                            .centerCrop()
-                            .into(holder.productImage);
-                });
+
+        StorageReference ref = storage.getReference(product.getImages().get(0));
+
+        GlideApp.with(holder.itemView.getContext())
+                .load(ref)
+                .centerCrop()
+                .placeholder(R.drawable.imageplaceholder2)
+                .into(holder.productImage);
 //        Glide.with(holder.itemView.getContext())
 //                .load(product.getImages().get(0))
 //                .centerCrop()

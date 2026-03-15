@@ -51,4 +51,21 @@ public class SpinnerDialog extends DialogFragment {
 
     }
 
+    public void hideDialog() {
+        Dialog dialog = getDialog();
+        if (dialog != null && dialog.isShowing()) {
+            dialog.hide();
+        }
+    }
+
+    /**
+     * Shows the dialog again if it was previously hidden.
+     */
+    public void resumeDialog() {
+        Dialog dialog = getDialog();
+        if (dialog != null && !dialog.isShowing()) {
+            dialog.show();
+        }
+    }
+
 }

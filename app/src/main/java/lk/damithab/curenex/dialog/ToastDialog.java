@@ -33,6 +33,8 @@ public class ToastDialog extends DialogFragment {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_toast);
 
+        setCancelable(false);
+
         if (getArguments() != null) {
             String message = getArguments().getString(ARG_MESSAGE);
             TextView textView = dialog.findViewById(R.id.dialog_text_view);

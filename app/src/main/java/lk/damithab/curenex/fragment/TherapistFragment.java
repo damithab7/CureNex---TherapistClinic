@@ -34,6 +34,11 @@ public class TherapistFragment extends Fragment {
 
     private String serviceId;
 
+    private FirebaseFirestore db;
+
+    private int completedTasks = 0;
+    private final int TOTAL_TASKS = 1;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,15 +60,52 @@ public class TherapistFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding.recyclerviewTherapist.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
 
+        startDataLoading(true);
+
+        getActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                requireActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
+    }
+
+    private void checkAllTasksFinished() {
+        completedTasks++;
+        Log.d("HomeFragment", "checkAllTasksFinished: " + completedTasks);
+        if (completedTasks >= TOTAL_TASKS) {
+            onDataLoad(false);
+            completedTasks = 0; // Reset for swipe-to-refresh
+        }
+    }
+
+    private void startDataLoading(boolean isShimmer) {
+        onDataLoad(isShimmer);
+        loadData();
+    }
+
+    private synchronized void onDataLoad(boolean isShimmer) {
+        if (isShimmer) {
+            binding.shimmerTherapistViewContainer.startShimmer();
+            binding.shimmerTherapistViewContainer.setVisibility(View.VISIBLE);
+            binding.recyclerviewTherapist.setVisibility(View.GONE);
+        } else {
+            binding.shimmerTherapistViewContainer.stopShimmer();
+            binding.shimmerTherapistViewContainer.setVisibility(View.GONE);
+            binding.recyclerviewTherapist.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void loadData(){
         db.collection("therapist")
                 .whereEqualTo("serviceId", serviceId)
                 .orderBy("name", Query.Direction.ASCENDING)
                 .get()
                 .addOnSuccessListener(ds->{
                     /// need to find a way to get User details and Service details. UPDATE -> I put workEmail & workMobileNo in therapist document
-                /// I added name in Therapist class so I don't need to get user details.
+                    /// I added name in Therapist class so I don't need to get user details.
                     if (!ds.isEmpty()){
                         List<Therapist> therapists = ds.toObjects(Therapist.class);
 
@@ -81,19 +123,14 @@ public class TherapistFragment extends Fragment {
                         });
 
                         binding.recyclerviewTherapist.setAdapter(adapter);
+                        checkAllTasksFinished();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        checkAllTasksFinished();
                         Log.e("Firestore", "Error: "+e.getMessage());
                     }
                 });
-
-        getActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                requireActivity().getSupportFragmentManager().popBackStack();
-            }
-        });
     }
 }

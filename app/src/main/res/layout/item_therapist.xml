@@ -72,7 +72,7 @@
             android:id="@+id/item_therapist_rating_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/small_font_size"
+            android:textSize="16dp"
             android:text="Women Shoes" />
 
 
