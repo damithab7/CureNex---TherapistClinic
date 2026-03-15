@@ -12,6 +12,9 @@
 * Performance Optimization - Implemented Glide for image loading and caching of firebase storage images.
 * External Services - Integrated the Zen API to handle [quotes] for users.
 * Managed via Firebase Auth and the Admin SDK to strict role-based permissions between the three apps.
+* Integrated Firebase Cloud Messaging (FCM) to send push notifications to users and therapists immediately after an appointment is booked or a product order is placed.
+* Implemented Facebook Shimmer and Skeleton Loading screens to provide a better UX feel while data is fetching
+* 
 
 ## Tech Stack
 <ul>
@@ -22,10 +25,13 @@
     Mobile: Android SDK
     </li>
   <li>
-    Backend: Firebase (Firestore, Auth, Admin SDK)
+    Backend: Firebase (FCM, Firestore, Auth, Storage & Admin SDK)
     </li>
   <li>
-    APIs & SDKs: PayHere, Zen API, Glide
+    UI/UX: Facebook Shimmer, Skeleton Layouts, Glide
+  </li>
+  <li>
+    APIs & SDKs: PayHere, Zen API
   </li>
 </ul>
 
