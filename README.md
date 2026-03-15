@@ -7,6 +7,23 @@
 
 ## Author
 
+## Tech Stack
+<ul>
+  <li>
+    Language: Java
+  </li>
+  <li>
+    Mobile: Android SDK
+    </li>
+  <li>
+    Backend: Firebase (Firestore, Auth, Admin SDK)
+    </li>
+  <li>
+    APIs & SDKs: PayHere, Zen API, Glide
+  </li>
+</ul>
+## Author
+
 👤 **damitha.sb**
 
 * Github: [@damithab17](https://github.com/damithab17)
