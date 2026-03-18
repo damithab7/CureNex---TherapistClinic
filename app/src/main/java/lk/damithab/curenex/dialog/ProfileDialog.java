@@ -37,6 +37,7 @@ import java.util.UUID;
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.databinding.DialogProfileDialogBinding;
 import lk.damithab.curenex.model.User;
+import lk.damithab.curenex.module.GlideApp;
 import lk.damithab.curenex.util.RegexUtil;
 
 public class ProfileDialog extends DialogFragment {
@@ -89,7 +90,7 @@ public class ProfileDialog extends DialogFragment {
                             if (ds.exists()) {
                                 User user = ds.toObject(User.class);
                                 if (user.getProfileUrl().startsWith("https")) {
-                                    Glide.with(binding.getRoot())
+                                    GlideApp.with(binding.getRoot())
                                             .load(user.getProfileUrl())
                                             .centerCrop()
                                             .into(binding.mainImageView);
@@ -97,7 +98,7 @@ public class ProfileDialog extends DialogFragment {
                                     storage.getReference(user.getProfileUrl())
                                             .getDownloadUrl()
                                             .addOnSuccessListener(uri -> {
-                                                Glide.with(binding.getRoot())
+                                                GlideApp.with(binding.getRoot())
                                                         .load(uri)
                                                         .centerCrop()
                                                         .into(binding.mainImageView);

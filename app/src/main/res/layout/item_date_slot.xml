@@ -5,34 +5,46 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginEnd="5dp"
+    app:strokeWidth="0dp"
     app:cardBackgroundColor="@color/md_theme_surfaceContainer"
-    app:cardCornerRadius="15dp">
+    app:cardCornerRadius="10dp">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingVertical="10dp"
-        android:paddingHorizontal="20dp">
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="10dp">
 
-    <TextView
-        android:layout_gravity="center_horizontal"
-        android:fontFamily="@font/poppins"
-        android:id="@+id/item_dateslot_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:chipStrokeWidth="0dp"
-        android:text="Fri"
-        />
+        <TextView
+            android:id="@+id/item_dateslot_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@font/poppins"
+            android:text="Fri"
+            app:chipStrokeWidth="0dp" />
 
-    <TextView
-        android:layout_gravity="center_horizontal"
-        android:fontFamily="@font/poppins"
-        android:textStyle="bold"
-        android:id="@+id/item_dateslot_day"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="17"
-        android:textSize="14sp" />
+        <TextView
+            android:id="@+id/item_dateslot_day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@font/poppins"
+            android:text="17"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/item_date_pto_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@font/poppins"
+            android:text="Unavailable"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:visibility="visible" />
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

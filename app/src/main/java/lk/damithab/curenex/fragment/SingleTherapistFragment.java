@@ -33,6 +33,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -47,8 +48,11 @@ import lk.damithab.curenex.adapter.TimeSlotAdapter;
 import lk.damithab.curenex.databinding.FragmentSingleTherapistBinding;
 import lk.damithab.curenex.dialog.MessageDialog;
 import lk.damithab.curenex.dialog.ToastDialog;
+import lk.damithab.curenex.listener.FirestoreCallback;
 import lk.damithab.curenex.model.Booking;
 import lk.damithab.curenex.model.DateModel;
+import lk.damithab.curenex.model.PTO;
+import lk.damithab.curenex.model.Product;
 import lk.damithab.curenex.model.Therapist;
 import lk.damithab.curenex.model.TherapistSchedule;
 import lk.damithab.curenex.util.AnimationUtil;
@@ -76,7 +80,9 @@ public class SingleTherapistFragment extends Fragment {
     private FirebaseStorage storage;
 
     private int completedTasks = 0;
-    private final int TOTAL_TASKS = 2;
+    private final int TOTAL_TASKS = 3;
+
+    private List<PTO> ptoList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -297,61 +303,61 @@ public class SingleTherapistFragment extends Fragment {
 
                                             /// Initialize time slot adapter here
 
-                                            List<DateModel> uniqueDates = generateDatesFor(workingDays);
+                                            generateDatesFor(workingDays, uniqueDates->{
+                                                timeSlotAdapter = new TimeSlotAdapter(new ArrayList<>(), schedule -> {
+                                                    selectedTime = schedule.getStartTime();
+                                                    SingleTherapistFragment.this.selectedSlot = schedule;
+                                                });
 
-                                            timeSlotAdapter = new TimeSlotAdapter(new ArrayList<>(), schedule -> {
-                                                selectedTime = schedule.getStartTime();
-                                                SingleTherapistFragment.this.selectedSlot = schedule;
-                                            });
+                                                binding.sTTimerecycle.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+                                                binding.sTTimerecycle.setAdapter(timeSlotAdapter);
 
-                                            binding.sTTimerecycle.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-                                            binding.sTTimerecycle.setAdapter(timeSlotAdapter);
-
-                                            dateAdapter = new DateAdapter(uniqueDates, selectedDate -> {
+                                                dateAdapter = new DateAdapter(uniqueDates, selectedDate -> {
 
 //                                                displayTimeSlots(selectedDate, currentSchedule);
 
-                                                SingleTherapistFragment.this.selectedDate = selectedDate; // Store the chosen date
-                                                SingleTherapistFragment.this.selectedSlot = null; // Reset time selection when day changes
+                                                    SingleTherapistFragment.this.selectedDate = selectedDate;
+                                                    SingleTherapistFragment.this.selectedSlot = null;
 
-
-                                                /// Filter Time Schedules
-                                                List<TherapistSchedule> dailySlots = new ArrayList<>();
-                                                for (TherapistSchedule s : currentSchedule) {
-                                                    if (s.getDayOfWeek() == selectedDate.getDayOfWeek()) {
-                                                        dailySlots.add(s);
+                                                    /// Filter Time Schedules
+                                                    List<TherapistSchedule> dailySlots = new ArrayList<>();
+                                                    for (TherapistSchedule s : currentSchedule) {
+                                                        if (s.getDayOfWeek() == selectedDate.getDayOfWeek()) {
+                                                            dailySlots.add(s);
+                                                        }
                                                     }
+
+                                                    Log.d("bookigns", "Date is selected" + "therapistId " + docId + " | bookingDate " + selectedDate.getFullDate());
+
+
+                                                    db.collection("bookings")
+                                                            .whereEqualTo("therapistId", docId)
+                                                            .whereEqualTo("bookingDate", selectedDate.getFullDate())
+                                                            .get()
+                                                            .addOnSuccessListener(bookingDocs -> {
+
+
+                                                                Map<String, Integer> bookingCounts = new HashMap<>();
+                                                                for (DocumentSnapshot bookingDoc : bookingDocs) {
+                                                                    String sid = bookingDoc.getString("scheduleId");
+                                                                    bookingCounts.put(sid, bookingCounts.getOrDefault(sid, 0) + 1);
+                                                                }
+
+                                                                timeSlotAdapter.setList(dailySlots, bookingCounts);
+
+                                                            });
+
+
+                                                });
+
+                                                binding.sTDaysrecycle.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+                                                binding.sTDaysrecycle.setAdapter(dateAdapter);
+
+                                                if (!uniqueDates.isEmpty()) {
+                                                    dateAdapter.getListener().onDateItemClick(uniqueDates.get(0));
                                                 }
-
-                                                Log.d("bookigns", "Date is selected" + "therapistId " + docId + " | bookingDate " + selectedDate.getFullDate());
-
-                                                db.collection("bookings")
-                                                        .whereEqualTo("therapistId", docId)
-                                                        .whereEqualTo("bookingDate", selectedDate.getFullDate())
-                                                        .get()
-                                                        .addOnSuccessListener(bookingDocs -> {
-
-
-                                                            Map<String, Integer> bookingCounts = new HashMap<>();
-                                                            for (DocumentSnapshot bookingDoc : bookingDocs) {
-                                                                String sid = bookingDoc.getString("scheduleId");
-                                                                bookingCounts.put(sid, bookingCounts.getOrDefault(sid, 0) + 1);
-                                                            }
-
-                                                            timeSlotAdapter.setList(dailySlots, bookingCounts);
-
-                                                        });
-
-
                                             });
 
-                                            binding.sTDaysrecycle.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-                                            binding.sTDaysrecycle.setAdapter(dateAdapter);
-
-                                            if (!uniqueDates.isEmpty()) {
-                                                // This simulates a click on the first generated date
-                                                dateAdapter.getListener().onDateItemClick(uniqueDates.get(0));
-                                            }
                                         }
 
                                         checkAllTasksFinished();
@@ -366,7 +372,7 @@ public class SingleTherapistFragment extends Fragment {
     }
 
 
-    private List<DateModel> generateDatesFor(Set<Integer> workingDays) {
+    private void generateDatesFor(Set<Integer> workingDays, OnDatesGeneratedListener listener) {
         List<DateModel> dateList = new ArrayList<>();
         Calendar calendar = Calendar.getInstance(); ///Today date
 
@@ -374,25 +380,80 @@ public class SingleTherapistFragment extends Fragment {
         SimpleDateFormat dateNumFormat = new SimpleDateFormat("dd", Locale.getDefault()); /// like 30, 28
         SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()); /// to Store bookings date
 
-        /// Check dates for next 14 days
-        for (int i = 0; i < 14; i++) {
-            int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK); ///mon to sunday
+        ptoList = new ArrayList<>();
 
-            /// Adding necessary dates where therapist works
-            if (workingDays.contains(dayOfWeek)) {
-                dateList.add(new DateModel(
-                        dayNumFormat.format(calendar.getTime()),
-                        dateNumFormat.format(calendar.getTime()),
-                        dayOfWeek,
-                        dbFormat.format(calendar.getTime())
-                ));
+        /// get data from PTO (Paid time Off)
+        getPTO(ptoList -> {
+            checkAllTasksFinished();
+            /// Check dates for next 14 days
+            for (int i = 0; i < 14; i++) {
+                int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK); ///mon to sunday
+
+                String currentDayStr = dbFormat.format(calendar.getTime());
+                Date currentDayDate = null;
+                try {
+                    currentDayDate = dbFormat.parse(currentDayStr);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                boolean isOnPTO = false;
+
+                if(!ptoList.isEmpty()) {
+                    for (PTO pto : ptoList) {
+                        try {
+                            if (pto.getDate().getType().equals("range")) {
+                                Date start = dbFormat.parse(pto.getDate().getStartDate());
+                                Date end = dbFormat.parse(pto.getDate().getEndDate());
+                                if (currentDayDate != null && !currentDayDate.before(start) && !currentDayDate.after(end)) {
+                                    isOnPTO = true;
+                                    break;
+                                }
+                            } else {
+                                if (currentDayStr.equals(pto.getDate().getStartDate())) {
+                                    isOnPTO = true;
+                                    break;
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                /// Adding necessary dates where therapist works
+                if (workingDays.contains(dayOfWeek)) {
+                    dateList.add(new DateModel(
+                            dayNumFormat.format(calendar.getTime()),
+                            dateNumFormat.format(calendar.getTime()),
+                            dayOfWeek,
+                            dbFormat.format(calendar.getTime()),
+                            isOnPTO
+                    ));
+                }
+
+                /// move calendar date by 1 day
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
             }
 
-            /// move calendar date by 1 day
-            calendar.add(Calendar.DAY_OF_YEAR, 1);
-        }
+            listener.onGenerated(dateList);
 
-        return dateList;
+        });
+    }
+
+    interface OnDatesGeneratedListener {
+        void onGenerated(List<DateModel> dates);
+    }
+
+    private void getPTO(FirestoreCallback<List<PTO>> callback) {
+        db.collection("therapist").document(therapistId).collection("pto").get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot qds) {
+                        ptoList = qds.toObjects(PTO.class);
+                        callback.onCallback(ptoList);
+                    }
+                });
     }
 
     @Override
