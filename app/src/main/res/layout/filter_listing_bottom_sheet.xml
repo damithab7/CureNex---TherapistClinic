@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/md_theme_background_highContrast"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/filter_listing_bottom">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/md_theme_background_highContrast"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="40dp"
+                android:layout_height="4dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="20dp"
+                android:background="#444444" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                android:text="Filters"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                android:text="Price Range"
+                android:textSize="14sp" />
+
+            <com.google.android.material.slider.RangeSlider
+                app:labelBehavior="withinBounds"
+                android:valueFrom="0"
+                android:valueTo="10000"
+                app:values="@array/initial_slider_values"
+                 android:layout_height="wrap_content"
+                android:layout_width="match_parent"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                android:text="Category"
+                android:layout_marginTop="16dp"
+                android:textSize="14sp" />
+            <Spinner
+                android:id="@+id/filter_listing_category_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/filter_listing_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/booking_cancel_btn"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/poppins"
+            android:text="Reset All"
+            android:textSize="@dimen/default_font_size" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/booking_makepayment_btn"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/poppins"
+            android:text="Apply"
+            android:textSize="@dimen/default_font_size" />
+    </LinearLayout>
+
+</RelativeLayout>

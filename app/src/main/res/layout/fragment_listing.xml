@@ -14,6 +14,7 @@
         tools:context=".activity.HomeActivity">
 
     <com.facebook.shimmer.ShimmerFrameLayout
+        android:visibility="gone"
         android:id="@+id/shimmer_listing_view_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -35,7 +36,7 @@
         android:id="@+id/recyclerview_listing"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
+        android:visibility="visible"
         />
     </LinearLayout>
 

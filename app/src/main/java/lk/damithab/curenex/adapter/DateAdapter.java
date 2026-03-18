@@ -54,9 +54,6 @@ public class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         DateModel date = dateList.get(position);
 
-        holder.dateSlotName.setText(date.getDayName());
-        holder.dateSlotDay.setText(date.getDateNum());
-
         Context context = holder.itemView.getContext();
 
         /// selection part
@@ -68,6 +65,19 @@ public class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
             holder.itemView.setBackgroundResource(R.drawable.bg_unselected_item);
             holder.dateSlotName.setTextColor(getThemeColor(context, com.google.android.material.R.attr.colorOnSurface));
             holder.dateSlotDay.setTextColor(getThemeColor(context, com.google.android.material.R.attr.colorOnSurface));
+        }
+
+        if(date.isPTO()){
+            holder.itemView.setEnabled(false);
+            holder.itemView.setBackgroundResource(R.drawable.bg_unavailable_item);
+            holder.datePTOStatus.setVisibility(View.VISIBLE);
+            holder.dateSlotName.setText(date.getDayName());
+            holder.dateSlotDay.setText(date.getDateNum());
+        }else{
+            holder.itemView.setEnabled(true);
+            holder.datePTOStatus.setVisibility(View.GONE);
+            holder.dateSlotName.setText(date.getDayName());
+            holder.dateSlotDay.setText(date.getDateNum());
         }
 
         holder.itemView.setOnClickListener(v->{
@@ -89,11 +99,12 @@ public class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        TextView dateSlotName, dateSlotDay;
+        TextView dateSlotName, dateSlotDay, datePTOStatus;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             this.dateSlotName = itemView.findViewById(R.id.item_dateslot_name);
             this.dateSlotDay = itemView.findViewById(R.id.item_dateslot_day);
+            this.datePTOStatus = itemView.findViewById(R.id.item_date_pto_status);
         }
     }
 

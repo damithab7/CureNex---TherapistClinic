@@ -26,4 +26,9 @@
         <item name="android:windowEnterAnimation">@anim/fade_in</item>
         <item name="android:windowExitAnimation">@anim/fade_out</item>
     </style>
+
+    <array name="initial_slider_values">
+        <item>2000</item>
+        <item>3500</item>
+    </array>
 </resources>

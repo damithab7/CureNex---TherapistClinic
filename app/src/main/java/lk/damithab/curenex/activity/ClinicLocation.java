@@ -1,4 +1,5 @@
 package lk.damithab.curenex.activity;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
@@ -71,6 +72,10 @@ public class ClinicLocation extends FragmentActivity implements OnMapReadyCallba
 
     private LatLng clinic;
 
+    private Location lastRequestLocation;
+
+    private GeoApiContext geoApiContext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +83,9 @@ public class ClinicLocation extends FragmentActivity implements OnMapReadyCallba
         binding = ActivityClinicLocationBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        geoApiContext = new GeoApiContext.Builder()
+                .apiKey(BuildConfig.DIRECTIONS_API_KEY)
+                .build();
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -87,7 +95,6 @@ public class ClinicLocation extends FragmentActivity implements OnMapReadyCallba
                 .build();
 
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         if (mapFragment != null) {
@@ -110,7 +117,7 @@ public class ClinicLocation extends FragmentActivity implements OnMapReadyCallba
         enableMyLocation();
 
 
-        clinic = new LatLng(6.987873556699518,  81.05838263529499);
+        clinic = new LatLng(6.987873556699518, 81.05838263529499);
 
         // mMap.addMarker(new MarkerOptions().position(home).title("Marker in Home"));
 
@@ -177,11 +184,11 @@ public class ClinicLocation extends FragmentActivity implements OnMapReadyCallba
 
                     currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
-                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                        if (currentLocation != null && clinic != null) {
-                            getDirectionWithApi(currentLocation, clinic);
-                        }
-                    }, 5000);
+                    if (lastRequestLocation == null || location.distanceTo(lastRequestLocation) > 50) {
+                        getDirectionWithApi(currentLocation, clinic);
+                        lastRequestLocation = location;
+                    }
+
 
                     //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f));
                 }
@@ -191,6 +198,7 @@ public class ClinicLocation extends FragmentActivity implements OnMapReadyCallba
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, getMainLooper());
 
     }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -222,57 +230,58 @@ public class ClinicLocation extends FragmentActivity implements OnMapReadyCallba
 
         }
     }
+
     private final ExecutorService service = Executors.newSingleThreadExecutor();
+
+    private void toggleTheme(){
+
+    }
 
     public void getDirectionWithApi(LatLng start, LatLng end) {
 
         service.execute(() -> {
-            String key = BuildConfig.DIRECTIONS_API_KEY;
-
             String origin = start.latitude + "," + start.longitude;
             String destination = end.latitude + "," + end.longitude;
 
-            try (GeoApiContext context = new GeoApiContext.Builder().apiKey(key).build()) {
+            try {
+                DirectionsResult result = DirectionsApi.newRequest(geoApiContext)
+                        .mode(TravelMode.DRIVING)
+                        .origin(origin)
+                        .destination(destination)
+                        .departureTimeNow()
+                        .alternatives(true)
+                        .await();
 
-                try {
-                    DirectionsResult result = DirectionsApi.newRequest(context)
-                            .mode(TravelMode.DRIVING)
-                            .origin(origin)
-                            .destination(destination)
-                            .departureTimeNow()
-                            .alternatives(true)
-                            .await();
+                if (result.routes.length > 0 && result.routes[0].legs.length > 0) {
 
-                    if (result.routes.length > 0) {
-                        String encodedPath = result.routes[0].overviewPolyline.getEncodedPath();
+                    String encodedPath = result.routes[0].overviewPolyline.getEncodedPath();
 
-                        List<LatLng> points = PolyUtil.decode(encodedPath);
+                    String distance= result.routes[0].legs[0].distance.humanReadable;
+                    String time= result.routes[0].legs[0].duration.humanReadable;
 
-                        runOnUiThread(() -> {
-                            if (polyline == null) {
-                                PolylineOptions polylineOptions = new PolylineOptions();
-                                polylineOptions.width(20);
-                                polylineOptions.color(R.color.purple_700);
-                                polylineOptions.addAll(points);
+                    List<LatLng> points = PolyUtil.decode(encodedPath);
 
-                                polyline = mMap.addPolyline(polylineOptions);
-                            } else {
-                                polyline.setPoints(points);
-                            }
-                        });
+                    runOnUiThread(() -> {
+                        binding.clinicDistance.setText("Distance: " + distance);
+                        binding.clinicTime.setText("Duration: " + time);
+                        if (polyline == null) {
+                            PolylineOptions polylineOptions = new PolylineOptions();
+                            polylineOptions.width(20);
+                            polylineOptions.color(R.color.purple_700);
+                            polylineOptions.addAll(points);
 
-                    }
+                            polyline = mMap.addPolyline(polylineOptions);
+                        } else {
+                            polyline.setPoints(points);
+                        }
+                    });
 
-                } catch (ApiException e) {
-                    throw new RuntimeException(e);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
                 }
 
-
-            } catch (IOException e) {
+            } catch (ApiException | InterruptedException | IOException e) {
                 throw new RuntimeException(e);
             }
+
         });
 
     }
@@ -309,7 +318,7 @@ public class ClinicLocation extends FragmentActivity implements OnMapReadyCallba
                 if (polyline == null) {
                     PolylineOptions polylineOptions = new PolylineOptions();
                     polylineOptions.width(20);
-                    polylineOptions.color(R.color.purple_700);
+                    polylineOptions.color(ContextCompat.getColor(ClinicLocation.this, R.color.purple_700));
                     polylineOptions.addAll(points);
 
                     polyline = mMap.addPolyline(polylineOptions);
