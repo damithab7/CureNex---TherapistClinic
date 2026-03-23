@@ -43,7 +43,6 @@ public class MessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage message) {
-
         Log.d(TAG, "onMessageReceived: Message Received!");
 
         String title = "CureNex";
@@ -96,7 +95,7 @@ public class MessagingService extends FirebaseMessagingService {
         int requestCode = 0;
         PendingIntent pendingIntent = PendingIntent.getActivity(this, requestCode, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
 
-        String channel_id = "promotion_channel";
+        String channel_id = getResources().getString(R.string.default_notification_channel_id);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channel_id)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle(title)

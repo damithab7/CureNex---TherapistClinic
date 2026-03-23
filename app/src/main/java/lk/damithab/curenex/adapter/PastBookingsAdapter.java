@@ -1,6 +1,7 @@
 package lk.damithab.curenex.adapter;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,9 +22,11 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.model.Booking;
+import lk.damithab.curenex.model.Reviews;
 import lk.damithab.curenex.model.Therapist;
 import lk.damithab.curenex.module.GlideApp;
 
@@ -34,6 +37,12 @@ public class PastBookingsAdapter extends RecyclerView.Adapter<PastBookingsAdapte
     private FirebaseFirestore db;
 
     private FirebaseStorage storage;
+
+    private OnReviewBtnClick listener;
+
+    public void setReviewBtnListener (OnReviewBtnClick listener){
+        this.listener = listener;
+    }
 
     public PastBookingsAdapter(List<Booking> bookingList) {
         this.bookingList = bookingList;
@@ -77,7 +86,39 @@ public class PastBookingsAdapter extends RecyclerView.Adapter<PastBookingsAdapte
         holder.bookingStatus.setText(booking.getStatus());
         holder.statusCard.setCardBackgroundColor(R.color.md_theme_surfaceVariant);
         holder.bookingTotal.setText(String.format(Locale.US, "LKR %,.2f",booking.getTotal()));
-        holder.cancelButton.setVisibility(View.GONE);
+
+        if(Objects.equals(booking.getStatus(), "Cancelled")){
+            holder.statusCard.setCardBackgroundColor(Color.RED);
+            holder.bookingStatus.setTextColor(Color.WHITE);
+            holder.cancelButton.setVisibility(View.GONE);
+        }
+
+        db.collection("reviews").whereEqualTo("uid", booking.getUid()).whereEqualTo("type","therapist")
+                .whereEqualTo("typeId", booking.getTherapistId()).get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot qds) {
+                        if(!qds.isEmpty()){
+                            Reviews review = qds.toObjects(Reviews.class).get(0);
+                            holder.cancelButton.setEnabled(true);
+                            holder.cancelButton.setText("Set Review");
+                            holder.cancelButton.setOnClickListener(v->{
+                                if(listener != null){
+                                    listener.onClick(review);
+                                }
+                            });
+                        }else{
+                            holder.cancelButton.setEnabled(true);
+                            holder.cancelButton.setText("View Review");
+                            holder.cancelButton.setOnClickListener(v->{
+                                if(listener != null){
+                                    listener.onClick(booking);
+                                }
+                            });
+                        }
+                    }
+                });
+
     }
 
     @Override
@@ -108,6 +149,10 @@ public class PastBookingsAdapter extends RecyclerView.Adapter<PastBookingsAdapte
             this.cancelButton = itemView.findViewById(R.id.item_booking_cancel_btn);
             this.statusCard = itemView.findViewById(R.id.item_booking_status_card);
         }
+    }
+
+    public interface OnReviewBtnClick {
+        void onClick(Object object);
     }
 
 }

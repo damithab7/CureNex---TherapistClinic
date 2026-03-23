@@ -9,6 +9,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -41,6 +43,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
@@ -59,6 +62,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
@@ -101,7 +105,9 @@ import lk.damithab.curenex.model.Service;
 import lk.damithab.curenex.model.Therapist;
 import lk.damithab.curenex.model.User;
 import lk.damithab.curenex.util.AnimationUtil;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, NavigationBarView.OnItemSelectedListener, SensorEventListener {
     private DrawerLayout drawerLayout;
     private MaterialToolbar toolbar;
@@ -149,6 +155,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private final int TOTAL_SEARCH_TASKS = 1;
     private int completedAdvancedSearchTasks = 0;
     private final int TOTAL_ADVANCED_SEARCH_TASKS = 2;
+
+    private static final String TAG = "Main Activity";
 
     private final ActivityResultLauncher<String> callPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -294,7 +302,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         int count = qds.size();
                         cartCount = count;
                         if (count > 0) {
-                            bottomNavigationView.getOrCreateBadge(R.id.nav_cart).setNumber(count);
+                            BadgeDrawable badge = bottomNavigationView.getOrCreateBadge(R.id.nav_cart);
+                            badge.setNumber(count);
+                            badge.setBackgroundColor(ContextCompat.getColor(this, R.color.md_theme_primary));
                         } else {
                             bottomNavigationView.removeBadge(R.id.nav_cart);
                         }
@@ -337,7 +347,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             navigationView.getMenu().findItem(R.id.side_nav_home).setVisible(true);
             navigationView.getMenu().findItem(R.id.side_nav_shop).setVisible(true);
             navigationView.getMenu().findItem(R.id.side_nav_cart).setVisible(true);
-            navigationView.getMenu().findItem(R.id.side_nav_notifications).setVisible(true);
             navigationView.getMenu().findItem(R.id.side_nav_bookings).setVisible(true);
             navigationView.getMenu().findItem(R.id.side_nav_support).setVisible(true);
             navigationView.getMenu().findItem(R.id.side_nav_logout).setVisible(false);
@@ -393,6 +402,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }, false);
 
+
     }
 
     public void loadFragment(Fragment fragment) {
@@ -436,6 +446,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         searchItem = menu.findItem(R.id.action_search);
 
+        MenuItem notification = menu.findItem(R.id.home_notification);
+        notification.setOnMenuItemClickListener(menuItem -> {
+            if (firebaseAuth.getCurrentUser() == null) {
+                Intent intent = new Intent(MainActivity.this, SignInActivity.class);
+                startActivity(intent);
+                finish();
+            }else{
+                Intent intent = new Intent(MainActivity.this, NotificationActivity.class);
+                startActivity(intent);
+            }
+
+            return true;
+        });
+
+        Typeface tf = ResourcesCompat.getFont(this,R.font.poppins);
         androidx.appcompat.widget.SearchView searchView =
                 (androidx.appcompat.widget.SearchView) searchItem.getActionView();
         searchView.setQueryHint("Search...");
@@ -445,6 +470,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public boolean onMenuItemActionExpand(MenuItem item) {
                 binding.navContainerView.setVisibility(View.GONE);
                 binding.searchResultsRecyclerView.setVisibility(View.VISIBLE);
+                notification.setVisible(false);
                 binding.bottomNavigationView.setVisibility(View.GONE);
                 return true;
             }
@@ -453,6 +479,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 binding.navContainerView.setVisibility(View.VISIBLE);
                 binding.searchResultsRecyclerView.setVisibility(View.GONE);
+                notification.setVisible(true);
                 AnimationUtil.bottomSlideUp(binding.bottomNavigationView);
                 return true;
             }
@@ -632,17 +659,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     selectedFragment = new ProductDetailsFragment();
                     bundle.putString("productId", product.getProductId());
                 } else {
+                    Log.d(TAG, "setAdvanceSearchAdapter: therapist");
                     Therapist therapist = (Therapist) object;
                     selectedFragment = new SingleTherapistFragment();
                     bundle.putString("therapistId", therapist.getTherapistId());
                 }
-
-                selectedFragment.setArguments(bundle);
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.navContainerView, selectedFragment)
-                        .addToBackStack(null)
-                        .commit();
-                getSupportFragmentManager().executePendingTransactions();
 
                 if (searchItem != null) {
                     searchItem.collapseActionView();
@@ -650,6 +671,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(binding.getRoot().getWindowToken(), 0);
+
+                selectedFragment.setArguments(bundle);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.navContainerView, selectedFragment)
+                        .addToBackStack(null)
+                        .commit();
+
+//                getSupportFragmentManager().executePendingTransactions();
 
             });
             binding.searchResultsRecyclerView.setAdapter(adapter);
@@ -722,15 +751,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             loadFragment(new AccountFragment());
             bottomNavigationView.getMenu().findItem(R.id.nav_account).setChecked(true);
 
-
-        } else if (itemId == R.id.side_nav_notifications) {
-            if (firebaseAuth.getCurrentUser() == null) {
-                Intent intent = new Intent(MainActivity.this, SignInActivity.class);
-                startActivity(intent);
-                finish();
-            }
-            Intent intent = new Intent(MainActivity.this, NotificationActivity.class);
-            startActivity(intent);
         } else if (itemId == R.id.side_nav_bookings) {
             if (firebaseAuth.getCurrentUser() == null) {
                 Intent intent = new Intent(MainActivity.this, SignInActivity.class);

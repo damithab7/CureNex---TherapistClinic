@@ -70,6 +70,7 @@ public class CartFragment extends Fragment {
                         public void onSuccess(QuerySnapshot qds) {
                             spinner.dismiss();
                             if (!qds.isEmpty()) {
+
                                 binding.cartProcessBtn.setEnabled(true);
 
                                 cartItems = new ArrayList<>();
@@ -140,8 +141,6 @@ public class CartFragment extends Fragment {
                                         .commit();
                                 navigationView.removeBadge(R.id.nav_cart);
                             }
-
-                            spinner.dismiss();
                         }
                     }).addOnFailureListener(aVoid->{
                         spinner.dismiss();

@@ -7,10 +7,29 @@
     android:padding="16dp"
     tools:context=".fragment.CheckoutFragment">
 
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_view_checkout_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:shimmer_auto_start="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include layout="@layout/item_checkout_skeleton" />
+
+        </LinearLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/checkout_main_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/address_bottom_layout">
+        android:visibility="visible"
+        android:layout_above="@+id/checkout_bottom_layout">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -582,7 +601,7 @@
     </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
-        android:id="@+id/address_bottom_layout"
+        android:id="@+id/checkout_bottom_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

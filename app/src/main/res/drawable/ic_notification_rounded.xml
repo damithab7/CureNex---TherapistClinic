@@ -1,0 +1,9 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/bg_circle_main" />
+    <item
+        android:drawable="@drawable/notificationicon"
+        android:top="@dimen/icon_round_size_small"
+        android:bottom="@dimen/icon_round_size_small"
+        android:left="@dimen/icon_round_size_small"
+        android:right="@dimen/icon_round_size_small" />
+</layer-list>

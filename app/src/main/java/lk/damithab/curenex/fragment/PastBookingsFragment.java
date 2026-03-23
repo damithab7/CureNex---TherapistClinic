@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,8 +28,10 @@ import lk.damithab.curenex.adapter.PastBookingsAdapter;
 import lk.damithab.curenex.adapter.UpcomingBookingsAdapter;
 import lk.damithab.curenex.databinding.FragmentPastBookingsBinding;
 import lk.damithab.curenex.databinding.FragmentUpcomingBookingsBinding;
+import lk.damithab.curenex.dialog.ReviewsBottomSheet;
 import lk.damithab.curenex.dialog.SpinnerDialog;
 import lk.damithab.curenex.model.Booking;
+import lk.damithab.curenex.model.Reviews;
 
 
 public class PastBookingsFragment extends Fragment {
@@ -70,9 +73,19 @@ public class PastBookingsFragment extends Fragment {
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot qds) {
-                        if(!qds.isEmpty()){
+                        if (!qds.isEmpty()) {
                             List<Booking> bookingList = qds.toObjects(Booking.class);
                             PastBookingsAdapter adapter = new PastBookingsAdapter(bookingList);
+                            adapter.setReviewBtnListener(obj -> {
+
+                                Booking booking = (Booking) obj;
+                                ReviewsBottomSheet sheet = new ReviewsBottomSheet(obj, () -> {
+                                    adapter.notifyDataSetChanged();
+                                });
+
+                                sheet.show(getChildFragmentManager(), "ScheduleBottomSheet");
+
+                            });
 
                             binding.pastBookingsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
                             binding.pastBookingsRecyclerView.setAdapter(adapter);

@@ -105,6 +105,7 @@ public class ProfileDialog extends DialogFragment {
                                                 imageUri = uri;
                                             });
                                 }
+
                                 binding.firstNameProfileInput.setText(user.getFirstName());
                                 binding.lastNameProfileInput.setText(user.getLastName());
                             }
