@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginEnd="5dp"
     android:id="@+id/item_time_slot_cart"
-    app:cardCornerRadius="20dp">
+    app:cardCornerRadius="@dimen/clock_chip_radius">
     <LinearLayout
         android:layout_marginHorizontal="10dp"
         android:layout_width="match_parent"

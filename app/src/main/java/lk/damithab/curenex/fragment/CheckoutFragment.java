@@ -85,6 +85,9 @@ public class CheckoutFragment extends Fragment {
 
     private int qty;
 
+    private int completedTasks = 0;
+    private final int TOTAL_TASKS = 1;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,8 +144,7 @@ public class CheckoutFragment extends Fragment {
 
         createNotificationChannel();
 
-        double shippingCost = 400;
-
+        startDataLoading(true);
 //        getParentFragmentManager().setFragmentResultListener("addressRequest", this, (requestKey, bundle) -> {
 //            // Cast the serializable back to your Address class
 //            Address address = (Address) bundle.getSerializable("selectedAddress");
@@ -156,65 +158,6 @@ public class CheckoutFragment extends Fragment {
             Intent intent = new Intent(requireContext(), AddressActivity.class);
             addressResultLauncher.launch(intent);
         });
-
-
-        if (productId != null) {
-            getSingleProduct(product -> {
-                binding.singleProductLayout.setVisibility(View.VISIBLE);
-                storage.getReference(product.getImages().get(0))
-                        .getDownloadUrl()
-                        .addOnSuccessListener(uri -> {
-                            Glide.with(requireContext())
-                                    .load(uri)
-                                    .centerCrop()
-                                    .into(binding.singleProductImage);
-                        });
-                binding.singleProductPrice.setText(String.format(Locale.US, "LKR %,.2f", product.getPrice() * qty));
-                binding.singleProductQty.setText("Quantity "+String.valueOf(qty));
-                binding.singleProductTitle.setText(product.getTitle());
-                binding.singleProductAttributes.setText("");
-                paymentActive = true;
-
-                total = product.getPrice() * qty;
-                binding.checkoutSubtotal.setText(String.format(Locale.US, "LKR %,.2f", total));
-                binding.checkoutShipping.setText(String.format(Locale.US, "LKR %,.2f", shippingCost));
-                binding.checkoutTotal.setText(String.format(Locale.US, "LKR %,.2f", total + shippingCost));
-            });
-        } else {
-            getCartItems(cartItems -> {
-
-
-                LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-                binding.productCheckoutItemsRecycler.setLayoutManager(layoutManager);
-                CheckoutItemsAdapter adapter = new CheckoutItemsAdapter(cartItems);
-                binding.productCheckoutItemsRecycler.setAdapter(adapter);
-
-                ArrayList<String> productIds = new ArrayList<>();
-                cartItems.forEach(cartItem -> {
-                    productIds.add(cartItem.getProductId());
-                });
-
-
-                getProductsByIds(productIds, data -> {
-
-                    double subTotal = 0;
-
-                    for (CartItem cartItem : cartItems) {
-                        Product product = data.get(cartItem.getProductId());
-                        if (product != null) {
-                            subTotal += product.getPrice() * cartItem.getQuantity();
-                        }
-                    }
-
-                    total = subTotal + shippingCost;
-                    binding.checkoutSubtotal.setText(String.format(Locale.US, "LKR %,.2f", subTotal));
-                    binding.checkoutShipping.setText(String.format(Locale.US, "LKR %,.2f", shippingCost));
-                    binding.checkoutTotal.setText(String.format(Locale.US, "LKR %,.2f", total));
-                    paymentActive = true;
-                });
-
-            });
-        }
 
         binding.checkoutBtnProceed.setOnClickListener(v -> {
 
@@ -396,6 +339,100 @@ public class CheckoutFragment extends Fragment {
         });
     }
 
+    private void checkAllTasksFinished() {
+        completedTasks++;
+        if (completedTasks >= TOTAL_TASKS) {
+            onDataLoad(false);
+        }
+    }
+
+    private void startDataLoading(boolean isShimmer) {
+        onDataLoad(isShimmer);
+        loadData();
+    }
+
+    private synchronized void onDataLoad(boolean isShimmer) {
+        if (isShimmer) {
+            binding.shimmerViewCheckoutContainer.startShimmer();
+            binding.shimmerViewCheckoutContainer.setVisibility(View.VISIBLE);
+            binding.checkoutBottomLayout.setVisibility(View.GONE);
+            binding.checkoutMainLayout.setVisibility(View.GONE);
+        } else {
+            binding.shimmerViewCheckoutContainer.stopShimmer();
+            binding.shimmerViewCheckoutContainer.setVisibility(View.GONE);
+            binding.checkoutBottomLayout.setVisibility(View.VISIBLE);
+            binding.checkoutMainLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void loadData() {
+        double shippingCost = 400;
+
+        if (productId != null) {
+            getSingleProduct(product -> {
+
+                binding.singleProductLayout.setVisibility(View.VISIBLE);
+                storage.getReference(product.getImages().get(0))
+                        .getDownloadUrl()
+                        .addOnSuccessListener(uri -> {
+                            checkAllTasksFinished();
+                            Glide.with(getContext())
+                                    .load(uri)
+                                    .centerCrop()
+                                    .into(binding.singleProductImage);
+                        }).addOnFailureListener(error->{
+                            checkAllTasksFinished();
+                        });
+                binding.singleProductPrice.setText(String.format(Locale.US, "LKR %,.2f", product.getPrice() * qty));
+                binding.singleProductQty.setText("Quantity " + String.valueOf(qty));
+                binding.singleProductTitle.setText(product.getTitle());
+                binding.singleProductAttributes.setText("");
+                paymentActive = true;
+
+                total = product.getPrice() * qty;
+                binding.checkoutSubtotal.setText(String.format(Locale.US, "LKR %,.2f", total));
+                binding.checkoutShipping.setText(String.format(Locale.US, "LKR %,.2f", shippingCost));
+                binding.checkoutTotal.setText(String.format(Locale.US, "LKR %,.2f", total + shippingCost));
+            });
+        } else {
+            getCartItems(cartItems -> {
+
+                checkAllTasksFinished();
+
+                LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+                binding.productCheckoutItemsRecycler.setLayoutManager(layoutManager);
+                CheckoutItemsAdapter adapter = new CheckoutItemsAdapter(cartItems);
+                binding.productCheckoutItemsRecycler.setAdapter(adapter);
+
+                ArrayList<String> productIds = new ArrayList<>();
+                cartItems.forEach(cartItem -> {
+                    productIds.add(cartItem.getProductId());
+                });
+
+
+                getProductsByIds(productIds, data -> {
+
+                    double subTotal = 0;
+
+                    for (CartItem cartItem : cartItems) {
+                        Product product = data.get(cartItem.getProductId());
+                        if (product != null) {
+                            subTotal += product.getPrice() * cartItem.getQuantity();
+                        }
+                    }
+
+                    total = subTotal + shippingCost;
+                    binding.checkoutSubtotal.setText(String.format(Locale.US, "LKR %,.2f", subTotal));
+                    binding.checkoutShipping.setText(String.format(Locale.US, "LKR %,.2f", shippingCost));
+                    binding.checkoutTotal.setText(String.format(Locale.US, "LKR %,.2f", total));
+                    paymentActive = true;
+                });
+
+            });
+        }
+    }
+
+
     private void getSingleProduct(FirestoreCallback<Product> callback) {
         db.collection("products").document(productId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -505,7 +542,7 @@ public class CheckoutFragment extends Fragment {
         }
 
         if (productId != null) {
-            getSingleProduct(product->{
+            getSingleProduct(product -> {
                 List<Order.OrderItem> orderItems = new ArrayList<>();
 
                 /// Attributes
@@ -609,7 +646,7 @@ public class CheckoutFragment extends Fragment {
         }
     }
 
-    private void loadListeners(){
+    private void loadListeners() {
         binding.billingDetailsName.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable editable) {

@@ -10,6 +10,7 @@
         android:id="@+id/shimmer_listing_view_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:shimmer_auto_start="true">
 
         <LinearLayout
@@ -25,7 +26,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
+        android:visibility="visible"
         android:id="@+id/account_main">
 
         <androidx.cardview.widget.CardView

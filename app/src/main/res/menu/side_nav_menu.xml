@@ -5,7 +5,7 @@
         <item
             android:id="@+id/side_nav_home"
             android:checkable="true"
-            android:icon="@drawable/homeicon"
+            android:icon="@drawable/homeicon2"
             android:title="@string/side_nav_home_title"
             android:visible="true" />
 
@@ -19,18 +19,12 @@
         <item
             android:id="@+id/side_nav_cart"
             android:checkable="true"
-            android:icon="@drawable/cartnav"
+            android:icon="@drawable/carticon2"
             android:title="@string/side_nav_cart_title"
             android:visible="false" />
 
     </group>
     <group android:id="@+id/side_nav_group_secondary">
-        <item
-            android:id="@+id/side_nav_notifications"
-            android:checkable="true"
-            android:icon="@drawable/notificationicon"
-            android:title="@string/side_nav_notification_title"
-            android:visible="false" />
         <item
             android:id="@+id/side_nav_bookings"
             android:checkable="true"

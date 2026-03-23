@@ -28,6 +28,7 @@ import lk.damithab.curenex.R;
 import lk.damithab.curenex.api.AuthAPI;
 import lk.damithab.curenex.client.RetrofitClient;
 import lk.damithab.curenex.databinding.ActivitySignInBinding;
+import lk.damithab.curenex.dialog.MessageDialog;
 import lk.damithab.curenex.dialog.ToastDialog;
 import lk.damithab.curenex.dialog.WelcomeDialog;
 import lk.damithab.curenex.dto.LoginRequestDTO;
@@ -93,7 +94,7 @@ public class SignInActivity extends AppCompatActivity {
                                 });
                             }
                         } else {
-                            Toast.makeText(SignInActivity.this, "Invalid Credentials!", Toast.LENGTH_SHORT).show();
+                            new MessageDialog(getSupportFragmentManager(), "Invalid Credentials!");
                         }
                     }
                 });

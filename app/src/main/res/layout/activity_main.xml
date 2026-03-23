@@ -78,6 +78,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/nav_bg"
+            app:itemIconTint="@color/md_theme_secondary"
+            app:itemActiveIndicatorStyle="@style/customActiveIndicator"
             app:itemTextAppearanceActive="@style/BottomNavText"
             app:itemTextAppearanceInactive="@style/BottomNavText"
             app:labelVisibilityMode="labeled"
@@ -105,7 +107,7 @@
             app:drawerLayoutCornerSize="@dimen/drawer_corners"
             app:headerLayout="@layout/side_nav_header"
             app:itemBackground="@drawable/bg_drawer"
-            app:itemIconSize="26dp"
+            app:itemIconSize="24dp"
             app:itemIconTint="@color/nav_item_color"
             app:itemTextAppearance="@style/sideNavFont"
             app:menu="@menu/side_nav_menu" />

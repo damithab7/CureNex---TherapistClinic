@@ -52,6 +52,7 @@ public class SignInPasswordFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentSignInPasswordBinding.inflate(inflater);
         auth = FirebaseAuth.getInstance();
+        firestore = FirebaseFirestore.getInstance();
         return binding.getRoot();
     }
 

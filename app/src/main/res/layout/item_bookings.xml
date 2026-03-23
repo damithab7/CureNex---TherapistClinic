@@ -4,14 +4,25 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingVertical="10dp"
+    android:layout_marginBottom="10dp"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal">
+    <androidx.cardview.widget.CardView
+        android:id="@+id/home_c_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="5dp"
+        app:cardCornerRadius="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
     <ImageView
         android:id="@+id/item_booking_therapist_img"
         android:layout_width="80dp"
-        android:layout_height="match_parent"
+        android:layout_height="80dp"
         android:layout_gravity="center"
         tools:srcCompat="@tools:sample/avatars"/>
+    </androidx.cardview.widget.CardView>
 
     <LinearLayout
         android:layout_marginStart="5dp"
@@ -35,24 +46,38 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="I Ordered a supplli"/>
-        <TextView
-            android:id="@+id/item_booking_date"
-            android:textColor="@color/material_on_background_disabled"
-            android:includeFontPadding="false"
-            android:fontFamily="@font/poppins"
-            android:textSize="13sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Order date 2023/10/01"/>
-        <TextView
-            android:id="@+id/item_booking_time_slot"
-            android:textColor="@color/material_on_background_disabled"
-            android:includeFontPadding="false"
-            android:fontFamily="@font/poppins"
-            android:textSize="13sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="order id: 123123"/>
+       <LinearLayout
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:orientation="horizontal">
+           <TextView
+               android:id="@+id/item_booking_date"
+               android:textColor="@color/material_on_background_disabled"
+               android:includeFontPadding="false"
+               android:fontFamily="@font/poppins"
+               android:textSize="13sp"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="2023/10/01"/>
+           <TextView
+               android:textColor="@color/material_on_background_disabled"
+               android:includeFontPadding="false"
+               android:fontFamily="@font/poppins"
+               android:textSize="13sp"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text=" | "/>
+           <TextView
+               android:id="@+id/item_booking_time_slot"
+               android:textColor="@color/material_on_background_disabled"
+               android:includeFontPadding="false"
+               android:fontFamily="@font/poppins"
+               android:textSize="13sp"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="order id: 123123"/>
+       </LinearLayout>
+
         <androidx.cardview.widget.CardView
             android:id="@+id/item_booking_status_card"
             android:layout_width="wrap_content"
@@ -86,7 +111,7 @@
             android:layout_gravity="end"
             android:includeFontPadding="false"
             android:fontFamily="@font/poppins"
-            android:textSize="@dimen/medium_font_size"
+            android:textSize="16sp"
             android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

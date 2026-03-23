@@ -70,7 +70,7 @@ public class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
         if(date.isPTO()){
             holder.itemView.setEnabled(false);
             holder.itemView.setBackgroundResource(R.drawable.bg_unavailable_item);
-            holder.datePTOStatus.setVisibility(View.VISIBLE);
+//            holder.datePTOStatus.setVisibility(View.VISIBLE);
             holder.dateSlotName.setText(date.getDayName());
             holder.dateSlotDay.setText(date.getDateNum());
         }else{

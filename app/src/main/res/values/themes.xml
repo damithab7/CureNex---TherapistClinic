@@ -72,6 +72,8 @@
 
         <item name="tab_background">@color/light_white</item>
         <item name="tab_indicator_bg">@color/white</item>
+        
+        <item name="badgeStyle">@style/CustomBadge</item>
     </style>
 
     <style name="Theme.CureNex.FullScreen" parent="Theme.CureNex">
@@ -81,6 +83,10 @@
     <style name="CircleImage">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="CustomBadge" parent="@style/Widget.MaterialComponents.Badge">
+        <item name="backgroundColor">@color/md_theme_primary</item>
     </style>
 
 </resources>

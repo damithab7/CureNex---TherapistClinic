@@ -17,10 +17,10 @@
             android:orientation="vertical">
 
             <com.facebook.shimmer.ShimmerFrameLayout
-                android:visibility="gone"
                 android:id="@+id/shimmer_single_therapist_view_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:shimmer_auto_start="true">
 
                 <LinearLayout
@@ -54,59 +54,61 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:layout_marginBottom="10dp"
+                    android:orientation="horizontal"
                     app:layout_constraintBottom_toTopOf="@+id/bottomBackgroundCard"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent">
-<!--                    <com.google.android.material.card.MaterialCardView-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:background="@drawable/item_therapist_round"-->
-<!--                        android:layout_marginTop="5dp"-->
-<!--                        android:layout_marginBottom="10dp"-->
-<!--                        app:cardCornerRadius="100dp">-->
+                    <!--                    <com.google.android.material.card.MaterialCardView-->
+                    <!--                        android:layout_width="wrap_content"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        android:background="@drawable/item_therapist_round"-->
+                    <!--                        android:layout_marginTop="5dp"-->
+                    <!--                        android:layout_marginBottom="10dp"-->
+                    <!--                        app:cardCornerRadius="100dp">-->
 
-<!--                        <LinearLayout-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:orientation="vertical"-->
-<!--                            android:padding="15dp">-->
+                    <!--                        <LinearLayout-->
+                    <!--                            android:layout_width="wrap_content"-->
+                    <!--                            android:layout_height="wrap_content"-->
+                    <!--                            android:orientation="vertical"-->
+                    <!--                            android:padding="15dp">-->
 
-<!--                            <ImageView-->
-<!--                                android:layout_width="match_parent"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:layout_marginBottom="7dp"-->
-<!--                                android:fontFamily="@font/poppins"-->
-<!--                                android:src="@drawable/emailicon"-->
-<!--                                android:text="Rate"-->
-<!--                                android:textSize="14sp" />-->
+                    <!--                            <ImageView-->
+                    <!--                                android:layout_width="match_parent"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:layout_marginBottom="7dp"-->
+                    <!--                                android:fontFamily="@font/poppins"-->
+                    <!--                                android:src="@drawable/emailicon"-->
+                    <!--                                android:text="Rate"-->
+                    <!--                                android:textSize="14sp" />-->
 
-<!--                            <TextView-->
-<!--                                android:layout_width="match_parent"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:fontFamily="@font/poppins"-->
-<!--                                android:text="Work Email"-->
-<!--                                android:textSize="14sp" />-->
-<!--                        </LinearLayout>-->
-<!--                    </com.google.android.material.card.MaterialCardView>-->
+                    <!--                            <TextView-->
+                    <!--                                android:layout_width="match_parent"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:fontFamily="@font/poppins"-->
+                    <!--                                android:text="Work Email"-->
+                    <!--                                android:textSize="14sp" />-->
+                    <!--                        </LinearLayout>-->
+                    <!--                    </com.google.android.material.card.MaterialCardView>-->
                     <ImageView
                         android:id="@+id/single_t_workemail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/emailicon2"
-                        android:background="@drawable/item_therapist_round"
                         android:layout_marginEnd="3dp"
-                        android:padding="15dp"/>
+                        android:background="@drawable/item_therapist_round"
+                        android:padding="15dp"
+                        android:src="@drawable/emailicon2" />
+
                     <ImageView
                         android:id="@+id/single_t_workmobile"
                         android:layout_width="wrap_content"
-                        android:layout_marginStart="3dp"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/phoneupicon"
+                        android:layout_marginStart="3dp"
                         android:background="@drawable/item_therapist_round"
-                        android:padding="15dp"/>
+                        android:padding="15dp"
+                        android:src="@drawable/phoneupicon" />
                 </LinearLayout>
+
                 <View
                     android:id="@+id/bottomBackgroundCard"
                     android:layout_width="match_parent"
@@ -140,38 +142,85 @@
                         android:textSize="22sp"
                         android:textStyle="bold" />
 
-                    <com.google.android.material.card.MaterialCardView
-                        style="@style/Widget.Material3.CardView.Filled"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="10dp"
-                        app:cardCornerRadius="10dp">
+                        android:orientation="horizontal">
 
-                        <LinearLayout
+                        <com.google.android.material.card.MaterialCardView
+                            style="@style/Widget.Material3.CardView.Filled"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="7dp">
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="10dp"
+                            app:cardBackgroundColor="@color/md_theme_surface"
+                            app:cardCornerRadius="10dp">
 
-                            <ImageView
-                                android:layout_width="match_parent"
+                            <LinearLayout
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="7dp"
-                                android:fontFamily="@font/poppins"
-                                android:src="@drawable/pace_24px"
-                                android:text="Rate"
-                                android:textSize="14sp" />
+                                android:orientation="vertical"
+                                android:padding="7dp">
 
-                            <TextView
-                                android:id="@+id/s_t_rate"
-                                android:layout_width="match_parent"
+                                <ImageView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="7dp"
+                                    android:fontFamily="@font/poppins"
+                                    android:src="@drawable/pace_24px"
+                                    android:text="Rate"
+                                    android:textSize="14sp" />
+
+                                <TextView
+                                    android:id="@+id/s_t_rate"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/poppins"
+                                    android:textStyle="bold"
+                                    android:text="LKR 10,500/ h"
+                                    android:textSize="14sp" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            style="@style/Widget.Material3.CardView.Filled"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            app:cardBackgroundColor="@color/md_theme_surface"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="10dp"
+                            app:cardCornerRadius="10dp">
+
+                            <LinearLayout
+                                android:layout_gravity="center"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/poppins"
-                                android:text="LKR 10,500/ h"
-                                android:textSize="14sp" />
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
+                                android:orientation="vertical"
+                                android:padding="7dp">
+
+
+                                <ImageView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="7dp"
+                                    android:fontFamily="@font/poppins"
+                                    android:src="@drawable/star_24px"
+                                    android:text="Rate"
+                                    android:textSize="14sp" />
+
+
+                                <TextView
+                                    android:id="@+id/s_t_rating"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/poppins"
+                                    android:text="4.7 (998)"
+                                    android:textStyle="bold"
+                                    android:textSize="14sp" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+                    </LinearLayout>
 
 
                     <TextView
@@ -179,7 +228,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:fontFamily="@font/poppins"
-                        android:text="About"
+                        android:text="Biography"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -226,9 +275,11 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/single_t_booknowbtn"
                         style="@style/Widget.Material3.Button.TonalButton"
+                        android:fontFamily="@font/poppins"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="50dp"
                         android:layout_marginTop="22dp"
+                        app:cornerRadius="5dp"
                         android:layout_marginBottom="10dp"
                         android:text="Book Now" />
 

@@ -106,12 +106,15 @@ public class SingleTherapistFragment extends Fragment {
 
         db = FirebaseFirestore.getInstance();
 
+        AnimationUtil.bottomSlideDown(getActivity().findViewById(R.id.bottomNavigationView));
+
         getActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 requireActivity().getSupportFragmentManager().popBackStack();
             }
         });
+
 
 //         Define dummy users from your users collection
 //        String user1 = "EqldpazzG5erZSgYNCVk8Fyx0xw2";
@@ -139,15 +142,6 @@ public class SingleTherapistFragment extends Fragment {
 //        }
 //
 //        batch.commit();
-
-        AnimationUtil.bottomSlideDown(getActivity().findViewById(R.id.bottomNavigationView));
-
-        getActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                requireActivity().getSupportFragmentManager().popBackStack();
-            }
-        });
 
         startDataLoading(true);
 
@@ -230,6 +224,7 @@ public class SingleTherapistFragment extends Fragment {
                             String therapistName = therapist.getTitle() + " " + therapist.getName();
 
                             binding.sTName.setText(therapistName);
+                            binding.sTRating.setText(String.valueOf(therapist.getRating()));
                             binding.singleTWorkemail.setOnClickListener(v -> {
 
                                 Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.click_anim);

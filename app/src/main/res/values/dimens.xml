@@ -24,7 +24,7 @@
     <!--    Text Size-->
     <dimen name="edit_text_size">13sp</dimen>
     <dimen name="button_text_size">15sp</dimen>
-    <dimen name="link_click_text_size">14sp</dimen>
+    <dimen name="link_click_text_size">13sp</dimen>
     <dimen name="default_font_size">14sp</dimen>
     <dimen name="small_font_size">12sp</dimen>
     <dimen name="logo_font_size">20sp</dimen>
@@ -54,16 +54,22 @@
 
     <!--    Icon Size-->
     <dimen name="icon_round_size">12dp</dimen>
+    <dimen name="icon_round_size_small">5dp</dimen>
     <dimen name="icon_padding">12dp</dimen>
 
     <dimen name="tab_indicator_padding">3dp</dimen>
     <dimen name="drawer_corners">10dp</dimen>
 
     <dimen name="item_card_elevation">2dp</dimen>
-    <dimen name="item_card_padding">3dp</dimen>
+    <dimen name="item_card_padding">5dp</dimen>
     <dimen name="item_card_corner_radius">10dp</dimen>
     <dimen name="item_card_stroke_width">0dp</dimen>
     <dimen name="item_card_margin_horizontal">5dp</dimen>
     <dimen name="list_item_spacing">16dp</dimen>
     <dimen name="list_item_spacing_half">8dp</dimen>
+
+    <dimen name="spinner_item_height">40dp</dimen>
+    <dimen name="spinner_item_font_size">13sp</dimen>
+
+    <dimen name="clock_chip_radius">10dp</dimen>
 </resources>

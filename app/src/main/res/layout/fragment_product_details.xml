@@ -10,6 +10,7 @@
             android:id="@+id/shimmer_single_therapist_view_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:shimmer_auto_start="true">
 
             <LinearLayout
@@ -24,7 +25,7 @@
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/product_details_main"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@id/product_details_bottom_bar">
@@ -64,7 +65,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_marginTop="340dp"
-                    android:background="@drawable/bg_login_card"
+                    android:background="@drawable/bg_product_view"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -73,7 +74,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/margin_25"
+                    android:layout_marginHorizontal="20dp"
                     android:layout_marginTop="20dp"
                     android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -86,7 +87,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/poppins"
                         android:text="32 Degrees Men's Cool Classic Sleep Short "
-                        android:textSize="20dp"
+                        android:textSize="18dp"
                         android:textStyle="bold" />
 
                     <LinearLayout
@@ -199,7 +200,7 @@
                                 android:fontFamily="@font/poppins"
                                 android:text="LKR 2,500.0"
                                 android:textColor="@color/md_theme_primary"
-                                android:textSize="20dp"
+                                android:textSize="18dp"
                                 android:textStyle="bold" />
 
                             <LinearLayout

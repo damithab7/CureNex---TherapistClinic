@@ -70,9 +70,15 @@
 
         <item name="tab_background">@color/dark_text_input_background</item>
         <item name="tab_indicator_bg">@color/dark_main</item>
+
+        <item name="badgeStyle">@style/CustomBadge</item>
     </style>
 
     <style name="Theme.CureNex.FullScreen" parent="Theme.CureNex">
         <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="CustomBadge" parent="@style/Widget.MaterialComponents.Badge">
+        <item name="backgroundColor">@color/md_theme_primary</item>
     </style>
 </resources>

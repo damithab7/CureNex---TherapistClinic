@@ -40,12 +40,12 @@
         android:textSize="@dimen/button_text_size" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/small_margin_top"
         android:orientation="horizontal">
-
         <TextView
+
             android:fontFamily="@font/poppins"
             android:textSize="@dimen/link_click_text_size"
             android:layout_width="wrap_content"

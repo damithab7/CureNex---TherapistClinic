@@ -23,6 +23,7 @@
                 android:id="@+id/shimmer_view_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:shimmer_auto_start="true">
 
                 <LinearLayout
@@ -37,14 +38,14 @@
 
             <LinearLayout
                 android:id="@+id/home_main"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content">
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/home_promotion_card"
@@ -57,32 +58,40 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
 
-                        <androidx.viewpager2.widget.ViewPager2
-                            android:id="@+id/home_promotion_slider"
+                        <include
+                            android:id="@+id/home_top_layout"
+                            layout="@layout/home_top_item"
                             android:layout_width="match_parent"
-                            android:layout_height="280dp"
                             android:adjustViewBounds="true"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/doctorimageexample2"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            android:layout_height="wrap_content"
+                            />
+
+<!--                        <androidx.viewpager2.widget.ViewPager2-->
+<!--                            android:id="@+id/home_promotion_slider"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="280dp"-->
+<!--                            android:adjustViewBounds="true"-->
+<!--                            android:scaleType="centerCrop"-->
+<!--                            android:src="@drawable/doctorimageexample2"-->
+<!--                            app:layout_constraintEnd_toEndOf="parent"-->
+<!--                            app:layout_constraintStart_toStartOf="parent"-->
+<!--                            app:layout_constraintTop_toTopOf="parent" />-->
 
                     </androidx.cardview.widget.CardView>
 
-                    <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
-                        android:id="@+id/home_dotsIndicator"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginBottom="5dp"
-                        app:dotsColor="@color/md_theme_secondary"
-                        app:dotsSize="6dp"
-                        app:dotsSpacing="4dp"
-                        app:layout_constraintBottom_toBottomOf="@+id/home_promotion_card"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:selectedDotColor="@color/md_theme_primary" />
+<!--                    <com.tbuonomo.viewpagerdotsindicator.DotsIndicator-->
+<!--                        android:id="@+id/home_dotsIndicator"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center_horizontal"-->
+<!--                        android:layout_marginBottom="5dp"-->
+<!--                        app:dotsColor="@color/md_theme_secondary"-->
+<!--                        app:dotsSize="6dp"-->
+<!--                        app:dotsSpacing="4dp"-->
+<!--                        app:layout_constraintBottom_toBottomOf="@+id/home_promotion_card"-->
+<!--                        app:layout_constraintEnd_toEndOf="parent"-->
+<!--                        app:layout_constraintStart_toStartOf="parent"-->
+<!--                        app:selectedDotColor="@color/md_theme_primary" />-->
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.cardview.widget.CardView
@@ -221,6 +230,59 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/bestTherapistLayout" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/h_search_edittext">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins"
+                        android:gravity="center_vertical"
+                        android:includeFontPadding="false"
+                        android:text="Top Products"
+                        android:textSize="@dimen/sub_heading_size"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/home_products_see_all"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins"
+                        android:gravity="center_vertical"
+                        android:includeFontPadding="false"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:paddingVertical="0dp"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="0dp"
+                        android:text="@string/see_all"
+                        android:textAllCaps="false"
+                        android:textSize="@dimen/small_font_size"
+                        android:textStyle="bold"
+                        app:icon="@drawable/rightsmallarrow"
+                        app:iconGravity="textEnd"
+                        app:iconPadding="4dp"
+                        app:iconTint="?attr/textColorCustom" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/home_products_recycle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/servicesLayoutHome" />
             </LinearLayout>
 
         </LinearLayout>

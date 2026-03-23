@@ -60,4 +60,5 @@
     <string name="side_nav_login_title">Login</string>
     <string name="drawer_emergency_txt">Emergency Call</string>
     <string name="title_activity_clinic_location">ClinicLocation</string>
+    <string name="default_notification_channel_id">lk.curenex.messages.promotion_channel</string>
 </resources>
