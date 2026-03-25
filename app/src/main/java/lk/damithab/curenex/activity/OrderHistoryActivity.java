@@ -1,5 +1,6 @@
 package lk.damithab.curenex.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +26,7 @@ import java.util.List;
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.adapter.OrdersHistoryAdapter;
 import lk.damithab.curenex.databinding.ActivityOrderHistoryBinding;
+import lk.damithab.curenex.fragment.EmptyOrdersFragment;
 import lk.damithab.curenex.fragment.HomeFragment;
 import lk.damithab.curenex.fragment.OrderItemsFragment;
 import lk.damithab.curenex.fragment.OrdersFragment;
@@ -34,11 +36,17 @@ public class OrderHistoryActivity extends AppCompatActivity {
 
     private ActivityOrderHistoryBinding binding;
 
+    private FirebaseFirestore db;
+
+    private FirebaseAuth auth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityOrderHistoryBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
 
         String orderId = getIntent().getStringExtra("orderId");
         MaterialToolbar toolbar = binding.ordersToolbar;
@@ -50,7 +58,7 @@ public class OrderHistoryActivity extends AppCompatActivity {
             }
         });
 
-        Log.d("OrderHistoryActivity", "onCreate: "+ orderId);
+        Log.d("OrderHistoryActivity", "onCreate: " + orderId);
         if (orderId != null) {
             OrderItemsFragment oif = new OrderItemsFragment();
             Bundle bundle = new Bundle();
@@ -61,9 +69,20 @@ public class OrderHistoryActivity extends AppCompatActivity {
                     .replace(R.id.orders_container, oif)
                     .commit();
         } else {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.orders_container, new OrdersFragment())
-                    .commit();
+            db.collection("orders").whereEqualTo("userId", auth.getUid())
+                    .get().addOnSuccessListener(qs -> {
+                        if (!qs.isEmpty()) {
+                            getSupportFragmentManager().beginTransaction()
+                                    .replace(R.id.orders_container, new OrdersFragment())
+                                    .commit();
+                        } else {
+                            getSupportFragmentManager().beginTransaction()
+                                    .replace(R.id.orders_container, new EmptyOrdersFragment())
+                                    .commit();
+                        }
+                    });
+
+
         }
 
 

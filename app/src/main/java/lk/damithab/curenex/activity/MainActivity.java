@@ -26,6 +26,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -44,7 +45,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -56,6 +56,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
+import androidx.core.graphics.Insets;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -138,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private long accelerationStartTime = 0;
 
-    private int MAX_HOLD_TIME = 500; //1.5 seconds
+    private int MAX_HOLD_TIME = 800; //1.5 seconds
 
     private int cartCount;
 
@@ -209,10 +211,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         sideNavHeaderBinding = SideNavHeaderBinding.bind(headerView);
 
+
         drawerLayout = binding.mainDrawerlayout;
         toolbar = binding.mainToolbar;
         navigationView = binding.sideNavigationView;
         bottomNavigationView = binding.bottomNavigationView;
+
+        bottomNavigationView.setOnApplyWindowInsetsListener(null);
+        bottomNavigationView.setPadding(0,0,0,0);
 
         /// Sensors
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -451,7 +457,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (firebaseAuth.getCurrentUser() == null) {
                 Intent intent = new Intent(MainActivity.this, SignInActivity.class);
                 startActivity(intent);
-                finish();
             }else{
                 Intent intent = new Intent(MainActivity.this, NotificationActivity.class);
                 startActivity(intent);
@@ -630,6 +635,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             .orderBy("name")
                             .startAt(query)
                             .endAt(query + "\uf8ff")
+                            .whereEqualTo("status", Boolean.TRUE)
                             .get()
                             .addOnSuccessListener(qsnap -> {
                                 checkAdvancedSearchFinished();
@@ -722,7 +728,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (firebaseAuth.getCurrentUser() == null) {
                 Intent intent = new Intent(MainActivity.this, SignInActivity.class);
                 startActivity(intent);
-                finish();
+
             }else{
                 spinner.show(getSupportFragmentManager(), "SpinnerDialog");
                 firebaseFirestore.collection("users").document(firebaseAuth.getUid()).collection("cart").get()
@@ -746,19 +752,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (firebaseAuth.getCurrentUser() == null) {
                 Intent intent = new Intent(MainActivity.this, SignInActivity.class);
                 startActivity(intent);
-                finish();
+            }else{
+                loadFragment(new AccountFragment());
+                bottomNavigationView.getMenu().findItem(R.id.nav_account).setChecked(true);
             }
-            loadFragment(new AccountFragment());
-            bottomNavigationView.getMenu().findItem(R.id.nav_account).setChecked(true);
+
 
         } else if (itemId == R.id.side_nav_bookings) {
             if (firebaseAuth.getCurrentUser() == null) {
                 Intent intent = new Intent(MainActivity.this, SignInActivity.class);
                 startActivity(intent);
-                finish();
+            }else{
+                Intent intent = new Intent(MainActivity.this, BookingHistoryActivity.class);
+                startActivity(intent);
             }
-            Intent intent = new Intent(MainActivity.this, BookingHistoryActivity.class);
-            startActivity(intent);
+
         } else if (itemId == R.id.side_nav_login) {
             Intent intent = new Intent(MainActivity.this, SignInActivity.class);
             startActivity(intent);
@@ -840,7 +848,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (sensorType) {
             case Sensor.TYPE_ACCELEROMETER:
-                String format = String.format("X:%.2f Y:%.2f Z:%.2f", event.values[0], event.values[1], event.values[2]);
+//                String format = String.format("X:%.2f Y:%.2f Z:%.2f", event.values[0], event.values[1], event.values[2]);
                 long curTime = System.currentTimeMillis();
                 if ((curTime - mLastShakeTime) > MIN_TIME_BETWEEN_SHAKES_MILLISECS) {
 

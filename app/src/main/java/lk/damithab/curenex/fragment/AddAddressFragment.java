@@ -29,13 +29,16 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.databinding.FragmentAddAddressBinding;
 import lk.damithab.curenex.databinding.FragmentAddressBinding;
 import lk.damithab.curenex.model.Address;
+import lk.damithab.curenex.model.City;
 import lk.damithab.curenex.model.User;
 
 public class AddAddressFragment extends Fragment {
@@ -93,11 +96,27 @@ public class AddAddressFragment extends Fragment {
 
         loadListeners();
 
-        AutoCompleteTextView shippingCities = binding.shippingDetailsCity;
-        String[] cities = {"Ampara","Anuradhapura", "Badulla","Colombo","Gampaha","Galle","Kurunegala","Kegalla","Bandarawela","Bandaragama"
-                ,"Haputhale","Horana","Mathale","Hambanthota"};
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_dropdown_item_1line, cities);
-        shippingCities.setAdapter(arrayAdapter);
+        db.collection("cities").get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot qds) {
+                        List<String> cities = new ArrayList<>();
+                        if(!qds.isEmpty()){
+                            List<City> cityList = qds.toObjects(City.class);
+                            for(City city: cityList){
+                                cities.add(city.getCityName());
+                            }
+
+                            AutoCompleteTextView shippingCities = binding.shippingDetailsCity;
+                            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_dropdown_item_1line, cities);
+                            shippingCities.setAdapter(arrayAdapter);
+                        }
+
+                    }
+                }).addOnFailureListener(error->{
+
+                });
+
 
         if(addressId != null){
             binding.saveAddressBtn.setText("Update");

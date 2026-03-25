@@ -2,6 +2,7 @@ package lk.damithab.curenex.fragment;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -37,6 +38,8 @@ public class AllTherapistFragment extends Fragment {
     private FirebaseFirestore db;
 
     private FirebaseStorage storage;
+    private int completedTasks = 0;
+    private final int TOTAL_TASKS = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,9 +61,18 @@ public class AllTherapistFragment extends Fragment {
 
         binding.allTherapistRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
+        startDataLoading(true);
         loadAllTherapists();
 
+        getActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                requireActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
+
         binding.allTherapistFilterBtn.setOnClickListener(v -> {
+
 
             FilterTherapistBottomSheet sheet = new FilterTherapistBottomSheet((therapistFilter) -> {
                 Query query = db.collection("therapist");
@@ -73,11 +85,15 @@ public class AllTherapistFragment extends Fragment {
                 }
 
                 query = query.whereGreaterThanOrEqualTo("rate", therapistFilter.getStartPrice())
-                        .whereLessThanOrEqualTo("rate", therapistFilter.getEndPrice());
+                        .whereLessThanOrEqualTo("rate", therapistFilter.getEndPrice())
+                        .whereEqualTo("status", Boolean.TRUE);
+
+                startDataLoading(true);
 
                 query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot qds) {
+                        startDataLoading(false);
                         List<Therapist> therapistList = new ArrayList<>();
                         AllTherapistAdapter adapter = new AllTherapistAdapter(therapistList, therapist -> {
                         });
@@ -98,21 +114,50 @@ public class AllTherapistFragment extends Fragment {
                             });
                             binding.allTherapistResultCount.setText(String.valueOf(qds.size()));
 
-                        }else{
+                        } else {
                             binding.allTherapistResultCount.setText("No Results");
                         }
 
                         binding.allTherapistRecycler.setAdapter(adapter);
                     }
                 }).addOnFailureListener(error -> {
-
+                    startDataLoading(false);
                 });
-            }, this::loadAllTherapists);
+            }, ()->{
+                loadAllTherapists();
+                startDataLoading(false);
+            });
 
             sheet.show(getChildFragmentManager(), "FilterAllTherapist");
         });
 
     }
+
+    private void checkAllTasksFinished() {
+        completedTasks++;
+        Log.d("HomeFragment", "checkAllTasksFinished: " + completedTasks);
+        if (completedTasks >= TOTAL_TASKS) {
+            onDataLoad(false);
+            completedTasks = 0; // Reset for swipe-to-refresh
+        }
+    }
+
+    private void startDataLoading(boolean isShimmer) {
+        onDataLoad(isShimmer);
+    }
+
+    private synchronized void onDataLoad(boolean isShimmer) {
+        if (isShimmer) {
+            binding.shimmerAllTherapistContainer.startShimmer();
+            binding.shimmerAllTherapistContainer.setVisibility(View.VISIBLE);
+            binding.allTherapistMain.setVisibility(View.GONE);
+        } else {
+            binding.shimmerAllTherapistContainer.stopShimmer();
+            binding.shimmerAllTherapistContainer.setVisibility(View.GONE);
+            binding.allTherapistMain.setVisibility(View.VISIBLE);
+        }
+    }
+
 
     private void loadAllTherapists() {
         getAllTherapists(therapists -> {
@@ -134,14 +179,20 @@ public class AllTherapistFragment extends Fragment {
     }
 
     private void getAllTherapists(FirestoreCallback<List<Therapist>> callback) {
-        db.collection("therapist").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot qds) {
-                if (!qds.isEmpty()) {
-                    List<Therapist> therapists = qds.toObjects(Therapist.class);
-                    callback.onCallback(therapists);
-                }
-            }
-        });
+        db.collection("therapist")
+                .whereEqualTo("status", Boolean.TRUE)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot qds) {
+                        checkAllTasksFinished();
+                        if (!qds.isEmpty()) {
+                            List<Therapist> therapists = qds.toObjects(Therapist.class);
+                            callback.onCallback(therapists);
+                        }
+                    }
+                }).addOnFailureListener(error -> {
+                    checkAllTasksFinished();
+                });
     }
 }

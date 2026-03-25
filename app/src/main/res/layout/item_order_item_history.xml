@@ -24,7 +24,7 @@
                 android:textSize="18sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="I Ordered a supplli"/>
+                android:text="Item does not exist"/>
             <TextView
                 android:id="@+id/order_item_id"
                 android:textColor="@color/material_on_background_disabled"
@@ -33,7 +33,7 @@
                 android:textSize="13sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="order id: 123123"/>
+                android:text="order id: #123123"/>
 
         </LinearLayout>
         <LinearLayout
@@ -77,6 +77,6 @@
         android:id="@+id/order_item_image"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        tools:srcCompat="@tools:sample/avatars"/>
+        tools:srcCompat="@drawable/ordersicon"/>
 
 </LinearLayout>

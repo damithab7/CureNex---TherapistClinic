@@ -79,6 +79,8 @@ public class UpcomingBookingsAdapter extends RecyclerView.Adapter<UpcomingBookin
         holder.bookingTimeSlot.setText(booking.getBookingTime());
         holder.bookingStatus.setText(booking.getStatus());
 
+        holder.cancelButton.setVisibility(View.GONE);
+
         if(Objects.equals(booking.getStatus(), "Cancelled")){
             holder.statusCard.setCardBackgroundColor(Color.RED);
             holder.bookingStatus.setTextColor(Color.WHITE);
@@ -87,11 +89,11 @@ public class UpcomingBookingsAdapter extends RecyclerView.Adapter<UpcomingBookin
 
         holder.bookingTotal.setText(String.format(Locale.US, "LKR %,.2f",booking.getTotal()));
 
-        holder.cancelButton.setOnClickListener(v->{
-            if(listener != null){
-                listener.onCancel(booking);
-            }
-        });
+//        holder.cancelButton.setOnClickListener(v->{
+//            if(listener != null){
+//                listener.onCancel(booking);
+//            }
+//        });
     }
 
     @Override

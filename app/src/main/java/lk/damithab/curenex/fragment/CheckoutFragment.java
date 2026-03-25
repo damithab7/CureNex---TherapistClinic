@@ -32,10 +32,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -49,6 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.activity.AddressActivity;
@@ -57,9 +61,11 @@ import lk.damithab.curenex.activity.OrderHistoryActivity;
 import lk.damithab.curenex.adapter.CartAdapter;
 import lk.damithab.curenex.adapter.CheckoutItemsAdapter;
 import lk.damithab.curenex.databinding.FragmentCheckoutBinding;
+import lk.damithab.curenex.dialog.SpinnerDialog;
 import lk.damithab.curenex.listener.FirestoreCallback;
 import lk.damithab.curenex.model.Address;
 import lk.damithab.curenex.model.CartItem;
+import lk.damithab.curenex.model.City;
 import lk.damithab.curenex.model.Order;
 import lk.damithab.curenex.model.Product;
 import lk.payhere.androidsdk.PHConstants;
@@ -86,7 +92,7 @@ public class CheckoutFragment extends Fragment {
     private int qty;
 
     private int completedTasks = 0;
-    private final int TOTAL_TASKS = 1;
+    private final int TOTAL_TASKS = 2;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -141,6 +147,28 @@ public class CheckoutFragment extends Fragment {
 
         getActivity().findViewById(R.id.bottomNavigationView).setVisibility(View.GONE);
         getActivity().findViewById(R.id.main_toolbar).setVisibility(View.GONE);
+
+        db.collection("cities").get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot qds) {
+                        checkAllTasksFinished();
+                        List<String> cities = new ArrayList<>();
+                        if(!qds.isEmpty()){
+                            List<City> cityList = qds.toObjects(City.class);
+                            for(City city: cityList){
+                                cities.add(city.getCityName());
+                            }
+
+                            AutoCompleteTextView shippingCities = binding.billingDetailsCity;
+                            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_dropdown_item_1line, cities);
+                            shippingCities.setAdapter(arrayAdapter);
+                        }
+
+                    }
+                }).addOnFailureListener(error->{
+                    checkAllTasksFinished();
+                });
 
         createNotificationChannel();
 
@@ -501,6 +529,8 @@ public class CheckoutFragment extends Fragment {
     });
 
     private void saveOrder(StatusResponse statusResponse) {
+
+        SpinnerDialog spinner = SpinnerDialog.show(getParentFragmentManager());
         String uid = firebaseAuth.getCurrentUser().getUid();
 
         Order order = new Order();
@@ -564,13 +594,22 @@ public class CheckoutFragment extends Fragment {
                 String generatedOrderId = newOrderRef.getId();
                 order.setDocId(generatedOrderId);
 
+                BottomNavigationView bottomNav = requireActivity().findViewById(R.id.bottomNavigationView);
+
+                if(bottomNav != null){
+                    bottomNav.removeBadge(R.id.nav_cart);
+                }
+
                 newOrderRef.set(order).addOnSuccessListener(aVoid -> {
+                    spinner.dismiss();
                     sendNotification(order.getOrderId(), generatedOrderId);
 
                     getParentFragmentManager().beginTransaction()
                             .replace(R.id.navContainerView, new HomeFragment())
                             .commit();
 
+                }).addOnFailureListener(error->{
+                    spinner.dismiss();
                 });
             });
         } else {
@@ -621,7 +660,14 @@ public class CheckoutFragment extends Fragment {
                     String generatedOrderId = newOrderRef.getId();
                     order.setDocId(generatedOrderId);
 
+                    BottomNavigationView bottomNav = requireActivity().findViewById(R.id.bottomNavigationView);
+
+                    if(bottomNav != null){
+                        bottomNav.removeBadge(R.id.nav_cart);
+                    }
+
                     newOrderRef.set(order).addOnSuccessListener(aVoid -> {
+                        spinner.dismiss();
                         sendNotification(order.getOrderId(), generatedOrderId);
                         // Clear cart
                         db.collection("users").document(uid).collection("cart")
@@ -637,6 +683,8 @@ public class CheckoutFragment extends Fragment {
                                 .replace(R.id.navContainerView, new HomeFragment())
                                 .commit();
 
+                    }).addOnFailureListener(error->{
+                        spinner.dismiss();
                     });
 
                 });

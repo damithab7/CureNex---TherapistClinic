@@ -44,7 +44,7 @@ public class AccountFragment extends Fragment {
     private FirebaseAuth firebaseAuth;
 
     private int completedTasks = 0;
-    private final int TOTAL_TASKS = 1;
+    private final int TOTAL_TASKS = 2;
 
 
     @Override
@@ -113,14 +113,16 @@ public class AccountFragment extends Fragment {
 //                        .commit();
             }
         });
-        view.findViewById(R.id.accountOrdersBtn).setOnClickListener(new View.OnClickListener() {
+        binding.accountOrdersBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Intent intent = new Intent(view.getContext(), OrderHistoryActivity.class);
                 startActivity(intent);
+
             }
         });
-        view.findViewById(R.id.accountSettingsBtn).setOnClickListener(new View.OnClickListener() {
+        binding.accountSettingsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(view.getContext(), SettingsActivity.class);
@@ -156,7 +158,7 @@ public class AccountFragment extends Fragment {
         }
     }
 
-    private void loadData(){
+    private void loadData() {
         db.collection("users").whereEqualTo("uid", auth.getUid()).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -168,6 +170,7 @@ public class AccountFragment extends Fragment {
                             binding.accountUserName.setText(user.getFirstName() + " " + user.getLastName());
 
                             if (user.getProfileUrl().startsWith("https")) {
+                                checkAllTasksFinished();
                                 Glide.with(binding.getRoot())
                                         .load(user.getProfileUrl())
                                         .centerCrop()
@@ -176,10 +179,13 @@ public class AccountFragment extends Fragment {
                                 storage.getReference(user.getProfileUrl())
                                         .getDownloadUrl()
                                         .addOnSuccessListener(uri -> {
+                                            checkAllTasksFinished();
                                             Glide.with(binding.getRoot())
                                                     .load(uri)
                                                     .centerCrop()
                                                     .into(binding.accountUserImage);
+                                        }).addOnFailureListener(error -> {
+                                            checkAllTasksFinished();
                                         });
                             }
 
@@ -188,7 +194,7 @@ public class AccountFragment extends Fragment {
 
                     }
 
-                }).addOnFailureListener(aVoid->{
+                }).addOnFailureListener(aVoid -> {
                     checkAllTasksFinished();
                 });
     }
