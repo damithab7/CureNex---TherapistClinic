@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.api.AuthAPI;
@@ -35,6 +36,7 @@ import lk.damithab.curenex.dto.LoginRequestDTO;
 import lk.damithab.curenex.dto.TokenDTO;
 import lk.damithab.curenex.fragment.SignInEmailFragment;
 import lk.damithab.curenex.manager.TokenManager;
+import lk.damithab.curenex.model.User;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -45,6 +47,8 @@ public class SignInActivity extends AppCompatActivity {
     private ActivitySignInBinding binding;
     private FirebaseAuth firebaseAuth;
 
+    private FirebaseFirestore db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +56,13 @@ public class SignInActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         firebaseAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.signInMain, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+            return insets;
+        });
 
         String accessToken = TokenManager.retrieveAccessToken(this);
         if (accessToken != null && !accessToken.isEmpty()) {
@@ -83,15 +94,28 @@ public class SignInActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             FirebaseUser user = firebaseAuth.getCurrentUser();
                             if (user != null) {
-                                user.reload().addOnCompleteListener(reloadTask -> {
-                                    if (user.isEmailVerified()) {
-                                        updateUI(user);
-                                    } else {
-                                        Intent intent = new Intent(SignInActivity.this, VerificationActivity.class);
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                });
+                                db.collection("users").whereEqualTo("uid", user.getUid())
+                                        .get()
+                                        .addOnSuccessListener(qs -> {
+                                            if(!qs.isEmpty()) {
+                                                User dbuser = qs.toObjects(User.class).get(0);
+                                                if (dbuser.isUserStatus()) {
+                                                    user.reload().addOnCompleteListener(reloadTask -> {
+                                                        if (user.isEmailVerified()) {
+                                                            updateUI(user);
+                                                        } else {
+                                                            Intent intent = new Intent(SignInActivity.this, VerificationActivity.class);
+                                                            startActivity(intent);
+                                                            finish();
+                                                        }
+                                                    });
+                                                } else {
+                                                    new MessageDialog(getSupportFragmentManager(), "This account has been deactivated!");
+                                                }
+                                            }else{
+                                                new MessageDialog(getSupportFragmentManager(), "Invalid Credentials!");
+                                            }
+                                        });
                             }
                         } else {
                             new MessageDialog(getSupportFragmentManager(), "Invalid Credentials!");

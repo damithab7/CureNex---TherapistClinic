@@ -34,6 +34,8 @@ public class SpinnerDialog extends DialogFragment {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_spinner);
 
+        setCancelable(false);
+
         // Apply transparent background and remove dim
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

@@ -157,6 +157,7 @@
                 android:id="@+id/billing_layout"
                 android:visibility="gone"
                 android:layout_marginTop="20dp"
+                app:strokeWidth="0dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -304,7 +305,7 @@
                         app:placeholderText="City"
                         app:placeholderTextAppearance="@style/placeholderFont">
 
-                        <com.google.android.material.textfield.TextInputEditText
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
                             android:id="@+id/billing_details_city"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

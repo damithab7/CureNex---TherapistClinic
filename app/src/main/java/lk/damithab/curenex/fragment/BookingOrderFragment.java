@@ -14,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -31,6 +32,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -47,6 +50,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import org.w3c.dom.Document;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -56,8 +60,10 @@ import lk.damithab.curenex.R;
 import lk.damithab.curenex.activity.BookingHistoryActivity;
 import lk.damithab.curenex.activity.MainActivity;
 import lk.damithab.curenex.databinding.FragmentBookingOrderBinding;
+import lk.damithab.curenex.dialog.SpinnerDialog;
 import lk.damithab.curenex.listener.FirestoreCallback;
 import lk.damithab.curenex.model.Booking;
+import lk.damithab.curenex.model.City;
 import lk.damithab.curenex.model.Notification;
 import lk.damithab.curenex.model.Therapist;
 import lk.damithab.curenex.util.RegexUtil;
@@ -85,6 +91,11 @@ public class BookingOrderFragment extends Fragment {
     private FirebaseStorage storage;
 
     private static final String CHANNEL_ID = "bookings_channel";
+
+    private static final String DATE_PICKER_TAG = "DATE_PICKER";
+
+    private int completedTasks = 0;
+    private final int TOTAL_TASKS = 2;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -117,6 +128,15 @@ public class BookingOrderFragment extends Fragment {
 
         createNotificationChannel();
 
+        startDataLoading(true);
+
+        getActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                requireActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
+
         // DOB date picker
         MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
                 .setTitleText("Select Birth Date")
@@ -126,7 +146,9 @@ public class BookingOrderFragment extends Fragment {
         TextInputEditText birthDateEditText = binding.bookingDetailsBirthdate;
 
         birthDateEditText.setOnClickListener(v -> {
-            datePicker.show(getParentFragmentManager(), "DATE_PICKER");
+            if (getParentFragmentManager().findFragmentByTag(DATE_PICKER_TAG) == null) {
+                datePicker.show(getParentFragmentManager(), DATE_PICKER_TAG);
+            }
         });
 
         binding.bookingCancelBtn.setOnClickListener(v -> {
@@ -145,14 +167,40 @@ public class BookingOrderFragment extends Fragment {
         double serviceFee = 500.0;
 
         total = 0;
+
+        db.collection("cities").get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot qds) {
+                        checkAllTasksFinished();
+                        List<String> cities = new ArrayList<>();
+                        if(!qds.isEmpty()){
+                            List<City> cityList = qds.toObjects(City.class);
+                            for(City city: cityList){
+                                cities.add(city.getCityName());
+                            }
+
+                            AutoCompleteTextView shippingCities = binding.bookingDetailsCity;
+                            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_dropdown_item_1line, cities);
+                            shippingCities.setAdapter(arrayAdapter);
+                        }
+
+                    }
+                }).addOnFailureListener(error->{
+                    checkAllTasksFinished();
+                });
+
         getTherapistDetails(therapist -> {
             storage.getReference(therapist.getTherapistImage())
                     .getDownloadUrl()
                     .addOnSuccessListener(uri -> {
+                        checkAllTasksFinished();
                         Glide.with(getContext())
                                 .load(uri)
                                 .centerCrop()
                                 .into(binding.bookingTherapistImage);
+                    }).addOnFailureListener(error->{
+                        checkAllTasksFinished();
                     });
 
             binding.bookingTherapistName.setText(therapist.getTitle() + " " + therapist.getName());
@@ -178,7 +226,6 @@ public class BookingOrderFragment extends Fragment {
 
             String firstName = binding.bookingDetailsFirstname.getText().toString();
             String lastName = binding.bookingDetailsLastname.getText().toString();
-            String email = binding.bookingDetailsEmail.getText().toString();
             String contactNo = binding.bookingDetailsContact.getText().toString();
             String address = binding.bookingDetailsAddress1.getText().toString();
             String city = binding.bookingDetailsCity.getText().toString();
@@ -214,22 +261,6 @@ public class BookingOrderFragment extends Fragment {
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                     binding.bookingDetailsLastnameLayout.setErrorEnabled(false);
-                }
-            });
-            binding.bookingDetailsEmail.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void afterTextChanged(Editable editable) {
-
-                }
-
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    binding.bookingDetailsEmailLayout.setErrorEnabled(false);
                 }
             });
             binding.bookingDetailsContact.addTextChangedListener(new TextWatcher() {
@@ -326,18 +357,6 @@ public class BookingOrderFragment extends Fragment {
                 return;
             }
 
-            if (email.isEmpty()) {
-                binding.bookingDetailsEmailLayout.setErrorEnabled(true);
-                binding.bookingDetailsEmailLayout.setError("Email address is required!");
-                binding.bookingDetailsEmail.requestFocus();
-                return;
-            }
-            if (!isEmailValid(email)) {
-                binding.bookingDetailsEmailLayout.setErrorEnabled(true);
-                binding.bookingDetailsEmailLayout.setError("Invalid email address!");
-                binding.bookingDetailsEmail.requestFocus();
-                return;
-            }
 
             if (contactNo.isEmpty()) {
                 binding.bookingDetailsContactLayout.setErrorEnabled(true);
@@ -370,7 +389,6 @@ public class BookingOrderFragment extends Fragment {
 
             binding.bookingDetailsFirstname.clearFocus();
             binding.bookingDetailsLastname.clearFocus();
-            binding.bookingDetailsEmail.clearFocus();
             binding.bookingDetailsContact.clearFocus();
             binding.bookingDetailsAddress1.clearFocus();
             binding.bookingDetailsCity.clearFocus();
@@ -394,7 +412,6 @@ public class BookingOrderFragment extends Fragment {
 
                 req.getCustomer().setFirstName(binding.bookingDetailsFirstname.getText().toString());
                 req.getCustomer().setLastName(binding.bookingDetailsLastname.getText().toString());
-                req.getCustomer().setEmail(binding.bookingDetailsEmail.getText().toString());
                 req.getCustomer().setPhone(binding.bookingDetailsContact.getText().toString());
                 req.getCustomer().getAddress().setAddress(binding.bookingDetailsAddress1.getText().toString());
                 req.getCustomer().getAddress().setCity(binding.bookingDetailsCity.getText().toString());
@@ -409,6 +426,32 @@ public class BookingOrderFragment extends Fragment {
             }
         });
     }
+
+    private void checkAllTasksFinished() {
+        completedTasks++;
+        if (completedTasks >= TOTAL_TASKS) {
+            onDataLoad(false);
+        }
+    }
+
+    private void startDataLoading(boolean isShimmer) {
+        onDataLoad(isShimmer);
+    }
+
+    private synchronized void onDataLoad(boolean isShimmer) {
+        if (isShimmer) {
+            binding.shimmerViewBookingContainer.startShimmer();
+            binding.shimmerViewBookingContainer.setVisibility(View.VISIBLE);
+            binding.bookingBottomLayout.setVisibility(View.GONE);
+            binding.bookingOrderMain.setVisibility(View.GONE);
+        } else {
+            binding.shimmerViewBookingContainer.stopShimmer();
+            binding.shimmerViewBookingContainer.setVisibility(View.GONE);
+            binding.bookingBottomLayout.setVisibility(View.VISIBLE);
+            binding.bookingOrderMain.setVisibility(View.VISIBLE);
+        }
+    }
+
 
     private void getTherapistDetails(FirestoreCallback<Therapist> callback) {
         db.collection("therapist").document(therapistId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -454,11 +497,12 @@ public class BookingOrderFragment extends Fragment {
 
     private void saveBooking(StatusResponse response) {
 
+        SpinnerDialog spinner = SpinnerDialog.show(getParentFragmentManager());
+
         String uid = firebaseAuth.getCurrentUser().getUid();
 
         String firstName = binding.bookingDetailsFirstname.getText().toString().trim();
         String lastName = binding.bookingDetailsLastname.getText().toString().trim();
-        String email = binding.bookingDetailsEmail.getText().toString().trim();
         String contactNo = binding.bookingDetailsContact.getText().toString().trim();
         String address = binding.bookingDetailsAddress1.getText().toString().trim();
         String city = binding.bookingDetailsCity.getText().toString().trim();
@@ -476,7 +520,6 @@ public class BookingOrderFragment extends Fragment {
         booking.setPatientAddress(address);
         booking.setPatientMobile(contactNo);
         booking.setPatientCity(city);
-        booking.setPatientEmail(email);
         booking.setPatientDateOfBirth(dob);
         booking.setTotal(total);
         booking.setUid(uid);
@@ -489,12 +532,15 @@ public class BookingOrderFragment extends Fragment {
         newBookingRef.set(booking).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
+                spinner.dismiss();
                 sendNotification(booking.getBookingId());
                 getParentFragmentManager().beginTransaction()
                         .replace(R.id.navContainerView, new BookingConfirmedFragment())
                         .addToBackStack(null)
                         .commit();
             }
+        }).addOnFailureListener(error->{
+            spinner.dismiss();
         });
     }
 

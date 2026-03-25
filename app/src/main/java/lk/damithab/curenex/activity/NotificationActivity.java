@@ -21,6 +21,8 @@ import java.util.List;
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.adapter.NotificationsAdapter;
 import lk.damithab.curenex.databinding.ActivityNotificationBinding;
+import lk.damithab.curenex.dialog.SpinnerDialog;
+import lk.damithab.curenex.fragment.EmptyNotificationsFragment;
 import lk.damithab.curenex.model.Notification;
 
 public class NotificationActivity extends AppCompatActivity {
@@ -48,7 +50,7 @@ public class NotificationActivity extends AppCompatActivity {
             }
         });
 
-
+        SpinnerDialog spinner = SpinnerDialog.show(getSupportFragmentManager());
         if(auth.getCurrentUser() != null) {
             binding.notificationsRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
             db.collection("notifications").whereEqualTo("uid", auth.getUid())
@@ -56,10 +58,21 @@ public class NotificationActivity extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot qds) {
+                            spinner.dismiss();
                             if(!qds.isEmpty()){
+                                binding.notificationsRecycler.setVisibility(View.VISIBLE);
+                                binding.notificationFragmentContainer.setVisibility(View.GONE);
                                 List<Notification> notificationList = qds.toObjects(Notification.class);
                                 NotificationsAdapter adapter = new NotificationsAdapter(notificationList);
                                 binding.notificationsRecycler.setAdapter(adapter);
+                            }else {
+                                if(savedInstanceState == null){
+                                    binding.notificationsRecycler.setVisibility(View.GONE);
+                                    binding.notificationFragmentContainer.setVisibility(View.VISIBLE);
+                                    getSupportFragmentManager().beginTransaction()
+                                            .replace(R.id.notification_fragment_container, new EmptyNotificationsFragment())
+                                            .commit();
+                                }
                             }
                         }
                     });

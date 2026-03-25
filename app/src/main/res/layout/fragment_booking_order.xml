@@ -5,12 +5,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".fragment.CheckoutFragment">
+    tools:context=".fragment.BookingOrderFragment">
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_view_booking_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:shimmer_auto_start="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include layout="@layout/item_checkout_skeleton" />
+
+        </LinearLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/booking_order_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/address_bottom_layout">
+        android:layout_above="@+id/booking_bottom_layout">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -86,26 +104,6 @@
                             android:textSize="@dimen/edit_text_size" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/booking_details_email_layout"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:hint="Email"
-                        app:placeholderText="example@email.com"
-                        app:placeholderTextAppearance="@style/placeholderFont">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/booking_details_email"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/poppins"
-                            android:inputType="textEmailAddress"
-                            android:padding="@dimen/edit_text_padding"
-                            android:textSize="@dimen/edit_text_size" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/booking_details_contact_layout"
@@ -155,7 +153,7 @@
                         app:placeholderText="City"
                         app:placeholderTextAppearance="@style/placeholderFont">
 
-                        <com.google.android.material.textfield.TextInputEditText
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
                             android:id="@+id/booking_details_city"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -207,6 +205,7 @@
                     xmlns:tools="http://schemas.android.com/tools"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:padding="5dp"
                     android:orientation="horizontal">
 
                     <androidx.cardview.widget.CardView
@@ -452,7 +451,7 @@
     </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
-        android:id="@+id/address_bottom_layout"
+        android:id="@+id/booking_bottom_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"

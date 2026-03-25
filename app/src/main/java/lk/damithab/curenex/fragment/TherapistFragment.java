@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -59,7 +60,7 @@ public class TherapistFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        binding.recyclerviewTherapist.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        binding.recyclerviewTherapist.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         db = FirebaseFirestore.getInstance();
 
         startDataLoading(true);
@@ -101,6 +102,7 @@ public class TherapistFragment extends Fragment {
     private void loadData(){
         db.collection("therapist")
                 .whereEqualTo("serviceId", serviceId)
+                .whereEqualTo("status", Boolean.TRUE)
                 .orderBy("name", Query.Direction.ASCENDING)
                 .get()
                 .addOnSuccessListener(ds->{

@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +20,10 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.List;
@@ -31,6 +34,7 @@ import lk.damithab.curenex.databinding.FragmentAddressBinding;
 import lk.damithab.curenex.dialog.CustomAlertDialog;
 import lk.damithab.curenex.dialog.ToastDialog;
 import lk.damithab.curenex.model.Address;
+import lk.damithab.curenex.model.City;
 
 public class AddressFragment extends Fragment {
 
@@ -68,6 +72,68 @@ public class AddressFragment extends Fragment {
 //                requireActivity().getSupportFragmentManager().popBackStack();
 //            }
 //        });
+
+//        List<City> cities = List.of(
+//                // Western Province
+//                City.builder().cityId("c1").cityName("Colombo").build(),
+//                City.builder().cityId("c2").cityName("Gampaha").build(),
+//                City.builder().cityId("c3").cityName("Kalutara").build(),
+//                City.builder().cityId("c4").cityName("Negombo").build(),
+//                City.builder().cityId("c5").cityName("Mount Lavinia").build(),
+//
+//                // Central Province
+//                City.builder().cityId("c6").cityName("Kandy").build(),
+//                City.builder().cityId("c7").cityName("Nuwara Eliya").build(),
+//                City.builder().cityId("c8").cityName("Matale").build(),
+//                City.builder().cityId("c9").cityName("Gampola").build(),
+//
+//                // Southern Province
+//                City.builder().cityId("c10").cityName("Galle").build(),
+//                City.builder().cityId("c11").cityName("Matara").build(),
+//                City.builder().cityId("c12").cityName("Hambantota").build(),
+//                City.builder().cityId("c13").cityName("Hikkaduwa").build(),
+//
+//                // Northern Province
+//                City.builder().cityId("c14").cityName("Jaffna").build(),
+//                City.builder().cityId("c15").cityName("Vavuniya").build(),
+//                City.builder().cityId("c16").cityName("Mannar").build(),
+//
+//                // Eastern Province
+//                City.builder().cityId("c17").cityName("Trincomalee").build(),
+//                City.builder().cityId("c18").cityName("Batticaloa").build(),
+//                City.builder().cityId("c19").cityName("Ampara").build(),
+//
+//                // North Western Province
+//                City.builder().cityId("c20").cityName("Kurunegala").build(),
+//                City.builder().cityId("c21").cityName("Puttalam").build(),
+//                City.builder().cityId("c22").cityName("Chilaw").build(),
+//
+//                // North Central Province
+//                City.builder().cityId("c23").cityName("Anuradhapura").build(),
+//                City.builder().cityId("c24").cityName("Polonnaruwa").build(),
+//
+//                // Uva Province
+//                City.builder().cityId("c25").cityName("Badulla").build(),
+//                City.builder().cityId("c26").cityName("Moneragala").build(),
+//                City.builder().cityId("c27").cityName("Bandarawela").build(),
+//                City.builder().cityId("c28").cityName("Ella").build(),
+//
+//                // Sabaragamuwa Province
+//                City.builder().cityId("c29").cityName("Ratnapura").build(),
+//                City.builder().cityId("c30").cityName("Kegalle").build()
+//        );
+//
+//        WriteBatch batch = db.batch();
+//
+//        for (City city : cities) {
+//            // We use city.getCityId() as the document path so it shows up as c1, c2, etc.
+//            DocumentReference ref = db.collection("cities").document(city.getCityId());
+//            batch.set(ref, city);
+//        }
+//
+//        batch.commit()
+//                .addOnSuccessListener(aVoid -> Log.d("CureNex", "Success: 30 cities added with numbered IDs."))
+//                .addOnFailureListener(e -> Log.e("CureNex", "Error: " + e.getMessage()));
 
         binding.addNewAddressBtn.setOnClickListener(v->{
             AddAddressFragment addAddressFragment = new AddAddressFragment();

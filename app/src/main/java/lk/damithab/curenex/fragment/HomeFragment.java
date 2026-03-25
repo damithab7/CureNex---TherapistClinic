@@ -122,6 +122,7 @@ public class HomeFragment extends Fragment {
         binding.homeTherapistsSeeAll.setOnClickListener(v -> {
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.navContainerView, new AllTherapistFragment())
+                    .addToBackStack(null)
                     .commit();
         });
         binding.homeProductsSeeAll.setOnClickListener(v -> {
@@ -174,7 +175,8 @@ public class HomeFragment extends Fragment {
 
 
     private void loadTherapists() {
-        db.collection("therapist").whereGreaterThan("rating", 4).get()
+        db.collection("therapist").whereGreaterThan("rating", 4)
+                .whereEqualTo("status", Boolean.TRUE).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
 

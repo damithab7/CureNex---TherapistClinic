@@ -43,6 +43,7 @@ import java.util.Set;
 
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.activity.MainActivity;
+import lk.damithab.curenex.activity.SignInActivity;
 import lk.damithab.curenex.adapter.DateAdapter;
 import lk.damithab.curenex.adapter.TimeSlotAdapter;
 import lk.damithab.curenex.databinding.FragmentSingleTherapistBinding;
@@ -156,27 +157,32 @@ public class SingleTherapistFragment extends Fragment {
                 return;
             }
 
-            // --- SUCCESS: You have everything you need ---
-            String scheduleId = selectedSlot.getScheduleId(); // The specific ID from Firestore
-            String bookingDate = selectedDate.getFullDate(); // e.g., "2026-02-27"
-            String therapistDocId = docId; // The therapist's auto-ID (HMkbq...)
+            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+            if (firebaseAuth.getCurrentUser() == null) {
+                Intent intent = new Intent(getActivity(), SignInActivity.class);
+                startActivity(intent);
+            } else {
 
-            Log.d("SingleTherapist", scheduleId + bookingDate + therapistDocId);
+                String scheduleId = selectedSlot.getScheduleId();
+                String bookingDate = selectedDate.getFullDate();
+                String therapistDocId = docId;
 
-            BookingOrderFragment bookingOrderFragment = new BookingOrderFragment();
+                Log.d("SingleTherapist", scheduleId + bookingDate + therapistDocId);
 
-            Bundle args = new Bundle();
-            args.putString("schedule_id", scheduleId);
-            args.putString("booking_date", bookingDate);
-            args.putString("booking_time", selectedTime);
-            args.putString("therapist_id", therapistDocId);
+                BookingOrderFragment bookingOrderFragment = new BookingOrderFragment();
 
-            bookingOrderFragment.setArguments(args);
+                Bundle args = new Bundle();
+                args.putString("schedule_id", scheduleId);
+                args.putString("booking_date", bookingDate);
+                args.putString("booking_time", selectedTime);
+                args.putString("therapist_id", therapistDocId);
 
-            getParentFragmentManager().beginTransaction().replace(R.id.navContainerView, bookingOrderFragment)
-                    .addToBackStack(null)
-                    .commit();
+                bookingOrderFragment.setArguments(args);
 
+                getParentFragmentManager().beginTransaction().replace(R.id.navContainerView, bookingOrderFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
 //            proceedToConfirmation(therapistDocId, scheduleId, bookingDate);
         });
     }
@@ -186,7 +192,7 @@ public class SingleTherapistFragment extends Fragment {
         Log.d("HomeFragment", "checkAllTasksFinished: " + completedTasks);
         if (completedTasks >= TOTAL_TASKS) {
             onDataLoad(false);
-            completedTasks = 0; // Reset for swipe-to-refresh
+            completedTasks = 0;
         }
     }
 
@@ -371,9 +377,9 @@ public class SingleTherapistFragment extends Fragment {
         List<DateModel> dateList = new ArrayList<>();
         Calendar calendar = Calendar.getInstance(); ///Today date
 
-        SimpleDateFormat dayNumFormat = new SimpleDateFormat("EEE", Locale.getDefault()); ///Like "Fri, Tue"
-        SimpleDateFormat dateNumFormat = new SimpleDateFormat("dd", Locale.getDefault()); /// like 30, 28
-        SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()); /// to Store bookings date
+        SimpleDateFormat dayNumFormat = new SimpleDateFormat("EEE", Locale.getDefault());
+        SimpleDateFormat dateNumFormat = new SimpleDateFormat("dd", Locale.getDefault());
+        SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
         ptoList = new ArrayList<>();
 
