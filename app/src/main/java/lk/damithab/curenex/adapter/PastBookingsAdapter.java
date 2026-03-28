@@ -91,6 +91,8 @@ public class PastBookingsAdapter extends RecyclerView.Adapter<PastBookingsAdapte
             holder.statusCard.setCardBackgroundColor(Color.RED);
             holder.bookingStatus.setTextColor(Color.WHITE);
             holder.cancelButton.setVisibility(View.GONE);
+        }else{
+            holder.statusCard.setVisibility(View.GONE);
         }
 
         db.collection("reviews").whereEqualTo("uid", booking.getUid()).whereEqualTo("type","therapist")
@@ -101,7 +103,7 @@ public class PastBookingsAdapter extends RecyclerView.Adapter<PastBookingsAdapte
                         if(!qds.isEmpty()){
                             Reviews review = qds.toObjects(Reviews.class).get(0);
                             holder.cancelButton.setEnabled(true);
-                            holder.cancelButton.setText("Set Review");
+                            holder.cancelButton.setText("View Review");
                             holder.cancelButton.setOnClickListener(v->{
                                 if(listener != null){
                                     listener.onClick(review);
@@ -109,7 +111,7 @@ public class PastBookingsAdapter extends RecyclerView.Adapter<PastBookingsAdapte
                             });
                         }else{
                             holder.cancelButton.setEnabled(true);
-                            holder.cancelButton.setText("View Review");
+                            holder.cancelButton.setText("Set Review");
                             holder.cancelButton.setOnClickListener(v->{
                                 if(listener != null){
                                     listener.onClick(booking);

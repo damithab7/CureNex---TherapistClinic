@@ -125,6 +125,8 @@ public class SignInEmailFragment extends Fragment {
         binding.googleContinueBtn.setOnClickListener(v -> {
 //            spinner = SpinnerDialog.show(getParentFragmentManager());
 
+            SpinnerDialog spinnerDialog = SpinnerDialog.show(getParentFragmentManager());
+
             GetCredentialRequest request = new GetCredentialRequest.Builder()
                     .addCredentialOption(googleIdOption)
                     .build();
@@ -137,12 +139,13 @@ public class SignInEmailFragment extends Fragment {
                     new CredentialManagerCallback<GetCredentialResponse, GetCredentialException>() {
                         @Override
                         public void onResult(GetCredentialResponse result) {
-                            // This sends the result to the handleSignIn method we created
+                            spinnerDialog.dismiss();
                             handleSignIn(result.getCredential());
                         }
 
                         @Override
                         public void onError(GetCredentialException e) {
+                            spinnerDialog.dismiss();
 //                            if (spinner.isAdded()) {
 //                                spinner.dismissAllowingStateLoss();
 //                            }

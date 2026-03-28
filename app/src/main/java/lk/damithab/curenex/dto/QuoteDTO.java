@@ -13,5 +13,4 @@ public class QuoteDTO {
     private String q;
     private String a;
     private String h;
-
 }
