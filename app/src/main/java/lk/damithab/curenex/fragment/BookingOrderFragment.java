@@ -413,6 +413,7 @@ public class BookingOrderFragment extends Fragment {
                 req.getCustomer().setFirstName(binding.bookingDetailsFirstname.getText().toString());
                 req.getCustomer().setLastName(binding.bookingDetailsLastname.getText().toString());
                 req.getCustomer().setPhone(binding.bookingDetailsContact.getText().toString());
+                req.getCustomer().setEmail(firebaseAuth.getCurrentUser().getEmail());
                 req.getCustomer().getAddress().setAddress(binding.bookingDetailsAddress1.getText().toString());
                 req.getCustomer().getAddress().setCity(binding.bookingDetailsCity.getText().toString());
                 req.getCustomer().getAddress().setCountry("Sri Lanka");

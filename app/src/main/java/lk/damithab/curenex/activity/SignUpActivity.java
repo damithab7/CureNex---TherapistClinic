@@ -33,6 +33,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.databinding.ActivitySignUpBinding;
+import lk.damithab.curenex.dialog.SpinnerDialog;
 import lk.damithab.curenex.dialog.ToastDialog;
 import lk.damithab.curenex.model.User;
 import lk.damithab.curenex.util.RegexUtil;
@@ -238,6 +239,7 @@ public class SignUpActivity extends AppCompatActivity {
             binding.emailSignUpInput.clearFocus();
             binding.passwordSignUpInput.clearFocus();
             binding.retypePasswordSignUpInput.clearFocus();
+
 
             firebaseAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {

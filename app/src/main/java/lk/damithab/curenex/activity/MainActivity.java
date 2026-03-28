@@ -369,10 +369,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     view.startAnimation(anim);
                 }
 
-                // Return false so the click listener still works for navigation
+                // return false so the click listener still works for navigation
                 return false;
             }
         });
+
         sideNavHeaderBinding.getRoot().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -848,7 +849,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (sensorType) {
             case Sensor.TYPE_ACCELEROMETER:
-//                String format = String.format("X:%.2f Y:%.2f Z:%.2f", event.values[0], event.values[1], event.values[2]);
+
                 long curTime = System.currentTimeMillis();
                 if ((curTime - mLastShakeTime) > MIN_TIME_BETWEEN_SHAKES_MILLISECS) {
 
@@ -859,7 +860,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     double acceleration = Math.abs(Math.sqrt(Math.pow(x, 2) +
                             Math.pow(y, 2) +
                             Math.pow(z, 2)) - SensorManager.GRAVITY_EARTH);
-//                    Log.d("MainActivity", "Acceleration is " + acceleration + "m/s^2");
 
                     if (acceleration < MAX_SHAKE_THRESHOLD && acceleration > SHAKE_THRESHOLD) {
                         mLastShakeTime = curTime;
@@ -869,13 +869,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
 
                         if ((curTime - accelerationStartTime) >= MAX_HOLD_TIME) {
-                            Log.d("MainActivity", "Continuous shake for 1.5 seconds");
+                            Log.d("MainActivity", "Continuous shake for 0.800 seconds");
 
                             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
                                     == PackageManager.PERMISSION_GRANTED) {
-                                    makePhoneCall();
+                                makePhoneCall();
                             } else {
-                                    callPermissionLauncher.launch(Manifest.permission.CALL_PHONE);
+                                callPermissionLauncher.launch(Manifest.permission.CALL_PHONE);
                             }
                             accelerationStartTime = 0;
                         }
