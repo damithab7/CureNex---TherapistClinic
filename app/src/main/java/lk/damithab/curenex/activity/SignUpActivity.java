@@ -37,6 +37,10 @@ import lk.damithab.curenex.dialog.SpinnerDialog;
 import lk.damithab.curenex.dialog.ToastDialog;
 import lk.damithab.curenex.model.User;
 import lk.damithab.curenex.util.RegexUtil;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.firestore.SetOptions;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SignUpActivity extends AppCompatActivity {
     private Button sign_up_back;
@@ -247,6 +251,7 @@ public class SignUpActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 String uid = task.getResult().getUser().getUid();
+
                                 User user = User.builder().uid(uid).firstName(firstName)
                                         .lastName(lastName)
                                         .profileUrl("https://ui-avatars.com/api/" + firstName + "+" + lastName)
@@ -254,21 +259,41 @@ public class SignUpActivity extends AppCompatActivity {
                                         .userStatus(true).build();
 
                                 firebaseFirestore.collection("users").document(uid)
-                                        .set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void unused) {
-                                                binding.signUpProgress.setVisibility(View.INVISIBLE);
-                                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-//                                                Toast.makeText(SignUpActivity.this, "Sign-Up success!", Toast.LENGTH_SHORT).show();
-                                                Intent intent = new Intent(SignUpActivity.this, VerificationActivity.class);
-                                                startActivity(intent);
-                                                finish();
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
+                                        .set(user)
+                                        .addOnSuccessListener(unused -> {
 
-                                            }
+                                            FirebaseMessaging.getInstance().getToken()
+                                                    .addOnSuccessListener(token -> {
+
+                                                        Map<String, Object> tokenData = new HashMap<>();
+                                                        tokenData.put("fcmToken", token);
+
+                                                        firebaseFirestore.collection("users")
+                                                                .document(uid)
+                                                                .set(tokenData, SetOptions.merge())
+                                                                .addOnSuccessListener(v -> {
+
+                                                                    binding.signUpProgress.setVisibility(View.INVISIBLE);
+                                                                    getWindow().clearFlags(
+                                                                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                                                                    );
+
+                                                                    Intent intent = new Intent(
+                                                                            SignUpActivity.this,
+                                                                            VerificationActivity.class
+                                                                    );
+                                                                    startActivity(intent);
+                                                                    finish();
+                                                                });
+                                                    });
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            binding.signUpProgress.setVisibility(View.INVISIBLE);
+                                            getWindow().clearFlags(
+                                                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                                            );
+
+                                            Log.e("SignUp", "Failed to create user document", e);
                                         });
                             } else {
                                 binding.signUpProgress.setVisibility(View.INVISIBLE);

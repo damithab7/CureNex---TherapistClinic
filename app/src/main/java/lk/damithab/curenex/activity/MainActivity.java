@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
@@ -15,6 +16,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -83,6 +86,8 @@ import java.util.Objects;
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.adapter.AdvancedSearchAdapter;
 import lk.damithab.curenex.adapter.BasicSearchAdapter;
+import lk.damithab.curenex.broadcast.NetworkChangeReceiver;
+import lk.damithab.curenex.broadcast.OrderPlacedReceiver;
 import lk.damithab.curenex.databinding.ActivityMainBinding;
 import lk.damithab.curenex.databinding.SideNavHeaderBinding;
 import lk.damithab.curenex.dialog.SpinnerDialog;
@@ -93,6 +98,7 @@ import lk.damithab.curenex.fragment.CartFragment;
 import lk.damithab.curenex.fragment.EmptyCartFragment;
 import lk.damithab.curenex.fragment.HomeFragment;
 import lk.damithab.curenex.fragment.ListingFragment;
+import lk.damithab.curenex.fragment.OrdersFragment;
 import lk.damithab.curenex.fragment.ProductDetailsFragment;
 import lk.damithab.curenex.fragment.ServiceFragment;
 import lk.damithab.curenex.fragment.ShopFragment;
@@ -125,6 +131,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String welcomeScreenShownPref = "welcomeScreenShown",
             PREFERENCE_NAME = "welcome_screen";
 
+    private final NetworkChangeReceiver networkReceiver = new NetworkChangeReceiver();
+
+    private ConnectivityManager.NetworkCallback networkCallback;
+
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore firebaseFirestore;
 
@@ -133,14 +143,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private SensorManager sensorManager;
     private Sensor accelerometer;
 
-    private static final float SHAKE_THRESHOLD = 1f; // m/S**2
-    private static final float MAX_SHAKE_THRESHOLD = 20f; // m/S**2
-    private static final int MIN_TIME_BETWEEN_SHAKES_MILLISECS = 0;
-    private long mLastShakeTime;
+    private static final float SHAKE_THRESHOLD = 1f;
+    private static final float MAX_SHAKE_THRESHOLD = 20f;
+    private static final int MAX_HOLD_TIME = 800;
 
     private long accelerationStartTime = 0;
-
-    private int MAX_HOLD_TIME = 800; //1.5 seconds
+    private boolean shakeTriggered = false;
 
     private int cartCount;
 
@@ -409,7 +417,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }, false);
 
-
     }
 
     public void loadFragment(Fragment fragment) {
@@ -418,7 +425,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         transaction.replace(R.id.navContainerView, fragment);
         transaction.commit();
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.navContainerView, fragment).commit();
+//        getSupportFragmentManager().beginTransaction().replace(R.id.navContainerView, fragment).commit();
 
     }
 
@@ -808,6 +815,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         boolean welcomeScreenShown = mPrefs.getBoolean(welcomeScreenShownPref, false);
 
+        ContextCompat.registerReceiver(this, networkReceiver,
+                new IntentFilter(NetworkChangeReceiver.ACTION_NETWORK_CHANGED),
+                ContextCompat.RECEIVER_NOT_EXPORTED);
+        startNetworkMonitoring();
+
         if (!welcomeScreenShown) {
             WelcomeDialog welcomeDialog = new WelcomeDialog();
             welcomeDialog.setOnContinueClickListener(view -> {
@@ -845,48 +857,55 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        int sensorType = event.sensor.getType();
 
-        switch (sensorType) {
-            case Sensor.TYPE_ACCELEROMETER:
+        if (event.sensor.getType() != Sensor.TYPE_ACCELEROMETER) {
+            return;
+        }
 
-                long curTime = System.currentTimeMillis();
-                if ((curTime - mLastShakeTime) > MIN_TIME_BETWEEN_SHAKES_MILLISECS) {
+        float x = event.values[0];
+        float y = event.values[1];
+        float z = event.values[2];
 
-                    float x = event.values[0];
-                    float y = event.values[1];
-                    float z = event.values[2];
+        double acceleration = Math.abs(
+                Math.sqrt(x * x + y * y + z * z)
+                        - SensorManager.GRAVITY_EARTH
+        );
 
-                    double acceleration = Math.abs(Math.sqrt(Math.pow(x, 2) +
-                            Math.pow(y, 2) +
-                            Math.pow(z, 2)) - SensorManager.GRAVITY_EARTH);
+        long curTime = System.currentTimeMillis();
 
-                    if (acceleration < MAX_SHAKE_THRESHOLD && acceleration > SHAKE_THRESHOLD) {
-                        mLastShakeTime = curTime;
+        if (acceleration > SHAKE_THRESHOLD) {
 
-                        if (accelerationStartTime == 0) {
-                            accelerationStartTime = curTime;
-                        }
+            if (accelerationStartTime == 0) {
+                accelerationStartTime = curTime;
+            }
 
-                        if ((curTime - accelerationStartTime) >= MAX_HOLD_TIME) {
-                            Log.d("MainActivity", "Continuous shake for 0.800 seconds");
+            if (!shakeTriggered &&
+                    (curTime - accelerationStartTime >= MAX_HOLD_TIME)) {
 
-                            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
-                                    == PackageManager.PERMISSION_GRANTED) {
-                                makePhoneCall();
-                            } else {
-                                callPermissionLauncher.launch(Manifest.permission.CALL_PHONE);
-                            }
-                            accelerationStartTime = 0;
-                        }
-                    } else {
-                        accelerationStartTime = 0;
-                    }
+                shakeTriggered = true;
+
+                Log.d("MainActivity",
+                        "Continuous shake for 0.800 seconds");
+
+                if (ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.CALL_PHONE
+                ) == PackageManager.PERMISSION_GRANTED) {
+
+                    makePhoneCall();
+
+                } else {
+                    callPermissionLauncher.launch(
+                            Manifest.permission.CALL_PHONE
+                    );
                 }
-                break;
+            }
+
+        } else {
+            accelerationStartTime = 0;
+            shakeTriggered = false;
         }
     }
-
     private void getFMCToken(){
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
@@ -908,7 +927,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivity(intent);
     }
 
-
     private void checkAndRequestPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
@@ -918,4 +936,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    private void startNetworkMonitoring() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        networkCallback = new ConnectivityManager.NetworkCallback() {
+            @Override public void onAvailable(@NonNull Network network) { sendNetworkBroadcast(true); }
+            @Override public void onLost(@NonNull Network network) { sendNetworkBroadcast(false); }
+        };
+        cm.registerDefaultNetworkCallback(networkCallback);
+    }
+
+    private void sendNetworkBroadcast(boolean connected) {
+        Intent i = new Intent(NetworkChangeReceiver.ACTION_NETWORK_CHANGED);
+        i.setPackage(getPackageName());
+        i.putExtra("connected", connected);
+        sendBroadcast(i);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(networkReceiver);
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        cm.unregisterNetworkCallback(networkCallback);
+    }
 }

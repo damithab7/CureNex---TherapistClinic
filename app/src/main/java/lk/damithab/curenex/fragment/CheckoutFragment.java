@@ -60,6 +60,7 @@ import lk.damithab.curenex.activity.BookingHistoryActivity;
 import lk.damithab.curenex.activity.OrderHistoryActivity;
 import lk.damithab.curenex.adapter.CartAdapter;
 import lk.damithab.curenex.adapter.CheckoutItemsAdapter;
+import lk.damithab.curenex.broadcast.OrderPlacedReceiver;
 import lk.damithab.curenex.databinding.FragmentCheckoutBinding;
 import lk.damithab.curenex.dialog.SpinnerDialog;
 import lk.damithab.curenex.listener.FirestoreCallback;
@@ -563,7 +564,6 @@ public class CheckoutFragment extends Fragment {
             String billing_city = binding.billingDetailsCity.getText().toString();
             String billing_postCode = binding.billingDetailsPostcode.getText().toString();
 
-
             Address billingAddress = Address.builder().name(billing_name).email(billing_email).contact(billing_contact).address1(billing_address1).address2(billing_address2).city(billing_city).postcode(billing_postCode).uid(user_id).build();
             order.setBillingAddress(billingAddress);
         } else {
@@ -603,6 +603,7 @@ public class CheckoutFragment extends Fragment {
                 newOrderRef.set(order).addOnSuccessListener(aVoid -> {
                     spinner.dismiss();
                     sendNotification(order.getOrderId(), generatedOrderId);
+//                    sendOrderBroadcast(order.getOrderId());
 
                     getParentFragmentManager().beginTransaction()
                             .replace(R.id.navContainerView, new HomeFragment())
@@ -669,6 +670,8 @@ public class CheckoutFragment extends Fragment {
                     newOrderRef.set(order).addOnSuccessListener(aVoid -> {
                         spinner.dismiss();
                         sendNotification(order.getOrderId(), generatedOrderId);
+//                        sendOrderBroadcast(order.getOrderId());
+
                         // Clear cart
                         db.collection("users").document(uid).collection("cart")
                                 .get()
@@ -845,6 +848,13 @@ public class CheckoutFragment extends Fragment {
         } else {
             checkAndRequestPermission();
         }
+    }
+
+    private void sendOrderBroadcast(String orderId) {
+        Intent i = new Intent(OrderPlacedReceiver.ACTION_ORDER_PLACED);
+        i.setPackage(requireContext().getPackageName());
+        i.putExtra("orderId", orderId);
+        requireContext().sendBroadcast(i);
     }
 
     private void checkAndRequestPermission() {

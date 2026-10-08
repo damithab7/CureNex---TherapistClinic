@@ -16,8 +16,11 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import lk.damithab.curenex.R;
 import lk.damithab.curenex.databinding.ActivityVerificationBinding;
@@ -41,12 +44,15 @@ public class VerificationActivity extends AppCompatActivity {
     private int completedTasks = 0;
     private final int TOTAL_TASKS = 1;
 
+    private FirebaseFirestore db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityVerificationBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         firebaseUser = auth.getCurrentUser();
 
@@ -121,6 +127,18 @@ public class VerificationActivity extends AppCompatActivity {
                     firebaseUser.reload().addOnCompleteListener(task -> {
                         if (firebaseUser.isEmailVerified()) {
                             stopPolling();
+
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("emailVerified", true);
+
+                            db.collection("users")
+                                    .document(firebaseUser.getUid())
+                                    .update(data)
+                                    .addOnSuccessListener(unused ->
+                                            Log.d("Verification", "Email verification status updated"))
+                                    .addOnFailureListener(e ->
+                                            Log.e("Verification", "Failed to update verification status", e));
+
                             Intent intent = new Intent(VerificationActivity.this, MainActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                                     Intent.FLAG_ACTIVITY_CLEAR_TASK |

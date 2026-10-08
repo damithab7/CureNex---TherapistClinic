@@ -57,7 +57,7 @@ public class CartFragment extends Fragment {
         BottomNavigationView navigationView = getActivity().findViewById(R.id.bottomNavigationView);
 
         SpinnerDialog spinner = SpinnerDialog.show(getParentFragmentManager());
-
+    
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
